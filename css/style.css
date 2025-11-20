@@ -548,15 +548,122 @@ body {
     }
 }
 
-/* Variant modal - active selection color override */
-#variantModal .list-group-item.active {
-    background-color: #2b2b2b;
-    border-color: #2b2b2b;
-    color: #fff;
+/* =========================
+   VARIANT MODAL THEME
+   (White + Yellow + Red palette)
+   With Black for hover/active
+   ========================= */
+
+/* Modal Background */
+#variantModal .modal-content {
+    background-color: #ffffff; /* White base */
+    color: #111;
+    border-radius: 12px;
+    border: 2px solid #ffe08a; /* soft yellow border */
+    box-shadow: 0 0 20px rgba(255, 180, 0, 0.25);
 }
 
+/* Header */
+#variantModal .modal-header {
+    background-color: #fff8e1; /* cream-yellow */
+    border-bottom: 2px solid #ffd54f;
+}
 
+#variantModal .modal-title {
+    color: var(--primary-color); /* your yellow */
+    font-weight: 800;
+}
+
+/* Section titles */
+#variantModal h6 {
+    color: #e53935; /* strong red accent */
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+/* List items (default state) */
+#variantModal .list-group-item {
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    color: #333;
+    transition: all 0.2s ease;
+}
+
+/* Hover (non-active) */
 #variantModal .list-group-item:not(.active):hover {
-    background-color: #858383;
+    background-color: #5c5a5a;       /* Black hover */
+    color: #fff;                  /* White text */
+    border-color: #000;
+}
+
+/* Selected item (active) */
+#variantModal .list-group-item.active {
+    background-color: #2b2b2b;       /* Black */
+    border-color: #000;
+    color: #ffe082;               /* Yellow text */
+    font-weight: 700;
+}
+
+/* Price inside list items */
+#variantModal .price-tag {
+    color: #555;
+    font-weight: 700;
+}
+
+/* Price when active */
+#variantModal .list-group-item.active .price-tag {
+    color: #ffeb3b; /* Bright yellow */
+}
+
+/* Footer */
+#variantModal .modal-footer {
+    background-color: #fff8e1;
+    border-top: 2px solid #ffd54f;
+}
+
+/* Footer text */
+#variantModal #variantModalPriceHint {
+    color: #444;
+    font-weight: 600;
+}
+
+/* Add to cart */
+#variantModal .modal-footer .btn-warning {
+    background-color: var(--primary-color);
+    border: none;
+    color: #000;
+    font-weight: 700;
+    border-radius: 6px;
+    padding: 6px 14px;
+}
+
+/* SPICE TOGGLE ==================================== */
+
+#variantModal .spice-toggle {
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    color: #e53935; /* spicy red text */
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+#variantModal .spice-toggle:hover {
+    background-color: #000;
+    border-color: #000;
     color: #fff;
 }
+
+#variantModal .spice-toggle.active {
+    background-color: #e53935; /* strong red when spicy */
+    border-color: #b71c1c;
+    color: #fff;
+    font-weight: 700;
+}
+
+/* Smooth corners for everything */
+#variantModal .modal-content,
+#variantModal .list-group-item,
+#variantModal .spice-toggle {
+    border-radius: 10px;
+}
+

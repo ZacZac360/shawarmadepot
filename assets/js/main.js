@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // =========================
-    // MOBILE ORDER BAR (optional simple behavior)
+    // MOBILE ORDER BAR
     // =========================
     const mobileOrderBar = document.querySelector(".mobile-order-bar");
     if (mobileOrderBar) {
@@ -90,30 +90,72 @@ document.addEventListener("DOMContentLoaded", function () {
             name: "Shawarma Wrap",
             description: "Classic shawarma wrap. Choose meat, size and spice level.",
 
-            // Separate meat, size/deal, and spice selections
-            meatOptions: [
-                { id: "meat-beef",    label: "Beef" },
-                { id: "meat-chicken", label: "Chicken" }
+            // Generic groups: can reuse pattern for other items
+            groups: [
+                {
+                    key: "meat",
+                    label: "Meat",
+                    options: [
+                        { id: "meat-beef",    label: "Beef" },
+                        { id: "meat-chicken", label: "Chicken" }
+                    ]
+                },
+                {
+                    key: "size",
+                    label: "Size / Deal",
+                    options: [
+                        { id: "regular-solo", label: "REGULAR Solo",         price: 70 },
+                        { id: "regular-b1t1", label: "REGULAR Buy 1 Take 1", price: 135 },
+                        { id: "large-solo",   label: "LARGE Solo",           price: 85 },
+                        { id: "large-b1t1",   label: "LARGE Buy 1 Take 1",   price: 165 }
+                    ]
+                }
             ],
 
-            sizeOptions: [
-                { id: "regular-solo", label: "REGULAR Solo",         price: 70 },
-                { id: "regular-b1t1", label: "REGULAR Buy 1 Take 1", price: 135 },
-                { id: "large-solo",   label: "LARGE Solo",           price: 85 },
-                { id: "large-b1t1",   label: "LARGE Buy 1 Take 1",   price: 165 }
-            ],
-
-            spiceOptions: [
-                { id: "not-spicy", label: "Not spicy" },
-                { id: "spicy",     label: "Spicy" }
-            ],
-
+            // Single "Spicy" toggle button
+            spiceToggle: true,
             startingFrom: 70
-        }
+        },
 
-        // you can add more products here later
-        // either with meatOptions/sizeOptions/spiceOptions
-        // or the old flat `options: [...]` style
+        // EXAMPLES for later (uncomment / adapt when you’re ready):
+        /*
+        "shawarma-rice": {
+            name: "Shawarma Rice",
+            description: "Rice bowl topped with shawarma and your choice of meat.",
+            groups: [
+                {
+                    key: "meat",
+                    label: "Meat",
+                    options: [
+                        { id: "meat-beef",    label: "Beef" },
+                        { id: "meat-chicken", label: "Chicken" }
+                    ]
+                },
+                {
+                    key: "size",
+                    label: "Serving",
+                    options: [
+                        { id: "solo",     label: "Solo",     price: 95 },
+                        { id: "overload", label: "Overload", price: 150 }
+                    ]
+                }
+            ],
+            spiceToggle: true,
+            startingFrom: 95
+        },
+
+        "drinks": {
+            name: "Beverages",
+            description: "Refreshments to go with your shawarma.",
+            // Simple flat options (no groups)
+            options: [
+                { id: "plum-regular", label: "Plum Tea Regular", price: 60 },
+                { id: "plum-large",   label: "Plum Tea Large",   price: 70 },
+                { id: "coke-mismo",   label: "Coke Mismo",       price: 25 }
+            ],
+            startingFrom: 25
+        }
+        */
     };
 
     const variantButtons = document.querySelectorAll(".js-open-variants");
@@ -140,48 +182,62 @@ document.addEventListener("DOMContentLoaded", function () {
                 // Clear previous options
                 optionsContainer.innerHTML = "";
 
-                // If this product uses multi-group selection (meat + size + spice)
-                if (product.meatOptions && product.sizeOptions && product.spiceOptions) {
-                    let selectedMeat   = null;
-                    let selectedSize   = null;
-                    let selectedSpice  = null;
+                // =============== GROUPED PRODUCTS (meat/size/etc.) ===============
+                if (product.groups && product.groups.length) {
+                    const selections = {}; // e.g., { meat: opt, size: opt, ... }
+                    let isSpicy = false;   // single toggle
 
-                    const updateHint = () => {
-                        if (selectedSize) {
-                            const meatLabel  = selectedMeat  ? selectedMeat.label  : "Choose meat";
-                            const spiceLabel = selectedSpice ? selectedSpice.label : "Choose spice";
-
-                            let text = `${meatLabel} • ${selectedSize.label}`;
-                            if (selectedSpice) {
-                                text += ` • ${spiceLabel}`;
-                            }
-                            text += ` – ₱${selectedSize.price}`;
-
-                            priceHint.textContent = text;
-                        } else {
-                            priceHint.textContent = "Pick meat, size/deal and spice level.";
-                        }
+                    const getSizeSelection = () => {
+                        // any group marked as key === "size"
+                        return selections.size || null;
                     };
 
-                    const makeSection = (title, options, type) => {
+                    const updateHint = () => {
+                        const sizeSel = getSizeSelection();
+                        if (!sizeSel) {
+                            priceHint.textContent = "Pick your options to see the price.";
+                            return;
+                        }
+
+                        const parts = [];
+
+                        // include meat if it exists and is selected
+                        if (selections.meat) {
+                            parts.push(selections.meat.label);
+                        }
+
+                        // include any other group labels if you want later
+                        // but for now we only show meat + size
+
+                        parts.push(sizeSel.label);
+
+                        if (product.spiceToggle && isSpicy) {
+                            parts.push("Spicy");
+                        }
+
+                        const text = `${parts.join(" • ")} – ₱${sizeSel.price}`;
+                        priceHint.textContent = text;
+                    };
+
+                    const makeGroupSection = (group) => {
                         const section = document.createElement("div");
                         section.className = "mb-3";
 
                         const heading = document.createElement("h6");
                         heading.className = "mb-2 small text-uppercase text-muted";
-                        heading.textContent = title;
+                        heading.textContent = group.label;
                         section.appendChild(heading);
 
                         const list = document.createElement("div");
                         list.className = "list-group small";
 
-                        options.forEach((opt) => {
+                        group.options.forEach((opt) => {
                             const optionBtn = document.createElement("button");
                             optionBtn.type = "button";
                             optionBtn.className =
                                 "list-group-item list-group-item-action d-flex justify-content-between align-items-center";
 
-                            if (type === "size") {
+                            if (group.key === "size") {
                                 optionBtn.innerHTML = `
                                     <span>${opt.label}</span>
                                     <span class="fw-semibold price-tag mb-0">₱${opt.price}</span>
@@ -191,13 +247,13 @@ document.addEventListener("DOMContentLoaded", function () {
                             }
 
                             optionBtn.addEventListener("click", () => {
-                                list.querySelectorAll(".active").forEach(el => el.classList.remove("active"));
+                                // remove active only inside this group
+                                list.querySelectorAll(".active").forEach(el =>
+                                    el.classList.remove("active")
+                                );
                                 optionBtn.classList.add("active");
 
-                                if (type === "meat")  selectedMeat  = opt;
-                                if (type === "size")  selectedSize  = opt;
-                                if (type === "spice") selectedSpice = opt;
-
+                                selections[group.key] = opt;
                                 updateHint();
                             });
 
@@ -208,14 +264,43 @@ document.addEventListener("DOMContentLoaded", function () {
                         optionsContainer.appendChild(section);
                     };
 
-                    // Build the 3 sections
-                    makeSection("Meat",        product.meatOptions,  "meat");
-                    makeSection("Size / Deal", product.sizeOptions,  "size");
-                    makeSection("Spice Level", product.spiceOptions, "spice");
+                    // Build all defined groups (meat, size, etc.)
+                    product.groups.forEach(makeGroupSection);
 
+                    // === SPICE SINGLE-TOGGLE BUTTON (OPTIONAL) ===
+                    if (product.spiceToggle) {
+                        const spiceSection = document.createElement("div");
+                        spiceSection.className = "mb-2";
+
+                        const spiceHeading = document.createElement("h6");
+                        spiceHeading.className = "mb-2 small text-uppercase text-muted";
+                        spiceHeading.textContent = "Spice Level";
+                        spiceSection.appendChild(spiceHeading);
+
+                        const spiceToggle = document.createElement("button");
+                        spiceToggle.type = "button";
+                        spiceToggle.className = "list-group-item list-group-item-action text-start";
+                        spiceToggle.textContent = "Spicy";
+
+                        spiceToggle.addEventListener("click", () => {
+                            isSpicy = !isSpicy;
+                            if (isSpicy) {
+                                spiceToggle.classList.add("active");
+                            } else {
+                                spiceToggle.classList.remove("active");
+                            }
+                            updateHint();
+                        });
+
+                        spiceSection.appendChild(spiceToggle);
+                        optionsContainer.appendChild(spiceSection);
+                    }
+
+                    // Initial hint
                     updateHint();
+
+                // =============== SIMPLE PRODUCTS (flat options list) ===============
                 } else if (product.options) {
-                    // FALLBACK: old flat list behavior
                     product.options.forEach((opt) => {
                         const optionBtn = document.createElement("button");
                         optionBtn.type = "button";
