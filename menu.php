@@ -88,6 +88,69 @@
             <span>Store hours: 4:00 PM – 11:00 PM • Delivery and pickup available within the area.</span>
         </div>
 
+        <!-- DELIVERY AREA SELECTOR -->
+        <div class="delivery-box small d-flex align-items-start mb-4 gap-3 p-3 rounded-3 shadow-sm">
+            <i class="fa-solid fa-location-dot me-2 mt-1"></i>
+
+            <div class="flex-grow-1">
+                <div class="fw-semibold mb-2">Delivery Details</div>
+
+                <!-- Subdivision Selection -->
+                <label class="small fw-semibold mb-1">Select Subdivision:</label>
+                <select id="subdivisionSelect" class="form-select form-select-sm mb-2">
+                    <option value="">-- Select your subdivision --</option>
+
+                    <optgroup label="San Marino City">
+                        <option value="classic">San Marino Classic (₱15 DF + ₱15 gate)</option>
+                        <option value="heights">San Marino Heights (₱15 DF)</option>
+                        <option value="central">San Marino Central (₱15 DF)</option>
+                        <option value="phase1">San Marino Phase 1 (₱15 DF)</option>
+                        <option value="phase2">San Marino Phase 2 (₱15 DF)</option>
+                        <option value="phase3">San Marino Phase 3 (₱15 DF)</option>
+                        <option value="phase4">San Marino Phase 4 (₱15 DF)</option>
+                        <option value="phase5">San Marino Phase 5 (₱15 DF)</option>
+                        <option value="north1">San Marino North 1 (₱15 DF)</option>
+                        <option value="north2">San Marino North 2 (₱15 DF)</option>
+                        <option value="south1">San Marino South 1 (₱15 DF)</option>
+                        <option value="south2">San Marino South 2 (₱15 DF)</option>
+                    </optgroup>
+
+                    <optgroup label="Outside Areas (Pickup / 25 + gate)">
+                        <option value="ndgv1">North Dasma Garden Villa 1 (₱25 DF + ₱10 gate)</option>
+                        <option value="ndgv2">North Dasma Garden Villa 2 (₱25 DF + ₱10 gate)</option>
+                    </optgroup>
+
+                    <option value="outside">Outside Service Area (Pickup/Lalamove only)</option>
+                </select>
+
+                <!-- Address Fields -->
+                <div id="addressFields" style="display:none">
+
+                    <label class="small fw-semibold mb-1">Block & Lot:</label>
+                    <input type="text" id="addrBlkLot" class="form-control form-control-sm mb-2"
+                        placeholder="e.g. Block 3 Lot 4">
+
+                    <label class="small fw-semibold mb-1">Landmark:</label>
+                    <input type="text" id="addrLandmark" class="form-control form-control-sm mb-2"
+                        placeholder="e.g. Red gate near Phase 2 park">
+
+                    <label class="small fw-semibold mb-1">Customer Name:</label>
+                    <input type="text" id="addrName" class="form-control form-control-sm mb-2"
+                        placeholder="Your full name">
+
+                    <label class="small fw-semibold mb-1">Contact Number:</label>
+                    <input type="text" id="addrPhone" class="form-control form-control-sm mb-2"
+                        placeholder="09XXXXXXXXX">
+
+                </div>
+
+                <div id="deliveryMessage" class="small text-muted mt-1">
+                    Select your subdivision to calculate delivery fee.
+                </div>
+            </div>
+        </div>
+
+
         <!-- CATEGORY SHORTCUTS -->
         <div class="d-flex flex-wrap gap-2 mb-5">
             <a href="#shawarma-wraps" class="btn btn-outline-dark btn-sm">Shawarma Wraps</a>
@@ -96,647 +159,675 @@
             <a href="#premium-steak-fries" class="btn btn-outline-dark btn-sm">Steak &amp; Fries</a>
             <a href="#fries-nachos" class="btn btn-outline-dark btn-sm">Coated Fries &amp; Nachos</a>
             <a href="#ala-carte" class="btn btn-outline-dark btn-sm">Ala Carte</a>
-            <a href="#beverages-extras" class="btn btn-outline-dark btn-sm">Drinks &amp; Extras</a>
+            <a href="#beverages-extras" class="btn btn-outline-dark btn-sm">Drinks</a>
         </div>
 
-        <!-- SHAWARMA WRAP -->
-        <section id="shawarma-wraps" class="mb-5 reveal-on-scroll">
-            <div class="d-flex justify-content-between align-items-end mb-3">
-                <div>
-                    <p class="section-title mb-1">Shawarma Wrap</p>
-                    <h2 class="h4 section-heading mb-0">Classic Wraps</h2>
-                </div>
-            </div>
+        <div class="row">
+            <!-- MAIN MENU COLUMN -->
+            <div class="col-lg-8">
+                <!-- SHAWARMA WRAP -->
+                <section id="shawarma-wraps" class="mb-5 reveal-on-scroll">
+                    <div class="d-flex justify-content-between align-items-end mb-3">
+                        <div>
+                            <p class="section-title mb-1">Shawarma Wrap</p>
+                            <h2 class="h4 section-heading mb-0">Classic Wraps</h2>
+                        </div>
+                    </div>
 
-            <div class="row g-4 align-items-stretch">
-                <div class="col-md-6 col-lg-4">
-                    <div class="card menu-card menu-card-overlay h-100 border-0">
-                        <div class="menu-card-image-wrapper">
-                            <img src="assets/images/beefshawarma.jpg"
-                                 class="menu-card-img"
-                                 alt="Shawarma Wrap">
+                    <div class="row g-4 align-items-stretch">
+                        <!-- Classic Shawarma Wrap (Beef / Chicken, Regular/Large, B1T1) -->
+                        <div class="col-md-6 col-lg-6">
+                            <div class="card menu-card menu-card-overlay h-100 border-0">
+                                <div class="menu-card-image-wrapper">
+                                    <img src="assets/images/beefshawarma.jpg"
+                                         class="menu-card-img"
+                                         alt="Shawarma Wrap">
 
-                            <div class="menu-card-gradient"></div>
+                                    <div class="menu-card-gradient"></div>
 
-                            <div class="featured-tag badge bg-warning text-dark">
-                                Best Seller
-                            </div>
+                                    <div class="featured-tag badge bg-warning text-dark">
+                                        Best Seller
+                                    </div>
 
-                            <div class="menu-card-content">
-                                <h4 class="menu-card-title mb-1">Shawarma Wrap</h4>
+                                    <div class="menu-card-content">
+                                        <h4 class="menu-card-title mb-1">Shawarma Wrap</h4>
 
-                                <!-- We only show "starts at" here to keep the card clean.
-                                     Full options (Large, Regular, B1T1, etc.) are shown in the modal. -->
-                                <div class="small mb-2 d-flex justify-content-between align-items-center">
-                                    <span class="text-white-50">
-                                        Starts at <span class="price-tag">₱70</span>
-                                    </span>
+                                        <!-- Starts at + modal trigger -->
+                                        <div class="small mb-2 d-flex justify-content-between align-items-center">
+                                            <span class="text-white-50">
+                                                Starts at <span class="price-tag">₱70</span>
+                                            </span>
 
-                                    <button
-                                        class="btn btn-warning btn-sm fw-semibold js-open-variants"
-                                        type="button"
-                                        data-product-id="shawarma-wrap">
-                                        <i class="fa-solid fa-plus me-1"></i>
-                                        Details
-                                    </button>
+                                            <button
+                                                class="btn btn-warning btn-sm fw-semibold js-open-variants"
+                                                type="button"
+                                                data-product-id="shawarma-wrap">
+                                                <i class="fa-solid fa-plus me-1"></i>
+                                                Details
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </section>
+                </section>
 
-        <!-- SPECIAL SHAWARMA WRAP -->
-        <section id="special-wraps" class="mb-5 reveal-on-scroll">
-            <div class="d-flex justify-content-between align-items-end mb-3">
-                <div>
-                    <p class="section-title mb-1">Special Shawarma Wrap</p>
-                    <h2 class="h4 section-heading mb-0">Fully Loaded Wraps</h2>
-                </div>
-            </div>
+                <!-- SPECIAL SHAWARMA WRAP -->
+                <section id="special-wraps" class="mb-5 reveal-on-scroll">
+                    <div class="d-flex justify-content-between align-items-end mb-3">
+                        <div>
+                            <p class="section-title mb-1">Special Shawarma Wrap</p>
+                            <h2 class="h4 section-heading mb-0">Fully Loaded Wraps</h2>
+                        </div>
+                    </div>
 
-            <div class="row g-4 align-items-stretch">
-                <!-- Overload Wrap -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="card menu-card menu-card-overlay h-100 border-0">
-                        <div class="menu-card-image-wrapper">
-                            <img src="assets/images/overload-wrap.jpg"
-                                 class="menu-card-img"
-                                 alt="Overload Wrap">
-                            <div class="menu-card-gradient"></div>
+                    <div class="row g-4 align-items-stretch">
+                        <!-- Overload Wrap -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card menu-card menu-card-overlay h-100 border-0">
+                                <div class="menu-card-image-wrapper">
+                                    <img src="assets/images/placeholder.jpg"
+                                         class="menu-card-img"
+                                         alt="Overload Wrap">
+                                    <div class="menu-card-gradient"></div>
 
-                            <div class="menu-card-content">
-                                <h4 class="menu-card-title mb-1">Overload Wrap</h4>
-                                <p class="menu-card-text mb-2">
-                                    Loaded with more meat, veggies and cheese.
-                                </p>
+                                    <div class="menu-card-content">
+                                        <h4 class="menu-card-title mb-1">Overload Wrap</h4>
+                                        <p class="menu-card-text mb-2">
+                                            Loaded with more meat, veggies and cheese.
+                                        </p>
 
-                                <div class="small mb-2">
-                                    <div>Regular – <span class="price-tag">₱95</span></div>
-                                    <div>Large – <span class="price-tag">₱110</span></div>
+                                        <div class="small mb-2 d-flex justify-content-between align-items-center">
+                                            <span class="text-white-50">
+                                                Starts at <span class="price-tag">₱95</span>
+                                            </span>
+
+                                            <button
+                                                class="btn btn-warning btn-sm fw-semibold js-open-variants"
+                                                type="button"
+                                                data-product-id="special-overload-wrap">
+                                                <i class="fa-solid fa-plus me-1"></i>
+                                                Details
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
+                            </div>
+                        </div>
 
-                                <div class="d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center gap-1">
-                                    <span class="small text-white-50">Starts at <span class="price-tag">₱95</span></span>
-                                    <button class="btn btn-warning btn-sm fw-semibold mt-1 mt-sm-0" type="button">
-                                        <i class="fa-solid fa-plus me-1"></i>
-                                        Add to cart
-                                    </button>
+                        <!-- Double Cheese Wrap -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card menu-card menu-card-overlay h-100 border-0">
+                                <div class="menu-card-image-wrapper">
+                                    <img src="assets/images/placeholder.jpg"
+                                         class="menu-card-img"
+                                         alt="Double Cheese Wrap">
+                                    <div class="menu-card-gradient"></div>
+
+                                    <div class="menu-card-content">
+                                        <h4 class="menu-card-title mb-1">Double Cheese Wrap</h4>
+                                        <p class="menu-card-text mb-2">
+                                            Filled with sliced cheese and orange cheese.
+                                        </p>
+
+                                        <div class="small mb-2 d-flex justify-content-between align-items-center">
+                                            <span class="text-white-50">
+                                                Starts at <span class="price-tag">₱90</span>
+                                            </span>
+
+                                            <button
+                                                class="btn btn-warning btn-sm fw-semibold js-open-variants"
+                                                type="button"
+                                                data-product-id="special-double-cheese-wrap">
+                                                <i class="fa-solid fa-plus me-1"></i>
+                                                Details
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- All Meat Wrap -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card menu-card menu-card-overlay h-100 border-0">
+                                <div class="menu-card-image-wrapper">
+                                    <img src="assets/images/placeholder.jpg"
+                                         class="menu-card-img"
+                                         alt="All Meat Wrap">
+                                    <div class="menu-card-gradient"></div>
+
+                                    <div class="menu-card-content">
+                                        <h4 class="menu-card-title mb-1">All Meat Wrap</h4>
+                                        <p class="menu-card-text mb-2">
+                                            Pure beef meat, no veggies.
+                                        </p>
+
+                                        <div class="small mb-2 d-flex justify-content-between align-items-center">
+                                            <span class="text-white-50">
+                                                Starts at <span class="price-tag">₱80</span>
+                                            </span>
+
+                                            <button
+                                                class="btn btn-warning btn-sm fw-semibold js-open-variants"
+                                                type="button"
+                                                data-product-id="special-all-meat-wrap">
+                                                <i class="fa-solid fa-plus me-1"></i>
+                                                Details
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <!-- Double Cheese Wrap -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="card menu-card menu-card-overlay h-100 border-0">
-                        <div class="menu-card-image-wrapper">
-                            <img src="assets/images/double-cheese-wrap.jpg"
-                                 class="menu-card-img"
-                                 alt="Double Cheese Wrap">
-                            <div class="menu-card-gradient"></div>
-
-                            <div class="menu-card-content">
-                                <h4 class="menu-card-title mb-1">Double Cheese Wrap</h4>
-                                <p class="menu-card-text mb-2">
-                                    Filled with sliced cheese and orange cheese.
-                                </p>
-
-                                <div class="small mb-2">
-                                    <div>Regular – <span class="price-tag">₱90</span></div>
-                                    <div>Large – <span class="price-tag">₱105</span></div>
-                                </div>
-
-                                <div class="d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center gap-1">
-                                    <span class="small text-white-50">Starts at <span class="price-tag">₱90</span></span>
-                                    <button class="btn btn-warning btn-sm fw-semibold mt-1 mt-sm-0" type="button">
-                                        <i class="fa-solid fa-plus me-1"></i>
-                                        Add to cart
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- All Meat Wrap -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="card menu-card menu-card-overlay h-100 border-0">
-                        <div class="menu-card-image-wrapper">
-                            <img src="assets/images/all-meat-wrap.jpg"
-                                 class="menu-card-img"
-                                 alt="All Meat Wrap">
-                            <div class="menu-card-gradient"></div>
-
-                            <div class="menu-card-content">
-                                <h4 class="menu-card-title mb-1">All Meat Wrap</h4>
-                                <p class="menu-card-text mb-2">
-                                    Pure beef meat, no veggies.
-                                </p>
-
-                                <div class="small mb-2">
-                                    <div>Regular – <span class="price-tag">₱80</span></div>
-                                    <div>Large – <span class="price-tag">₱95</span></div>
-                                </div>
-
-                                <div class="d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center gap-1">
-                                    <span class="small text-white-50">Starts at <span class="price-tag">₱80</span></span>
-                                    <button class="btn btn-warning btn-sm fw-semibold mt-1 mt-sm-0" type="button">
-                                        <i class="fa-solid fa-plus me-1"></i>
-                                        Add to cart
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
+                </section>
         <!-- SHAWARMA RICE -->
-        <section id="shawarma-rice" class="mb-5 reveal-on-scroll">
-            <div class="d-flex justify-content-between align-items-end mb-3">
-                <div>
-                    <p class="section-title mb-1">Shawarma Rice</p>
-                    <h2 class="h4 section-heading mb-0">Rice Meals</h2>
-                </div>
+                <section id="shawarma-rice" class="mb-5 reveal-on-scroll">
+                    <div class="d-flex justify-content-between align-items-end mb-3">
+                        <div>
+                            <p class="section-title mb-1">Shawarma Rice</p>
+                            <h2 class="h4 section-heading mb-0">Rice Meals</h2>
+                        </div>
+                    </div>
+
+                    <div class="row g-4 align-items-stretch">
+                        <!-- Regular Shawarma Rice -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card menu-card menu-card-overlay h-100 border-0">
+                                <div class="menu-card-image-wrapper">
+                                    <img src="assets/images/placeholder.jpg"
+                                        class="menu-card-img"
+                                        alt="Shawarma Rice">
+                                    <div class="menu-card-gradient"></div>
+
+                                    <div class="menu-card-content">
+                                        <h4 class="menu-card-title mb-1">Shawarma Rice</h4>
+                                        <p class="menu-card-text mb-2">
+                                            Rice bowl topped with shawarma meat, veggies and sauces.
+                                        </p>
+
+                                        <div class="small mb-2 d-flex justify-content-between align-items-center">
+                                            <span class="text-white-50">
+                                                Starts at <span class="price-tag">₱95</span>
+                                            </span>
+
+                                            <button
+                                                class="btn btn-warning btn-sm fw-semibold js-open-variants"
+                                                type="button"
+                                                data-product-id="shawarma-rice-regular">
+                                                <i class="fa-solid fa-plus me-1"></i>
+                                                Details
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- All Meat Shawarma Rice -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card menu-card menu-card-overlay h-100 border-0">
+                                <div class="menu-card-image-wrapper">
+                                    <img src="assets/images/placeholder.jpg"
+                                        class="menu-card-img"
+                                        alt="All Meat Shawarma Rice">
+                                    <div class="menu-card-gradient"></div>
+
+                                    <div class="menu-card-content">
+                                        <h4 class="menu-card-title mb-1">All Meat Shawarma Rice</h4>
+                                        <p class="menu-card-text mb-2">
+                                            Rice bowl topped with pure beef, no veggies.
+                                        </p>
+
+                                        <div class="small mb-2 d-flex justify-content-between align-items-center">
+                                            <span class="text-white-50">
+                                                Starts at <span class="price-tag">₱105</span>
+                                            </span>
+
+                                            <button
+                                                class="btn btn-warning btn-sm fw-semibold js-open-variants"
+                                                type="button"
+                                                data-product-id="shawarma-rice-all-meat">
+                                                <i class="fa-solid fa-plus me-1"></i>
+                                                Details
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- PREMIUM STEAK & FRIES -->
+                <section id="premium-steak-fries" class="mb-5 reveal-on-scroll">
+                    <div class="d-flex justify-content-between align-items-end mb-3">
+                        <div>
+                            <p class="section-title mb-1">Premium Steak &amp; Fries</p>
+                            <h2 class="h4 section-heading mb-0">Steak Trays</h2>
+                        </div>
+                    </div>
+
+                    <div class="row g-4 align-items-stretch">
+                        <!-- Premium Steak & Fries (Regular / Large) -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card menu-card menu-card-overlay h-100 border-0">
+                                <div class="menu-card-image-wrapper">
+                                    <img src="assets/images/placeholder.jpg"
+                                        class="menu-card-img"
+                                        alt="Premium Steak & Fries">
+                                    <div class="menu-card-gradient"></div>
+
+                                    <div class="menu-card-content">
+                                        <h4 class="menu-card-title mb-1">Premium Steak &amp; Fries</h4>
+                                        <p class="menu-card-text mb-2">
+                                            Tray of fries topped with premium beef and sauces.
+                                        </p>
+
+                                        <div class="small mb-2 d-flex justify-content-between align-items-center">
+                                            <span class="text-white-50">
+                                                Starts at <span class="price-tag">₱100</span>
+                                            </span>
+
+                                            <button
+                                                class="btn btn-warning btn-sm fw-semibold js-open-variants"
+                                                type="button"
+                                                data-product-id="premium-steak">
+                                                <i class="fa-solid fa-plus me-1"></i>
+                                                Details
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Double Cheese Premium Steak & Fries (Regular / Large) -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card menu-card menu-card-overlay h-100 border-0">
+                                <div class="menu-card-image-wrapper">
+                                    <img src="assets/images/placeholder.jpg"
+                                        class="menu-card-img"
+                                        alt="Double Cheese Premium Steak & Fries">
+                                    <div class="menu-card-gradient"></div>
+
+                                    <div class="menu-card-content">
+                                        <h4 class="menu-card-title mb-1">Double Cheese Premium</h4>
+                                        <p class="menu-card-text mb-2">
+                                            Premium steak tray loaded with extra cheese.
+                                        </p>
+
+                                        <div class="small mb-2 d-flex justify-content-between align-items-center">
+                                            <span class="text-white-50">
+                                                Starts at <span class="price-tag">₱130</span>
+                                            </span>
+
+                                            <button
+                                                class="btn btn-warning btn-sm fw-semibold js-open-variants"
+                                                type="button"
+                                                data-product-id="premium-steak-double-cheese">
+                                                <i class="fa-solid fa-plus me-1"></i>
+                                                Details
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- COATED FRIES & NACHOS -->
+                <section id="fries-nachos" class="mb-5 reveal-on-scroll">
+                    <div class="d-flex justify-content-between align-items-end mb-3">
+                        <div>
+                            <p class="section-title mb-1">Coated Fries &amp; Nachos</p>
+                            <h2 class="h4 section-heading mb-0">Loaded Sides</h2>
+                        </div>
+                    </div>
+
+                    <div class="row g-4 align-items-stretch">
+                        <!-- Coated Fries -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card menu-card menu-card-overlay h-100 border-0">
+                                <div class="menu-card-image-wrapper">
+                                    <img src="assets/images/placeholder.jpg"
+                                        class="menu-card-img"
+                                        alt="Coated Fries">
+                                    <div class="menu-card-gradient"></div>
+
+                                    <div class="menu-card-content">
+                                        <h4 class="menu-card-title mb-1">Coated Fries</h4>
+                                        <p class="menu-card-text mb-2">
+                                            Crispy fries in a flavored coating.
+                                        </p>
+
+                                        <div class="small mb-2 d-flex justify-content-between align-items-center">
+                                            <span class="text-white-50">
+                                                Starts at <span class="price-tag">₱98</span>
+                                            </span>
+
+                                            <button
+                                                class="btn btn-warning btn-sm fw-semibold js-open-variants"
+                                                type="button"
+                                                data-product-id="coated-fries">
+                                                <i class="fa-solid fa-plus me-1"></i>
+                                                Details
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Beefy Coated Fries -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card menu-card menu-card-overlay h-100 border-0">
+                                <div class="menu-card-image-wrapper">
+                                    <img src="assets/images/placeholder.jpg"
+                                        class="menu-card-img"
+                                        alt="Beefy Coated Fries">
+                                    <div class="menu-card-gradient"></div>
+
+                                    <div class="menu-card-content">
+                                        <h4 class="menu-card-title mb-1">Beefy Coated Fries</h4>
+                                        <p class="menu-card-text mb-2">
+                                            Coated fries topped with beef shawarma.
+                                        </p>
+
+                                        <div class="small mb-2 d-flex justify-content-between align-items-center">
+                                            <span class="text-white-50">
+                                                Starts at <span class="price-tag">₱120</span>
+                                            </span>
+
+                                            <button
+                                                class="btn btn-warning btn-sm fw-semibold js-open-variants"
+                                                type="button"
+                                                data-product-id="beefy-coated-fries">
+                                                <i class="fa-solid fa-plus me-1"></i>
+                                                Details
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cheesy Beef Coated Fries -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card menu-card menu-card-overlay h-100 border-0">
+                                <div class="menu-card-image-wrapper">
+                                    <img src="assets/images/placeholder.jpg"
+                                        class="menu-card-img"
+                                        alt="Cheesy Beef Coated Fries">
+                                    <div class="menu-card-gradient"></div>
+
+                                    <div class="menu-card-content">
+                                        <h4 class="menu-card-title mb-1">Cheesy Beef Coated Fries</h4>
+                                        <p class="menu-card-text mb-2">
+                                            Beefy coated fries leveled up with extra cheese.
+                                        </p>
+
+                                        <div class="small mb-2 d-flex justify-content-between align-items-center">
+                                            <span class="text-white-50">
+                                                Starts at <span class="price-tag">₱150</span>
+                                            </span>
+
+                                            <button
+                                                class="btn btn-warning btn-sm fw-semibold js-open-variants"
+                                                type="button"
+                                                data-product-id="cheesy-beef-coated-fries">
+                                                <i class="fa-solid fa-plus me-1"></i>
+                                                Details
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Nacho Shawarma -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card menu-card menu-card-overlay h-100 border-0">
+                                <div class="menu-card-image-wrapper">
+                                    <img src="assets/images/placeholder.jpg"
+                                        class="menu-card-img"
+                                        alt="Nacho Shawarma">
+                                    <div class="menu-card-gradient"></div>
+
+                                    <div class="menu-card-content">
+                                        <h4 class="menu-card-title mb-1">Nacho Shawarma</h4>
+                                        <p class="menu-card-text mb-2">
+                                            Nachos piled with beef, veggies and sauces.
+                                        </p>
+
+                                        <div class="small mb-2 d-flex justify-content-between align-items-center">
+                                            <span class="text-white-50">
+                                                Starts at <span class="price-tag">₱170</span>
+                                            </span>
+
+                                            <button
+                                                class="btn btn-warning btn-sm fw-semibold js-open-variants"
+                                                type="button"
+                                                data-product-id="nacho-shawarma">
+                                                <i class="fa-solid fa-plus me-1"></i>
+                                                Details
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Nacho Bandido -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card menu-card menu-card-overlay h-100 border-0">
+                                <div class="menu-card-image-wrapper">
+                                    <img src="assets/images/placeholder.jpg"
+                                        class="menu-card-img"
+                                        alt="Nacho Bandido">
+                                    <div class="menu-card-gradient"></div>
+
+                                    <div class="menu-card-content">
+                                        <h4 class="menu-card-title mb-1">Nacho Bandido</h4>
+                                        <p class="menu-card-text mb-2">
+                                            Another loaded nacho favorite from the depot.
+                                        </p>
+
+                                        <div class="small mb-2 d-flex justify-content-between align-items-center">
+                                            <span class="text-white-50">
+                                                Starts at <span class="price-tag">₱150</span>
+                                            </span>
+
+                                            <button
+                                                class="btn btn-warning btn-sm fw-semibold js-open-variants"
+                                                type="button"
+                                                data-product-id="nacho-bandido">
+                                                <i class="fa-solid fa-plus me-1"></i>
+                                                Details
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ALA CARTE -->
+                <section id="ala-carte" class="mb-5 reveal-on-scroll">
+                    <div class="d-flex justify-content-between align-items-end mb-3">
+                        <div>
+                            <p class="section-title mb-1">Shawarma Ala Carte</p>
+                            <h2 class="h4 section-heading mb-0">Plates</h2>
+                        </div>
+                    </div>
+
+                    <div class="row g-4 align-items-stretch">
+                        <!-- Meat & Veggies -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card menu-card menu-card-overlay h-100 border-0">
+                                <div class="menu-card-image-wrapper">
+                                    <img src="assets/images/placeholder.jpg"
+                                        class="menu-card-img"
+                                        alt="Meat & Veggies Ala Carte">
+                                    <div class="menu-card-gradient"></div>
+
+                                    <div class="menu-card-content">
+                                        <h4 class="menu-card-title mb-1">Meat &amp; Veggies</h4>
+                                        <p class="menu-card-text mb-2">
+                                            Shawarma meat with veggies and sauces on a plate.
+                                        </p>
+
+                                        <div class="small mb-2 d-flex justify-content-between align-items-center">
+                                            <span class="text-white-50">
+                                                Starts at <span class="price-tag">₱210</span>
+                                            </span>
+
+                                            <button
+                                                class="btn btn-warning btn-sm fw-semibold js-open-variants"
+                                                type="button"
+                                                data-product-id="ala-meat-veggies">
+                                                <i class="fa-solid fa-plus me-1"></i>
+                                                Details
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- All Meat -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card menu-card menu-card-overlay h-100 border-0">
+                                <div class="menu-card-image-wrapper">
+                                    <img src="assets/images/placeholder.jpg"
+                                        class="menu-card-img"
+                                        alt="All Meat Ala Carte">
+                                    <div class="menu-card-gradient"></div>
+
+                                    <div class="menu-card-content">
+                                        <h4 class="menu-card-title mb-1">All Meat</h4>
+                                        <p class="menu-card-text mb-2">
+                                            Pure shawarma meat served on a plate.
+                                        </p>
+
+                                        <div class="small mb-2 d-flex justify-content-between align-items-center">
+                                            <span class="text-white-50">
+                                                Starts at <span class="price-tag">₱240</span>
+                                            </span>
+
+                                            <button
+                                                class="btn btn-warning btn-sm fw-semibold js-open-variants"
+                                                type="button"
+                                                data-product-id="ala-all-meat">
+                                                <i class="fa-solid fa-plus me-1"></i>
+                                                Details
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- BEVERAGES-->
+                <section id="beverages-extras" class="mb-3 reveal-on-scroll">
+                    <div class="row g-4 align-items-stretch">
+                        <!-- Beverages -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card menu-card menu-card-overlay h-100 border-0">
+                                <div class="menu-card-image-wrapper">
+                                    <img src="assets/images/placeholder.jpg"
+                                        class="menu-card-img"
+                                        alt="Beverages">
+                                    <div class="menu-card-gradient"></div>
+
+                                    <div class="menu-card-content">
+                                        <h4 class="menu-card-title mb-1">Beverages</h4>
+                                        <p class="menu-card-text mb-2">
+                                            Refreshing drinks to go with your shawarma.
+                                        </p>
+
+                                        <div class="small mb-2 d-flex justify-content-between align-items-center">
+                                            <span class="text-white-50">
+                                                Starts at <span class="price-tag">₱25</span>
+                                            </span>
+
+                                            <button
+                                                class="btn btn-warning btn-sm fw-semibold js-open-variants"
+                                                type="button"
+                                                data-product-id="drinks">
+                                                <i class="fa-solid fa-plus me-1"></i>
+                                                Details
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <p class="text-muted small mt-4">
+                    * Menu and prices based on Shawarma Depot’s current offerings. Items and pricing may change depending on availability and promos.
+                </p>
             </div>
 
-            <div class="row g-4 align-items-stretch">
-                <!-- Shawarma Rice -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="card menu-card menu-card-overlay h-100 border-0">
-                        <div class="menu-card-image-wrapper">
-                            <img src="assets/images/shawarma-rice.jpg"
-                                 class="menu-card-img"
-                                 alt="Shawarma Rice">
-                            <div class="menu-card-gradient"></div>
+            <!-- SIDE CART COLUMN (desktop only) -->
+            <div class="col-lg-4 d-none d-lg-block">
+                <div class="card shadow-sm sticky-top mb-4" style="top: 90px;">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3 d-flex justify-content-between align-items-center">
+                            <span><i class="fa-solid fa-cart-shopping me-2"></i> Your Order</span>
+                            <span class="badge bg-warning text-dark" id="cartItemCount">0</span>
+                        </h5>
 
-                            <div class="menu-card-content">
-                                <h4 class="menu-card-title mb-1">Shawarma Rice</h4>
-                                <p class="menu-card-text mb-2">
-                                    Rice bowl topped with beef shawarma, veggies and sauces.
-                                </p>
+                        <div id="cartItems" class="mb-3 text-muted">
+                            No items yet. Add something from the menu.
+                        </div>
 
-                                <div class="small mb-2">
-                                    <div>Solo – <span class="price-tag">₱95</span></div>
-                                    <div>Overload – <span class="price-tag">₱150</span></div>
-                                </div>
+                        <hr class="my-2">
 
-                                <div class="d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center gap-1">
-                                    <span class="small text-white-50">Starts at <span class="price-tag">₱95</span></span>
-                                    <button class="btn btn-warning btn-sm fw-semibold mt-1 mt-sm-0" type="button">
-                                        <i class="fa-solid fa-plus me-1"></i>
-                                        Add to cart
-                                    </button>
-                                </div>
+                        <div class="mb-2">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="fulfillment" id="cartDelivery" value="delivery" checked>
+                                <label class="form-check-label small" for="cartDelivery">Delivery</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="fulfillment" id="cartPickup" value="pickup">
+                                <label class="form-check-label small" for="cartPickup">Pickup</label>
+                            </div>
+                            <div id="cartDeliveryNote" class="small text-muted mt-1">
+                                Delivery fee will apply for deliveries starting at ₱15 based on delivery location.
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                <!-- All Meat Shawarma Rice -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="card menu-card menu-card-overlay h-100 border-0">
-                        <div class="menu-card-image-wrapper">
-                            <img src="assets/images/all-meat-rice.jpg"
-                                 class="menu-card-img"
-                                 alt="All Meat Shawarma Rice">
-                            <div class="menu-card-gradient"></div>
-
-                            <div class="menu-card-content">
-                                <h4 class="menu-card-title mb-1">All Meat Shawarma Rice</h4>
-                                <p class="menu-card-text mb-2">
-                                    Rice bowl topped with pure beef, no veggies.
-                                </p>
-
-                                <div class="small mb-2">
-                                    <div>Solo – <span class="price-tag">₱105</span></div>
-                                    <div>Overload – <span class="price-tag">₱165</span></div>
-                                </div>
-
-                                <div class="d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center gap-1">
-                                    <span class="small text-white-50">Starts at <span class="price-tag">₱105</span></span>
-                                    <button class="btn btn-warning btn-sm fw-semibold mt-1 mt-sm-0" type="button">
-                                        <i class="fa-solid fa-plus me-1"></i>
-                                        Add to cart
-                                    </button>
-                                </div>
-                            </div>
+                        <div class="d-flex justify-content-between small">
+                            <span>Subtotal</span>
+                            <span id="cartSubtotal">₱0</span>
                         </div>
+                        <div class="d-flex justify-content-between small">
+                            <span>Delivery fee</span>
+                            <span id="cartDeliveryFee">₱20</span>
+                        </div>
+                        <div class="d-flex justify-content-between fw-semibold mt-2">
+                            <span>Total</span>
+                            <span id="cartTotal">₱0</span>
+                        </div>
+
+                        <button class="btn btn-warning w-100 btn-sm fw-semibold mt-3">
+                            <i class="fa-solid fa-bag-shopping me-1"></i> Proceed to Checkout
+                        </button>
                     </div>
                 </div>
             </div>
-        </section>
-
-        <!-- PREMIUM STEAK & FRIES -->
-        <section id="premium-steak-fries" class="mb-5 reveal-on-scroll">
-            <div class="d-flex justify-content-between align-items-end mb-3">
-                <div>
-                    <p class="section-title mb-1">Premium Steak &amp; Fries</p>
-                    <h2 class="h4 section-heading mb-0">Steak Trays</h2>
-                </div>
-            </div>
-
-            <div class="row g-4 align-items-stretch">
-                <!-- Large Premium -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="card menu-card menu-card-overlay h-100 border-0">
-                        <div class="menu-card-image-wrapper">
-                            <img src="assets/images/steak-large.jpg"
-                                 class="menu-card-img"
-                                 alt="Large Premium Steak & Fries">
-                            <div class="menu-card-gradient"></div>
-
-                            <div class="menu-card-content">
-                                <h4 class="menu-card-title mb-1">Large Premium</h4>
-                                <p class="menu-card-text mb-2">
-                                    Large tray of fries topped with premium beef and sauces.
-                                </p>
-
-                                <div class="small mb-2">
-                                    <div>Price – <span class="price-tag">₱125</span></div>
-                                </div>
-
-                                <div class="d-flex justify-content-end">
-                                    <button class="btn btn-warning btn-sm fw-semibold" type="button">
-                                        <i class="fa-solid fa-plus me-1"></i>
-                                        Add
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Regular Premium -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="card menu-card menu-card-overlay h-100 border-0">
-                        <div class="menu-card-image-wrapper">
-                            <img src="assets/images/steak-regular.jpg"
-                                 class="menu-card-img"
-                                 alt="Regular Premium Steak & Fries">
-                            <div class="menu-card-gradient"></div>
-
-                            <div class="menu-card-content">
-                                <h4 class="menu-card-title mb-1">Regular Premium</h4>
-                                <p class="menu-card-text mb-2">
-                                    Regular-sized tray with premium beef and sauces.
-                                </p>
-
-                                <div class="small mb-2">
-                                    <div>Price – <span class="price-tag">₱100</span></div>
-                                </div>
-
-                                <div class="d-flex justify-content-end">
-                                    <button class="btn btn-warning btn-sm fw-semibold" type="button">
-                                        <i class="fa-solid fa-plus me-1"></i>
-                                        Add
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Double Cheese Premium -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="card menu-card menu-card-overlay h-100 border-0">
-                        <div class="menu-card-image-wrapper">
-                            <img src="assets/images/steak-double-cheese.jpg"
-                                 class="menu-card-img"
-                                 alt="Double Cheese Premium Steak & Fries">
-                            <div class="menu-card-gradient"></div>
-
-                            <div class="menu-card-content">
-                                <h4 class="menu-card-title mb-1">Double Cheese Premium</h4>
-                                <p class="menu-card-text mb-2">
-                                    Premium steak tray loaded with extra cheese.
-                                </p>
-
-                                <div class="small mb-2">
-                                    <div>Large – <span class="price-tag">₱155</span></div>
-                                    <div>Regular – <span class="price-tag">₱130</span></div>
-                                </div>
-
-                                <div class="d-flex justify-content-end">
-                                    <button class="btn btn-warning btn-sm fw-semibold" type="button">
-                                        <i class="fa-solid fa-plus me-1"></i>
-                                        Add
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- COATED FRIES & NACHOS -->
-        <section id="fries-nachos" class="mb-5 reveal-on-scroll">
-            <div class="d-flex justify-content-between align-items-end mb-3">
-                <div>
-                    <p class="section-title mb-1">Coated Fries &amp; Nachos</p>
-                    <h2 class="h4 section-heading mb-0">Loaded Sides</h2>
-                </div>
-            </div>
-
-            <div class="row g-4 align-items-stretch">
-                <!-- Coated Fries -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="card menu-card menu-card-overlay h-100 border-0">
-                        <div class="menu-card-image-wrapper">
-                            <img src="assets/images/coated-fries.jpg"
-                                 class="menu-card-img"
-                                 alt="Coated Fries">
-                            <div class="menu-card-gradient"></div>
-
-                            <div class="menu-card-content">
-                                <h4 class="menu-card-title mb-1">Coated Fries</h4>
-                                <p class="menu-card-text mb-2">
-                                    Crispy fries in a flavored coating.
-                                </p>
-
-                                <div class="small mb-2">
-                                    <div>Solo – <span class="price-tag">₱98</span></div>
-                                    <div>Bucket – <span class="price-tag">₱190</span></div>
-                                </div>
-
-                                <div class="d-flex justify-content-end">
-                                    <button class="btn btn-warning btn-sm fw-semibold" type="button">
-                                        <i class="fa-solid fa-plus me-1"></i>
-                                        Add
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Beefy Coated Fries -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="card menu-card menu-card-overlay h-100 border-0">
-                        <div class="menu-card-image-wrapper">
-                            <img src="assets/images/beefy-coated-fries.jpg"
-                                 class="menu-card-img"
-                                 alt="Beefy Coated Fries">
-                            <div class="menu-card-gradient"></div>
-
-                            <div class="menu-card-content">
-                                <h4 class="menu-card-title mb-1">Beefy Coated Fries</h4>
-                                <p class="menu-card-text mb-2">
-                                    Coated fries topped with beef shawarma.
-                                </p>
-
-                                <div class="small mb-2">
-                                    <div>Solo – <span class="price-tag">₱120</span></div>
-                                    <div>Bucket – <span class="price-tag">₱215</span></div>
-                                </div>
-
-                                <div class="d-flex justify-content-end">
-                                    <button class="btn btn-warning btn-sm fw-semibold" type="button">
-                                        <i class="fa-solid fa-plus me-1"></i>
-                                        Add
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Cheesy Beef Coated Fries -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="card menu-card menu-card-overlay h-100 border-0">
-                        <div class="menu-card-image-wrapper">
-                            <img src="assets/images/cheesy-beef-fries.jpg"
-                                 class="menu-card-img"
-                                 alt="Cheesy Beef Coated Fries">
-                            <div class="menu-card-gradient"></div>
-
-                            <div class="menu-card-content">
-                                <h4 class="menu-card-title mb-1">Cheesy Beef Coated Fries</h4>
-                                <p class="menu-card-text mb-2">
-                                    Beefy coated fries leveled up with extra cheese.
-                                </p>
-
-                                <div class="small mb-2">
-                                    <div>Solo – <span class="price-tag">₱150</span></div>
-                                    <div>Bucket – <span class="price-tag">₱290</span></div>
-                                </div>
-
-                                <div class="d-flex justify-content-end">
-                                    <button class="btn btn-warning btn-sm fw-semibold" type="button">
-                                        <i class="fa-solid fa-plus me-1"></i>
-                                        Add
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Nacho Shawarma -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="card menu-card menu-card-overlay h-100 border-0">
-                        <div class="menu-card-image-wrapper">
-                            <img src="assets/images/nacho-shawarma.jpg"
-                                 class="menu-card-img"
-                                 alt="Nacho Shawarma">
-                            <div class="menu-card-gradient"></div>
-
-                            <div class="menu-card-content">
-                                <h4 class="menu-card-title mb-1">Nacho Shawarma</h4>
-                                <p class="menu-card-text mb-2">
-                                    Nachos piled with beef, veggies and sauces.
-                                </p>
-
-                                <div class="small mb-2">
-                                    <div>Price – <span class="price-tag">₱170</span></div>
-                                </div>
-
-                                <div class="d-flex justify-content-end">
-                                    <button class="btn btn-warning btn-sm fw-semibold" type="button">
-                                        <i class="fa-solid fa-plus me-1"></i>
-                                        Add
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Nacho Bandido -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="card menu-card menu-card-overlay h-100 border-0">
-                        <div class="menu-card-image-wrapper">
-                            <img src="assets/images/nacho-bandido.jpg"
-                                 class="menu-card-img"
-                                 alt="Nacho Bandido">
-                            <div class="menu-card-gradient"></div>
-
-                            <div class="menu-card-content">
-                                <h4 class="menu-card-title mb-1">Nacho Bandido</h4>
-                                <p class="menu-card-text mb-2">
-                                    Another loaded nacho favorite from the depot.
-                                </p>
-
-                                <div class="small mb-2">
-                                    <div>Price – <span class="price-tag">₱150</span></div>
-                                </div>
-
-                                <div class="d-flex justify-content-end">
-                                    <button class="btn btn-warning btn-sm fw-semibold" type="button">
-                                        <i class="fa-solid fa-plus me-1"></i>
-                                        Add
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ALA CARTE -->
-        <section id="ala-carte" class="mb-5 reveal-on-scroll">
-            <div class="d-flex justify-content-between align-items-end mb-3">
-                <div>
-                    <p class="section-title mb-1">Shawarma Ala Carte</p>
-                    <h2 class="h4 section-heading mb-0">Plates</h2>
-                </div>
-            </div>
-
-            <div class="row g-4 align-items-stretch">
-                <!-- Meat & Veggies -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="card menu-card menu-card-overlay h-100 border-0">
-                        <div class="menu-card-image-wrapper">
-                            <img src="assets/images/alacarte-meat-veggies.jpg"
-                                 class="menu-card-img"
-                                 alt="Meat & Veggies Ala Carte">
-                            <div class="menu-card-gradient"></div>
-
-                            <div class="menu-card-content">
-                                <h4 class="menu-card-title mb-1">Meat &amp; Veggies</h4>
-                                <p class="menu-card-text mb-2">
-                                    Shawarma meat with veggies and sauces on a plate.
-                                </p>
-
-                                <div class="small mb-2">
-                                    <div>Price – <span class="price-tag">₱210</span></div>
-                                </div>
-
-                                <div class="d-flex justify-content-end">
-                                    <button class="btn btn-warning btn-sm fw-semibold" type="button">
-                                        <i class="fa-solid fa-plus me-1"></i>
-                                        Add
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- All Meat -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="card menu-card menu-card-overlay h-100 border-0">
-                        <div class="menu-card-image-wrapper">
-                            <img src="assets/images/alacarte-all-meat.jpg"
-                                 class="menu-card-img"
-                                 alt="All Meat Ala Carte">
-                            <div class="menu-card-gradient"></div>
-
-                            <div class="menu-card-content">
-                                <h4 class="menu-card-title mb-1">All Meat</h4>
-                                <p class="menu-card-text mb-2">
-                                    Pure shawarma meat served on a plate.
-                                </p>
-
-                                <div class="small mb-2">
-                                    <div>Price – <span class="price-tag">₱240</span></div>
-                                </div>
-
-                                <div class="d-flex justify-content-end">
-                                    <button class="btn btn-warning btn-sm fw-semibold" type="button">
-                                        <i class="fa-solid fa-plus me-1"></i>
-                                        Add
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- BEVERAGES & EXTRAS -->
-        <section id="beverages-extras" class="mb-3 reveal-on-scroll">
-            <div class="row g-4 align-items-stretch">
-                <!-- Beverages -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="card menu-card menu-card-overlay h-100 border-0">
-                        <div class="menu-card-image-wrapper">
-                            <img src="assets/images/drinks.jpg"
-                                 class="menu-card-img"
-                                 alt="Beverages">
-                            <div class="menu-card-gradient"></div>
-
-                            <div class="menu-card-content">
-                                <h4 class="menu-card-title mb-1">Beverages</h4>
-                                <p class="menu-card-text mb-2">
-                                    Refreshing drinks to go with your shawarma.
-                                </p>
-
-                                <div class="small mb-2">
-                                    <div>Plum Tea Regular – <span class="price-tag">₱60</span></div>
-                                    <div>Plum Tea Large – <span class="price-tag">₱70</span></div>
-                                    <div>Coke Mismo – <span class="price-tag">₱25</span></div>
-                                    <div>Royal Mismo – <span class="price-tag">₱25</span></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Extras -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="card menu-card menu-card-overlay h-100 border-0">
-                        <div class="menu-card-image-wrapper">
-                            <img src="assets/images/extras.jpg"
-                                 class="menu-card-img"
-                                 alt="Extras">
-                            <div class="menu-card-gradient"></div>
-
-                            <div class="menu-card-content">
-                                <h4 class="menu-card-title mb-1">Extras</h4>
-                                <p class="menu-card-text mb-2">
-                                    Level up your wrap, rice, or fries with add-ons.
-                                </p>
-
-                                <div class="small mb-2">
-                                    <div>Meat – <span class="price-tag">₱30</span></div>
-                                    <div>Rice – <span class="price-tag">₱20</span></div>
-                                    <div>Veggies – <span class="price-tag">₱20</span></div>
-                                    <div>Garlic Sauce – <span class="price-tag">₱15</span></div>
-                                    <div>Cheese Sauce – <span class="price-tag">₱15</span></div>
-                                    <div>Sliced Cheese – <span class="price-tag">₱15</span></div>
-                                    <div>Orange Cheese – <span class="price-tag">₱30</span></div>
-                                    <div>Salsa – <span class="price-tag">₱20</span></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <p class="text-muted small mt-4">
-            * Menu and prices based on Shawarma Depot’s current offerings. Items and pricing may change depending on availability and promos.
-        </p>
-    </div>
+        </div>
 </main>
+
 
 <!-- PRODUCT VARIANT MODAL (used for Shawarma Wrap options) -->
 <div class="modal fade" id="variantModal" tabindex="-1" aria-labelledby="variantModalLabel" aria-hidden="true">
@@ -759,7 +850,7 @@
                 <div class="small text-muted" id="variantModalPriceHint">
                     Pick a size/deal to see the price.
                 </div>
-                <button type="button" class="btn btn-warning btn-sm fw-semibold">
+                <button type="button" class="btn btn-warning btn-sm fw-semibold" id="variantModalAddBtn">
                     <i class="fa-solid fa-cart-plus me-1"></i>
                     Add to cart
                 </button>

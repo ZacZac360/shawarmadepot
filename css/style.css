@@ -667,3 +667,91 @@ body {
     border-radius: 10px;
 }
 
+.delivery-box {
+    background: #fff;             /* yellow background */
+    border-left: 4px solid #1f1f1f;  /* dark accent */
+    color: #1c1c1c;                  /* dark text */
+    padding: 1rem;
+    border-radius: 0.5rem;
+}
+
+/* Inputs inside the delivery box */
+.delivery-box input,
+.delivery-box select {
+    background-color: #ffffff;       /* white input background */
+    color: #1c1c1c;                  /* dark text */
+    border: 1px solid #ccc;          /* subtle border */
+}
+
+/* Placeholder text */
+.delivery-box input::placeholder {
+    color: #666;                     /* darker placeholder for contrast */
+}
+
+/* === CART ITEM LIGHT THEME (Matches Shawarma Depot UI) === */
+
+.cart-item {
+    background: #ffffff;                 /* clean white card */
+    border: 1px solid #e3e3e3;           /* very light border */
+    border-radius: 10px;
+    padding: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    color: #1c1c1c;                      /* dark charcoal text */
+}
+
+/* Header: item name + line total */
+.cart-item .item-header {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 6px;
+    color: #111;                         /* strong dark */
+}
+
+.cart-item .item-price {
+    color: #ffb300;                      /* your main yellow accent */
+    font-weight: 800;
+}
+
+/* Summary text */
+.cart-item .item-summary {
+    font-size: 0.8rem;
+    color: #666;                         /* gray descriptive text */
+    margin-bottom: 12px;
+}
+
+/* Quantity controls */
+.cart-item .qty-box {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* + / – buttons */
+.cart-item .qty-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    background: #f2f2f2;                 /* soft light gray button bg */
+    border: 1px solid #ccc;              /* thin border */
+    color: #1c1c1c;                      /* dark icon */
+    transition: 0.15s ease;
+}
+
+.cart-item .qty-btn:hover {
+    background: #ffe08a;                 /* very soft yellow hover */
+    border-color: #ffb300;
+}
+
+/* Quantity number */
+.cart-item .qty-number {
+    padding: 2px 12px;
+    background: #ffb300;                 /* yellow pill */
+    color: #1c1c1c;                      /* black text */
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 1rem;
+    min-width: 32px;
+    text-align: center;
+}
