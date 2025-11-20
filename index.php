@@ -30,7 +30,7 @@
             </div>
         </a>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
             <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -48,6 +48,18 @@
                 <li class="nav-item">
                     <a class="nav-link" href="contact.php">Contact</a>
                 </li>
+                
+                <!-- NEW -->
+                <li class="nav-item">
+                    <a class="nav-link" href="track-order.php">Track Order</a>
+                </li>
+
+                <li class="nav-item ms-lg-3">
+                    <a class="btn btn-outline-warning fw-semibold px-3" href="cart.php">
+                        <i class="fa-solid fa-cart-shopping me-1"></i> Cart
+                    </a>
+                </li>
+
                 <li class="nav-item ms-lg-3">
                     <a class="btn btn-warning fw-semibold px-3" href="menu.php">
                         <i class="fa-solid fa-utensils me-1"></i> Order Now
@@ -57,6 +69,7 @@
         </div>
     </div>
 </nav>
+
 
 <!-- HERO SECTION -->
 <section class="hero-section position-relative overflow-hidden">
@@ -124,8 +137,8 @@
                     <h5 class="fw-bold mb-1">
                         <i class="fa-solid fa-bag-shopping text-warning me-2"></i> Order in seconds
                     </h5>
-                    <p class="small text-light opacity-75 mb-3">
-                        Choose your craving and we’ll prep your shawarma fresh.
+                    <p class="small text-light opacity-75 mb-0">
+                        Choose your craving and we'll prep your shawarma fresh.
                     </p>
 
                     <!-- Order Type -->
@@ -143,20 +156,8 @@
                             </label>
                         </div>
                     </div>
-
-                    <!-- Quick favorite -->
-                    <div class="mb-3">
-                        <label class="form-label small text-uppercase text-muted mb-1">Go-to order</label>
-                        <select class="form-select form-select-sm">
-                            <!-- Just placeholders – link to real menu later if needed -->
-                            <option>Beef Shawarma Wrap</option>
-                            <option>Chicken Shawarma Rice</option>
-                            <option>Cheesy Shawarma Fries</option>
-                        </select>
-                    </div>
-
                     <a href="menu.php" class="btn btn-warning w-100 fw-semibold mb-2">
-                        Start Order
+                        Order Now
                     </a>
 
                     <div class="d-flex justify-content-between small">
@@ -211,14 +212,12 @@
 </section>
 
 <!-- BEST SELLERS -->
-<section id="best-sellers" class="py-5">
+<section id="best-sellers" class="py-5 section-deals reveal-on-scroll">
     <div class="container">
         <div class="text-center mb-4">
-            <div class="section-title">Best Sellers</div>
-            <h2 class="section-heading mb-2">Your go-to Shawarma Depot orders</h2>
-            <p class="text-muted">
-                These are the go-to picks — perfect for hungry nights and late hangouts.
-            </p>
+            <div class="section-title"><h1 class="hero-title mb-3">
+                    BEST SELLERS
+                </h1></div>
         </div>
 
         <div class="row g-4 align-items-stretch">
@@ -344,11 +343,12 @@
 
 
 <!-- CUSTOMER REVIEWS -->
-<section id="reviews" class="py-5 bg-dark text-light">
+<section id="reviews" class="py-5 bg-dark text-light reveal-on-scroll">
     <div class="container">
         <div class="text-center mb-4">
-            <div class="section-title text-warning">Customer Reviews</div>
-            <h2 class="section-heading mb-2 text-light">Real feedback from our customers</h2>
+            <div class="section-title text-warning"><h1 class="hero-title mb-3">
+                    CUSTOMER REVIEWS
+                </h1></div>
             <p class="text-light opacity-75 mb-1">
                 Real feedback from customers who tried our shawarma.
             </p>
@@ -415,14 +415,15 @@
 </section>
 
 <!-- FROM FACEBOOK (REELS) -->
-<section class="py-5 bg-light">
+<section class="py-5 section-media reveal-on-scroll">
     <div class="container">
         <div class="row gy-4 align-items-center">
             <div class="col-lg-5">
-                <div class="section-title">From Our Facebook</div>
-                <h2 class="section-heading mb-3">Straight from the grill</h2>
+                <h2 class="section-heading mb-3"><h1 class="hero-title mb-3">
+                    Straight from <br>the grill
+                </h1></h2>
                 <p class="text-muted mb-3"  >
-                    Reels straight from Shawarma Depot’s Facebook page.
+                    Reels straight from Shawarma Depot's Facebook page.
                 </p>
                 <p class="small text-muted mb-3">
                     Follow us on Facebook for promos, new items, and behind-the-scenes shawarma content.
@@ -493,15 +494,16 @@
     </div>
 </section>
 
-<!-- WHY SHAWARMA DEPOT + HOW IT WORKS -->
-<section class="py-5 bg-white">
+<!-- INFORSECTION -->
+<section class="py-5 bg-white" reveal-on-scroll>
     <div class="container">
         <div class="row align-items-start gy-4">
             <div class="col-lg-6">
-                <div class="section-title">Why Shawarma Depot?</div>
-                <h2 class="section-heading mb-3">Street food vibes. Consistent quality.</h2>
+                <h1 class="hero-title mb-3">
+                   Street food vibes. Consistent quality.
+                </h1>
                 <p class="text-muted">
-                    Whether you’re ending a long day, cramming for exams, or just craving something messy and good,
+                    Whether you're ending a long day, cramming for exams, or just craving something messy and good,
                     Shawarma Depot has you covered.
                 </p>
 
@@ -543,7 +545,7 @@
                         <div>
                             <h6 class="fw-bold mb-1">Student-Friendly Pricing</h6>
                             <p class="small text-muted mb-0">
-                                Solid meals that won’t murder your allowance.
+                                Solid meals that won't murder your allowance.
                             </p>
                         </div>
                     </div>
@@ -567,9 +569,7 @@
             <!-- How it works timeline -->
             <div class="col-lg-6">
                 <div class="card border-0 shadow-sm rounded-4 p-4">
-                    <div class="section-title mb-1">How It Works</div>
                     <h5 class="fw-bold mb-3">Order in 3 easy steps</h5>
-
                     <div class="order-step d-flex mb-3">
                         <div class="step-number me-3">1</div>
                         <div>
@@ -595,7 +595,7 @@
                         <div>
                             <h6 class="fw-semibold mb-1">Confirm & wait</h6>
                             <p class="small text-muted mb-0">
-                                We’ll prep your order — all that’s left is to eat.
+                                We'll prep your order — all that's left is to eat.
                             </p>
                         </div>
                     </div>
@@ -610,23 +610,23 @@
 </section>
 
 <!-- LOCATION & HOURS -->
-<section id="visit-us" class="py-5 bg-light">
+<section id="visit-us" class="py-5 visit-section">
     <div class="container">
         <div class="row gy-4 align-items-center">
             <div class="col-lg-6">
                 <div class="section-title">Visit Us</div>
                 <h2 class="section-heading mb-3">Find Shawarma Depot</h2>
                 <p class="text-muted mb-4">
-                    We’re a local spot with big flavor. Drop by the stall or order online and chill while we prep your food.
+                    We're a local spot with big flavor. Drop by the stall or order online and chill while we prep your food.
                 </p>
 
                 <div class="location-card p-4 mb-3 bg-white rounded-4 shadow-sm">
                     <h6 class="fw-bold mb-2">
-                        <i class="fa-solid fa-location-dot me-2 text-warning"></i> Store Location
+                        <i class="fa-solid fa-location-dot me-2 text-warning"></i> Store Location <br><br>
                     </h6>
                     <!-- Customize: exact address pulled from FB page -->
                     <p class="mb-1">
-                        Blk 16 Lot 26 Laos St Corner Lebanon St<br>
+                        Blk 16 Lot 26 Laos St Corner Lebanon St
                         San Marino City, Cavite
                     </p>
                 </div>
@@ -677,7 +677,7 @@
 </section>
 
 <!-- FOOTER -->
-<footer class="footer mt-4 py-3 bg-dark text-light">
+<footer class="footer mt-0 py-3 bg-dark text-light">
     <div class="container">
         <div class="row gy-3 align-items-center">
             <div class="col-md-6 text-center text-md-start">
@@ -694,6 +694,7 @@
     </div>
 </footer>
 
+
 <!-- MOBILE STICKY ORDER BAR -->
 <div class="d-lg-none fixed-bottom bg-dark text-light py-2 shadow mobile-order-bar">
     <div class="container d-flex justify-content-between align-items-center">
@@ -707,10 +708,16 @@
     </div>
 </div>
 
+<!-- BACK TO TOP BUTTON -->
+<button class="btn btn-warning back-to-top" type="button">
+    <i class="fa-solid fa-arrow-up"></i>
+</button>
+
+
 <!-- Bootstrap JS Bundle -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 
-<!-- Your custom JS -->
+<!-- custom JS -->
 <script src="assets/js/main.js"></script>
 
 </body>

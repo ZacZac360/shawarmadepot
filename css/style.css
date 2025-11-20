@@ -11,9 +11,26 @@ body {
     background-color: #f8f9fa;
 }
 
-/* Navbar */
+/* =========================
+   Navbar
+   ========================= */
 .navbar-brand span {
     color: var(--primary-color);
+    font-weight: 800;
+}
+
+/* =========================
+   Generic section styles
+   ========================= */
+.section-title {
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    color: var(--primary-color);
+}
+
+.section-heading {
     font-weight: 800;
 }
 
@@ -93,20 +110,19 @@ body {
     margin-bottom: 0.75rem;
 }
 
-/* Card should just behave like a normal full-width card in its column */
+/* Hero video card */
 .hero-video-card {
     width: 100%;              /* take full width of the Bootstrap col */
-    max-width: 400px;         /* optional: cap it so it doesn't get too huge on very wide screens */
+    max-width: 400px;         /* cap width */
     margin-left: auto;
     margin-right: auto;       /* centers the card in its column */
-    /* no transform, no scale, no fit-content */
 }
 
 /* Video wrapper controls actual video size */
 .hero-fb-video {
     position: relative;
     width: 100%;
-    max-width: 260px;         /* 👉 adjust this to change video width */
+    max-width: 260px;
     aspect-ratio: 9 / 16;     /* keeps reels vertical */
     border-radius: 0.75rem;
     overflow: hidden;
@@ -119,67 +135,6 @@ body {
     inset: 0;
     width: 100%;
     height: 100%;
-}
-
-/* Optional: let video be a bit wider on small phones */
-@media (max-width: 576px) {
-    .hero-fb-video {
-        max-width: 80vw;
-    }
-}
-
-
-
-
-
-/* =========================
-   Reviews
-   ========================= */
-.review-card {
-    background: #fff9e6 !important;
-    border-radius: 1rem;
-    border: none;
-}
-
-
-.review-box {
-    background: transparent;
-    border-radius: 0.85rem;
-    border: 1px;
-    padding: 0.75rem;
-}
-
-.review-avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: #1877f2;          /* FB blue */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.9rem;
-    color: #fff;
-}
-
-/* Optional: slightly tighter section padding */
-#reviews {
-    padding-top: 2.5rem;
-    padding-bottom: 2.5rem;
-}
-
-/* =========================
-   Generic section styles
-   ========================= */
-.section-title {
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    font-size: 0.9rem;
-    color: var(--primary-color);
-}
-
-.section-heading {
-    font-weight: 800;
 }
 
 /* =========================
@@ -211,6 +166,12 @@ body {
 .price-tag {
     font-weight: 700;
     color: var(--primary-color);
+}
+
+/* Cart badge */
+.cart-count {
+    font-size: 0.7rem;
+    padding: 0.25em 0.4em;
 }
 
 /* =========================
@@ -306,6 +267,100 @@ body {
 }
 
 /* =========================
+   Special sections: Deals & Media
+   ========================= */
+
+/* Featured deals / best sellers band (Angel's / Shack vibe) */
+.section-deals {
+    position: relative;
+    background: radial-gradient(circle at top left, #fff3cf 0%, #ffffff 45%, #fff8e6 100%);
+}
+
+/* Thin colored strip at the top of the section */
+.section-deals::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    height: 6px;
+    background: linear-gradient(90deg, #ffb300, #ff7a00);
+    opacity: 0.9;
+    pointer-events: none;
+}
+
+/* Give content some spacing from the strip */
+.section-deals > .container {
+    position: relative;
+    padding-top: 1.5rem;
+}
+
+/* Optional: slightly stronger heading color inside this band */
+.section-deals .section-heading {
+    color: #111827;
+}
+
+/* Media section with subtle highlight */
+.section-media {
+    position: relative;
+    background: #f4f4f7;
+    overflow: hidden;
+}
+
+.section-media::before {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 40px;
+    width: 260px;
+    height: 260px;
+    background: radial-gradient(circle, rgba(255, 179, 0, 0.22), transparent 65%);
+    opacity: 0.8;
+    pointer-events: none;
+}
+
+.section-media > .container {
+    position: relative;
+}
+
+/* Tighten up titles inside band sections */
+.section-deals .section-title,
+.section-media .section-title {
+    letter-spacing: 0.08em;
+}
+
+/* =========================
+   Reviews
+   ========================= */
+#reviews {
+    padding-top: 2.5rem;
+    padding-bottom: 2.5rem;
+}
+
+.review-card {
+    background: #fff9e6 !important;
+    border-radius: 1rem;
+    border: none;
+}
+
+.review-box {
+    background: transparent;
+    border-radius: 0.85rem;
+    border: 1px;
+    padding: 0.75rem;
+}
+
+.review-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #1877f2;          /* FB blue */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    color: #fff;
+}
+
+/* =========================
    "Why us" icons & steps
    ========================= */
 .feature-icon {
@@ -334,9 +389,29 @@ body {
 }
 
 /* =========================
-   Location
+   Location / Visit Us
    ========================= */
+.visit-section {
+    background-color: #2b2b2b;          /* .bg-dark equivalent */
+    color: #f8f9fa;                     /* default text color inside */
+}
+
+/* Make "muted" text light-muted instead of gray-on-dark */
+.visit-section .text-muted {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Links inside Visit Us section */
+.visit-section a {
+    color: #ffc107; /* or var(--primary-color) if you prefer */
+}
+
+.visit-section a:hover {
+    color: #ffdd57;
+}
+
 .location-card {
+    color: #212529 !important;          /* dark text inside the white box */
     border-radius: 1rem;
     background-color: #fff;
     box-shadow: 0 8px 20px rgba(0,0,0,0.05);
@@ -347,10 +422,12 @@ body {
     justify-content: space-between;
 }
 
+/* Make Bootstrap ratio iframe fill container */
 .ratio iframe {
     width: 100%;
     height: 100%;
 }
+
 
 
 /* =========================
@@ -372,8 +449,76 @@ body {
 }
 
 /* =========================
+   Back-to-top button & scroll reveal
+   ========================= */
+.back-to-top {
+    position: fixed;
+    right: 1.25rem;
+    bottom: 4.5rem; /* sits above mobile order bar on phones */
+    z-index: 1050;
+    border-radius: 999px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+    padding-inline: 0.9rem;
+    padding-block: 0.55rem;
+}
+
+.back-to-top i {
+    font-size: 0.9rem;
+}
+
+/* When visible */
+.back-to-top.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Base state for things that will reveal on scroll */
+.reveal-on-scroll {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+}
+
+/* When visible */
+.reveal-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Slight stagger effect if multiple children */
+.reveal-on-scroll.reveal-delay-1 {
+    transition-delay: 0.1s;
+}
+
+.reveal-on-scroll.reveal-delay-2 {
+    transition-delay: 0.2s;
+}
+
+.reveal-on-scroll.reveal-delay-3 {
+    transition-delay: 0.3s;
+}
+
+/* =========================
    Responsive tweaks
    ========================= */
+
+/* Small phones: hero video width & back-to-top position */
+@media (max-width: 576px) {
+    .hero-fb-video {
+        max-width: 80vw;
+    }
+
+    .back-to-top {
+        bottom: 5.5rem;
+    }
+}
+
+/* Tablets and below */
 @media (max-width: 767.98px) {
     .hero-section {
         text-align: center;
@@ -401,4 +546,17 @@ body {
         inset-inline: 1rem;
         bottom: 1rem;
     }
+}
+
+/* Variant modal - active selection color override */
+#variantModal .list-group-item.active {
+    background-color: #2b2b2b;
+    border-color: #2b2b2b;
+    color: #fff;
+}
+
+
+#variantModal .list-group-item:not(.active):hover {
+    background-color: #858383;
+    color: #fff;
 }
