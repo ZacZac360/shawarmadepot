@@ -22,7 +22,6 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-
 <!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm sticky-top">
     <div class="container">
@@ -56,7 +55,7 @@
                     <a class="nav-link" href="track-order.php">Track Order</a>
                 </li>
                 <li class="nav-item ms-lg-3">
-                    <a class="btn btn-outline-warning fw-semibold px-3" href="cart.php">
+                    <a class="btn btn-outline-warning fw-semibold px-3" href="menu.php">
                         <i class="fa-solid fa-cart-shopping me-1"></i> Cart
                     </a>
                 </li>
@@ -88,67 +87,100 @@
             <span>Store hours: 4:00 PM – 11:00 PM • Delivery and pickup available within the area.</span>
         </div>
 
-        <!-- DELIVERY AREA SELECTOR -->
+        <!-- ORDER / DELIVERY DETAILS -->
         <div class="delivery-box small d-flex align-items-start mb-4 gap-3 p-3 rounded-3 shadow-sm">
             <i class="fa-solid fa-location-dot me-2 mt-1"></i>
 
             <div class="flex-grow-1">
-                <div class="fw-semibold mb-2">Delivery Details</div>
+                <!-- Title -->
+                <div class="fw-semibold mb-2">Order Details</div>
 
-                <!-- Subdivision Selection -->
-                <label class="small fw-semibold mb-1">Select Subdivision:</label>
-                <select id="subdivisionSelect" class="form-select form-select-sm mb-2">
-                    <option value="">-- Select your subdivision --</option>
+                <!-- Delivery or Pickup -->
+                <div class="mb-3">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="fulfillment"
+                            id="fulfillmentDelivery" value="delivery">
+                        <label class="form-check-label small" for="fulfillmentDelivery">Delivery</label>
+                    </div>
 
-                    <optgroup label="San Marino City">
-                        <option value="classic">San Marino Classic (₱15 DF + ₱15 gate)</option>
-                        <option value="heights">San Marino Heights (₱15 DF)</option>
-                        <option value="central">San Marino Central (₱15 DF)</option>
-                        <option value="phase1">San Marino Phase 1 (₱15 DF)</option>
-                        <option value="phase2">San Marino Phase 2 (₱15 DF)</option>
-                        <option value="phase3">San Marino Phase 3 (₱15 DF)</option>
-                        <option value="phase4">San Marino Phase 4 (₱15 DF)</option>
-                        <option value="phase5">San Marino Phase 5 (₱15 DF)</option>
-                        <option value="north1">San Marino North 1 (₱15 DF)</option>
-                        <option value="north2">San Marino North 2 (₱15 DF)</option>
-                        <option value="south1">San Marino South 1 (₱15 DF)</option>
-                        <option value="south2">San Marino South 2 (₱15 DF)</option>
-                    </optgroup>
-
-                    <optgroup label="Outside Areas (Pickup / 25 + gate)">
-                        <option value="ndgv1">North Dasma Garden Villa 1 (₱25 DF + ₱10 gate)</option>
-                        <option value="ndgv2">North Dasma Garden Villa 2 (₱25 DF + ₱10 gate)</option>
-                    </optgroup>
-
-                    <option value="outside">Outside Service Area (Pickup/Lalamove only)</option>
-                </select>
-
-                <!-- Address Fields -->
-                <div id="addressFields" style="display:none">
-
-                    <label class="small fw-semibold mb-1">Block & Lot:</label>
-                    <input type="text" id="addrBlkLot" class="form-control form-control-sm mb-2"
-                        placeholder="e.g. Block 3 Lot 4">
-
-                    <label class="small fw-semibold mb-1">Landmark:</label>
-                    <input type="text" id="addrLandmark" class="form-control form-control-sm mb-2"
-                        placeholder="e.g. Red gate near Phase 2 park">
-
-                    <label class="small fw-semibold mb-1">Customer Name:</label>
-                    <input type="text" id="addrName" class="form-control form-control-sm mb-2"
-                        placeholder="Your full name">
-
-                    <label class="small fw-semibold mb-1">Contact Number:</label>
-                    <input type="text" id="addrPhone" class="form-control form-control-sm mb-2"
-                        placeholder="09XXXXXXXXX">
-
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="fulfillment"
+                            id="fulfillmentPickup" value="pickup">
+                        <label class="form-check-label small" for="fulfillmentPickup">Pickup</label>
+                    </div>
                 </div>
+                <!-- These fields only show when DELIVERY is selected -->
+                    <div id="deliveryDetailsFields" style="display:none;">
+                                        <!-- Coverage + partner apps (always visible) -->
+                    <div id="deliveryIntro" class="small text-muted mb-2">
+                        Our delivery service covers nearby areas of San Marino City, Dasmariñas.
+                        For areas beyond our coverage, you can still order via:
+                    </div>
+                    <div class="mb-3 d-flex flex-wrap gap-2">
+                        <a href="https://www.foodpanda.ph/restaurant/aduq/shawarma-depot-dasmarinas-cavite"
+                        target="_blank"
+                        class="btn panda-btn btn-sm fw-semibold">
+                            🐼 Foodpanda
+                        </a>
+                        <a href="https://food.grab.com/ph/en/restaurant/shawarma-depot-dasmarinas-delivery/2-C7LKAVJUAK3TV2?"
+                        target="_blank"
+                        class="btn grab-btn btn-sm fw-semibold">
+                            🛵 GrabFood
+                        </a>
+                    </div>
+                    <!-- Subdivision Selection -->
+                    <label class="small fw-semibold mb-1">Select Subdivision:</label>
+                    <select id="subdivisionSelect" class="form-select form-select-sm mb-2">
+                        <option value="">-- Select your subdivision --</option>
 
-                <div id="deliveryMessage" class="small text-muted mt-1">
-                    Select your subdivision to calculate delivery fee.
+                        <optgroup label="San Marino City">
+                            <option value="classic">San Marino Classic (₱15 DF + ₱15 gate)</option>
+                            <option value="heights">San Marino Heights (₱15 DF)</option>
+                            <option value="central">San Marino Central (₱15 DF)</option>
+                            <option value="phase1">San Marino Phase 1 (₱15 DF)</option>
+                            <option value="phase2">San Marino Phase 2 (₱15 DF)</option>
+                            <option value="phase3">San Marino Phase 3 (₱15 DF)</option>
+                            <option value="phase4">San Marino Phase 4 (₱15 DF)</option>
+                            <option value="phase5">San Marino Phase 5 (₱15 DF)</option>
+                            <option value="north1">San Marino North 1 (₱15 DF)</option>
+                            <option value="north2">San Marino North 2 (₱15 DF)</option>
+                            <option value="south1">San Marino South 1 (₱15 DF)</option>
+                            <option value="south2">San Marino South 2 (₱15 DF)</option>
+                        </optgroup>
+
+                        <optgroup label="Outside Areas (Pickup / 25 + gate)">
+                            <option value="ndgv">North Dasma Garden Villa (₱25 DF + ₱10 gate)</option>
+                            <option value="sdgv">South Dasma Garden Villa (₱25 DF + ₱10 gate)</option>
+                        </optgroup>
+                    </select>
+
+                    <!-- Address Fields -->
+                    <div id="addressFields" style="display:none;">
+                        <label class="small fw-semibold mb-1">Block &amp; Lot:</label>
+                        <input type="text" id="addrBlkLot" class="form-control form-control-sm mb-2"
+                            placeholder="e.g. Block 3 Lot 4">
+
+                        <label class="small fw-semibold mb-1">Landmark:</label>
+                        <input type="text" id="addrLandmark" class="form-control form-control-sm mb-2"
+                            placeholder="e.g. Red gate near Phase 2 park">
+
+                        <label class="small fw-semibold mb-1">Customer Name:</label>
+                        <input type="text" id="addrName" class="form-control form-control-sm mb-2"
+                            placeholder="Your full name">
+
+                        <label class="small fw-semibold mb-1">Contact Number:</label>
+                        <input type="text" id="addrPhone" class="form-control form-control-sm mb-2"
+                            placeholder="09XXXXXXXXX">
+                    </div>
+
+                    <!-- Fee message (changes based on subdivision) -->
+                    <div id="deliveryFeeMessage" class="small text-muted mt-1">
+                        Select your subdivision to calculate delivery fee.
+                    </div>
                 </div>
             </div>
         </div>
+
 
 
         <!-- CATEGORY SHORTCUTS -->
@@ -169,8 +201,7 @@
                 <section id="shawarma-wraps" class="mb-5 reveal-on-scroll">
                     <div class="d-flex justify-content-between align-items-end mb-3">
                         <div>
-                            <p class="section-title mb-1">Shawarma Wrap</p>
-                            <h2 class="h4 section-heading mb-0">Classic Wraps</h2>
+                            <h2 class="h4 section-heading mb-0">Classic Shawarma Wrap</h2>
                         </div>
                     </div>
 
@@ -179,7 +210,7 @@
                         <div class="col-md-6 col-lg-6">
                             <div class="card menu-card menu-card-overlay h-100 border-0">
                                 <div class="menu-card-image-wrapper">
-                                    <img src="assets/images/beefshawarma.jpg"
+                                    <img src="assets/images/classicshawarma.jpg"
                                          class="menu-card-img"
                                          alt="Shawarma Wrap">
 
@@ -217,8 +248,7 @@
                 <section id="special-wraps" class="mb-5 reveal-on-scroll">
                     <div class="d-flex justify-content-between align-items-end mb-3">
                         <div>
-                            <p class="section-title mb-1">Special Shawarma Wrap</p>
-                            <h2 class="h4 section-heading mb-0">Fully Loaded Wraps</h2>
+                            <h2 class="h4 section-heading mb-0">Special Shawarma Wrap</h2>
                         </div>
                     </div>
 
@@ -227,7 +257,7 @@
                         <div class="col-md-6 col-lg-4">
                             <div class="card menu-card menu-card-overlay h-100 border-0">
                                 <div class="menu-card-image-wrapper">
-                                    <img src="assets/images/placeholder.jpg"
+                                    <img src="assets/images/overloadwrap.jpg"
                                          class="menu-card-img"
                                          alt="Overload Wrap">
                                     <div class="menu-card-gradient"></div>
@@ -260,7 +290,7 @@
                         <div class="col-md-6 col-lg-4">
                             <div class="card menu-card menu-card-overlay h-100 border-0">
                                 <div class="menu-card-image-wrapper">
-                                    <img src="assets/images/placeholder.jpg"
+                                    <img src="assets/images/doublecheesewrap.jpg"
                                          class="menu-card-img"
                                          alt="Double Cheese Wrap">
                                     <div class="menu-card-gradient"></div>
@@ -293,7 +323,7 @@
                         <div class="col-md-6 col-lg-4">
                             <div class="card menu-card menu-card-overlay h-100 border-0">
                                 <div class="menu-card-image-wrapper">
-                                    <img src="assets/images/placeholder.jpg"
+                                    <img src="assets/images/allmeatwrap.jpg"
                                          class="menu-card-img"
                                          alt="All Meat Wrap">
                                     <div class="menu-card-gradient"></div>
@@ -323,12 +353,11 @@
                         </div>
                     </div>
                 </section>
-        <!-- SHAWARMA RICE -->
+                <!-- SHAWARMA RICE -->
                 <section id="shawarma-rice" class="mb-5 reveal-on-scroll">
                     <div class="d-flex justify-content-between align-items-end mb-3">
                         <div>
-                            <p class="section-title mb-1">Shawarma Rice</p>
-                            <h2 class="h4 section-heading mb-0">Rice Meals</h2>
+                            <h2 class="h4 section-heading mb-0">Shawarma Rice</h2>
                         </div>
                     </div>
 
@@ -337,7 +366,7 @@
                         <div class="col-md-6 col-lg-4">
                             <div class="card menu-card menu-card-overlay h-100 border-0">
                                 <div class="menu-card-image-wrapper">
-                                    <img src="assets/images/placeholder.jpg"
+                                    <img src="assets/images/shawarmaveggiesrice.jpg"
                                         class="menu-card-img"
                                         alt="Shawarma Rice">
                                     <div class="menu-card-gradient"></div>
@@ -370,7 +399,7 @@
                         <div class="col-md-6 col-lg-4">
                             <div class="card menu-card menu-card-overlay h-100 border-0">
                                 <div class="menu-card-image-wrapper">
-                                    <img src="assets/images/placeholder.jpg"
+                                    <img src="assets/images/allmeatshawarmarice.jpg"
                                         class="menu-card-img"
                                         alt="All Meat Shawarma Rice">
                                     <div class="menu-card-gradient"></div>
@@ -405,8 +434,7 @@
                 <section id="premium-steak-fries" class="mb-5 reveal-on-scroll">
                     <div class="d-flex justify-content-between align-items-end mb-3">
                         <div>
-                            <p class="section-title mb-1">Premium Steak &amp; Fries</p>
-                            <h2 class="h4 section-heading mb-0">Steak Trays</h2>
+                            <h2 class="h4 section-heading mb-0">Premium Steak &amp; Fries Shawarma</h2>
                         </div>
                     </div>
 
@@ -415,7 +443,7 @@
                         <div class="col-md-6 col-lg-4">
                             <div class="card menu-card menu-card-overlay h-100 border-0">
                                 <div class="menu-card-image-wrapper">
-                                    <img src="assets/images/placeholder.jpg"
+                                    <img src="assets/images/steakandfriesshawarma.jpg"
                                         class="menu-card-img"
                                         alt="Premium Steak & Fries">
                                     <div class="menu-card-gradient"></div>
@@ -448,7 +476,7 @@
                         <div class="col-md-6 col-lg-4">
                             <div class="card menu-card menu-card-overlay h-100 border-0">
                                 <div class="menu-card-image-wrapper">
-                                    <img src="assets/images/placeholder.jpg"
+                                    <img src="assets/images/doublecheese.jpg"
                                         class="menu-card-img"
                                         alt="Double Cheese Premium Steak & Fries">
                                     <div class="menu-card-gradient"></div>
@@ -483,8 +511,7 @@
                 <section id="fries-nachos" class="mb-5 reveal-on-scroll">
                     <div class="d-flex justify-content-between align-items-end mb-3">
                         <div>
-                            <p class="section-title mb-1">Coated Fries &amp; Nachos</p>
-                            <h2 class="h4 section-heading mb-0">Loaded Sides</h2>
+                            <h2 class="h4 section-heading mb-0">Coated Fries &amp; Nachos</h2>
                         </div>
                     </div>
 
@@ -493,7 +520,7 @@
                         <div class="col-md-6 col-lg-4">
                             <div class="card menu-card menu-card-overlay h-100 border-0">
                                 <div class="menu-card-image-wrapper">
-                                    <img src="assets/images/placeholder.jpg"
+                                    <img src="assets/images/coatedfries.jpg"
                                         class="menu-card-img"
                                         alt="Coated Fries">
                                     <div class="menu-card-gradient"></div>
@@ -526,7 +553,7 @@
                         <div class="col-md-6 col-lg-4">
                             <div class="card menu-card menu-card-overlay h-100 border-0">
                                 <div class="menu-card-image-wrapper">
-                                    <img src="assets/images/placeholder.jpg"
+                                    <img src="assets/images/beefyfries.jpg"
                                         class="menu-card-img"
                                         alt="Beefy Coated Fries">
                                     <div class="menu-card-gradient"></div>
@@ -559,7 +586,7 @@
                         <div class="col-md-6 col-lg-4">
                             <div class="card menu-card menu-card-overlay h-100 border-0">
                                 <div class="menu-card-image-wrapper">
-                                    <img src="assets/images/placeholder.jpg"
+                                    <img src="assets/images/cheesyfries.jpg"
                                         class="menu-card-img"
                                         alt="Cheesy Beef Coated Fries">
                                     <div class="menu-card-gradient"></div>
@@ -592,7 +619,7 @@
                         <div class="col-md-6 col-lg-4">
                             <div class="card menu-card menu-card-overlay h-100 border-0">
                                 <div class="menu-card-image-wrapper">
-                                    <img src="assets/images/placeholder.jpg"
+                                    <img src="assets/images/nachos.jpg"
                                         class="menu-card-img"
                                         alt="Nacho Shawarma">
                                     <div class="menu-card-gradient"></div>
@@ -625,7 +652,7 @@
                         <div class="col-md-6 col-lg-4">
                             <div class="card menu-card menu-card-overlay h-100 border-0">
                                 <div class="menu-card-image-wrapper">
-                                    <img src="assets/images/placeholder.jpg"
+                                    <img src="assets/images/nachobandido.jpg"
                                         class="menu-card-img"
                                         alt="Nacho Bandido">
                                     <div class="menu-card-gradient"></div>
@@ -660,8 +687,7 @@
                 <section id="ala-carte" class="mb-5 reveal-on-scroll">
                     <div class="d-flex justify-content-between align-items-end mb-3">
                         <div>
-                            <p class="section-title mb-1">Shawarma Ala Carte</p>
-                            <h2 class="h4 section-heading mb-0">Plates</h2>
+                            <h2 class="h4 section-heading mb-0">Shawarma Ala Carte Plates</h2>
                         </div>
                     </div>
 
@@ -670,7 +696,7 @@
                         <div class="col-md-6 col-lg-4">
                             <div class="card menu-card menu-card-overlay h-100 border-0">
                                 <div class="menu-card-image-wrapper">
-                                    <img src="assets/images/placeholder.jpg"
+                                    <img src="assets/images/shawarmacarte.jpg"
                                         class="menu-card-img"
                                         alt="Meat & Veggies Ala Carte">
                                     <div class="menu-card-gradient"></div>
@@ -703,7 +729,7 @@
                         <div class="col-md-6 col-lg-4">
                             <div class="card menu-card menu-card-overlay h-100 border-0">
                                 <div class="menu-card-image-wrapper">
-                                    <img src="assets/images/placeholder.jpg"
+                                    <img src="assets/images/allmeat.jpg"
                                         class="menu-card-img"
                                         alt="All Meat Ala Carte">
                                     <div class="menu-card-gradient"></div>
@@ -736,12 +762,16 @@
 
                 <!-- BEVERAGES-->
                 <section id="beverages-extras" class="mb-3 reveal-on-scroll">
+                        <div>
+                            <h2 class="h4 section-heading mb-0">Beverages</h2>
+                        </div>
+                        <br>
                     <div class="row g-4 align-items-stretch">
                         <!-- Beverages -->
                         <div class="col-md-6 col-lg-4">
                             <div class="card menu-card menu-card-overlay h-100 border-0">
                                 <div class="menu-card-image-wrapper">
-                                    <img src="assets/images/placeholder.jpg"
+                                    <img src="assets/images/drinks.jpg"
                                         class="menu-card-img"
                                         alt="Beverages">
                                     <div class="menu-card-gradient"></div>
@@ -787,41 +817,30 @@
                         </h5>
 
                         <div id="cartItems" class="mb-3 text-muted">
-                            No items yet. Add something from the menu.
+                            No items yet. Come try out what we have!
                         </div>
 
                         <hr class="my-2">
 
-                        <div class="mb-2">
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="fulfillment" id="cartDelivery" value="delivery" checked>
-                                <label class="form-check-label small" for="cartDelivery">Delivery</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="fulfillment" id="cartPickup" value="pickup">
-                                <label class="form-check-label small" for="cartPickup">Pickup</label>
-                            </div>
-                            <div id="cartDeliveryNote" class="small text-muted mt-1">
-                                Delivery fee will apply for deliveries starting at ₱15 based on delivery location.
-                            </div>
+                        <div class="small text-muted mb-2" id="cartFulfillmentNote">
+                            Delivery fee will be calculated based on your address.
                         </div>
-
                         <div class="d-flex justify-content-between small">
                             <span>Subtotal</span>
                             <span id="cartSubtotal">₱0</span>
                         </div>
-                        <div class="d-flex justify-content-between small">
+                        <div class="d-flex justify-content-between small" id="cartDeliveryRow" style="display:none;">
                             <span>Delivery fee</span>
-                            <span id="cartDeliveryFee">₱20</span>
+                            <span id="cartDeliveryFee">₱0</span>
                         </div>
                         <div class="d-flex justify-content-between fw-semibold mt-2">
                             <span>Total</span>
                             <span id="cartTotal">₱0</span>
                         </div>
 
-                        <button class="btn btn-warning w-100 btn-sm fw-semibold mt-3">
+                        <a href="checkout.php" class="btn btn-warning w-100 btn-sm fw-semibold mt-3">
                             <i class="fa-solid fa-bag-shopping me-1"></i> Proceed to Checkout
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>

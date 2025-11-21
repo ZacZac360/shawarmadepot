@@ -1,6 +1,5 @@
-/* =========================
-   Global theme vars & base
-   ========================= */
+/* ---------------------- Global theme & base ---------------------- */
+
 :root {
     --primary-color: #ffb300;   /* main accent color */
     --secondary-color: #2b2b2b; /* dark bg color */
@@ -11,17 +10,25 @@ body {
     background-color: #f8f9fa;
 }
 
-/* =========================
-   Navbar
-   ========================= */
+main {
+    background: linear-gradient(
+        to bottom,
+        #fafafa 0%,
+        #f7f4d6 40%,
+        #ffffff 100%
+    );
+    background-attachment: fixed;
+}
+
+/* ---------------------- Navbar ---------------------- */
+
 .navbar-brand span {
     color: var(--primary-color);
     font-weight: 800;
 }
 
-/* =========================
-   Generic section styles
-   ========================= */
+/* ---------------------- Generic section styles ---------------------- */
+
 .section-title {
     font-weight: 700;
     letter-spacing: 0.04em;
@@ -34,9 +41,20 @@ body {
     font-weight: 800;
 }
 
-/* =========================
-   HERO
-   ========================= */
+/* Background for info sections */
+
+.section-info {
+    background: linear-gradient(
+        to bottom,
+        #fafafa 0%,
+        #f7f4d6 40%,
+        #ffffff 100%
+    );
+    background-attachment: fixed;
+}
+
+/* ---------------------- Hero ---------------------- */
+
 .hero-section {
     position: relative;
     min-height: 80vh;
@@ -47,14 +65,16 @@ body {
     padding: 4rem 0;
 }
 
-/* Background slider container */
+/* Hero background slider container */
+
 .hero-bg {
     position: absolute;
     inset: 0;
     z-index: -2;
 }
 
-/* Individual slides */
+/* Individual hero slides */
+
 .hero-bg-slide {
     position: absolute;
     inset: 0;
@@ -65,12 +85,14 @@ body {
     transition: opacity 1s ease-in-out;
 }
 
-/* Active slide visible */
+/* Active hero slide */
+
 .hero-bg-slide.active {
     opacity: 1;
 }
 
 /* Dark overlay for readability */
+
 .hero-overlay {
     position: absolute;
     inset: 0;
@@ -82,7 +104,8 @@ body {
     z-index: -1;
 }
 
-/* Text tweaks */
+/* Hero text */
+
 .hero-title {
     font-size: clamp(2.4rem, 4vw, 3.3rem);
     font-weight: 800;
@@ -93,7 +116,8 @@ body {
     max-width: 32rem;
 }
 
-/* Badge style */
+/* Hero badge */
+
 .hero-badge {
     display: inline-flex;
     align-items: center;
@@ -104,32 +128,36 @@ body {
     font-size: 0.85rem;
 }
 
-/* Stats spacing */
+/* Hero stats */
+
 .hero-stats > div {
     margin-right: 1.5rem;
     margin-bottom: 0.75rem;
 }
 
 /* Hero video card */
+
 .hero-video-card {
-    width: 100%;              /* take full width of the Bootstrap col */
-    max-width: 400px;         /* cap width */
+    width: 100%;
+    max-width: 400px;
     margin-left: auto;
-    margin-right: auto;       /* centers the card in its column */
+    margin-right: auto;
 }
 
-/* Video wrapper controls actual video size */
+/* Hero Facebook video wrapper */
+
 .hero-fb-video {
     position: relative;
     width: 100%;
     max-width: 260px;
-    aspect-ratio: 9 / 16;     /* keeps reels vertical */
+    aspect-ratio: 9 / 16;
     border-radius: 0.75rem;
     overflow: hidden;
-    margin: 0 auto;           /* center video inside the card */
+    margin: 0 auto;
 }
 
-/* Iframe fills that wrapper and never fights the size */
+/* Hero Facebook iframe fills wrapper */
+
 .hero-fb-video iframe {
     position: absolute;
     inset: 0;
@@ -137,48 +165,48 @@ body {
     height: 100%;
 }
 
-/* =========================
-   Menu cards (base)
-   ========================= */
+/* ---------------------- Menu cards (base) ---------------------- */
 
 /* Base card look */
+
 .menu-card {
     border-radius: 1rem;
     overflow: hidden;
     border: none;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.07);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-/* Hover ONLY for normal (non-overlay) cards */
+/* Hover for normal (non-overlay) cards */
+
 .menu-card:not(.menu-card-overlay):hover {
     transform: translateY(-4px);
-    box-shadow: 0 14px 32px rgba(0,0,0,0.12);
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.12);
 }
 
-/* Normal image cards (non-overlay) */
+/* Normal image cards */
+
 .menu-card:not(.menu-card-overlay) img {
     height: 180px;
     object-fit: cover;
 }
 
 /* Shared price style */
+
 .price-tag {
     font-weight: 700;
     color: var(--primary-color);
 }
 
 /* Cart badge */
+
 .cart-count {
     font-size: 0.7rem;
     padding: 0.25em 0.4em;
 }
 
-/* =========================
-   OVERLAY CARDS for Best Sellers
-   ========================= */
+/* ---------------------- Overlay cards (Best Sellers) ---------------------- */
 
-/* Card container */
 .menu-card-overlay {
     border-radius: 1.25rem;
     overflow: hidden;
@@ -187,14 +215,16 @@ body {
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
 
-/* Wrapper that holds the image + overlays */
+/* Overlay image wrapper */
+
 .menu-card-overlay .menu-card-image-wrapper {
     position: relative;
     height: 100%;
-    min-height: 260px; /* tweak if you want taller/shorter cards */
+    min-height: 260px;
 }
 
-/* Full-bleed image */
+/* Overlay full-bleed image */
+
 .menu-card-overlay .menu-card-img {
     width: 100%;
     height: 100%;
@@ -203,7 +233,8 @@ body {
     transition: transform 0.35s ease;
 }
 
-/* Dark gradient from bottom so text is readable */
+/* Overlay gradient for text */
+
 .menu-card-gradient {
     position: absolute;
     inset: 0;
@@ -216,7 +247,8 @@ body {
     );
 }
 
-/* Text content over image */
+/* Overlay content */
+
 .menu-card-content {
     position: absolute;
     inset-inline: 1.25rem;
@@ -235,12 +267,14 @@ body {
     color: rgba(255, 255, 255, 0.85);
 }
 
-/* Price color when on dark background */
+/* Overlay price color override */
+
 .menu-card-overlay .price-tag {
     color: #ffdf6b;
 }
 
 /* Featured badge */
+
 .featured-tag {
     position: absolute;
     top: 1rem;
@@ -251,7 +285,8 @@ body {
     font-size: 0.75rem;
 }
 
-/* Hover effects: card pops, image zooms */
+/* Overlay hover effects */
+
 .menu-card-overlay:hover {
     transform: translateY(-6px) scale(1.02);
     box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
@@ -261,44 +296,40 @@ body {
     transform: scale(1.06);
 }
 
-/* Make outline buttons look decent on dark image */
+/* Outline buttons on overlays */
+
 .menu-card-overlay .btn-outline-light {
     border-width: 1px;
 }
 
-/* =========================
-   Special sections: Deals & Media
-   ========================= */
+/* ---------------------- Special sections: deals & media ---------------------- */
 
-/* Featured deals / best sellers band (Angel's / Shack vibe) */
 .section-deals {
     position: relative;
-    background: radial-gradient(circle at top left, #fff3cf 0%, #ffffff 45%, #fff8e6 100%);
+    background: linear-gradient(
+        to bottom,
+        #fff7d1 0%,
+        #fff3b8 40%,
+        #ffef9e 100%
+    );
+    background-attachment: fixed;
 }
 
-/* Thin colored strip at the top of the section */
-.section-deals::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    height: 6px;
-    background: linear-gradient(90deg, #ffb300, #ff7a00);
-    opacity: 0.9;
-    pointer-events: none;
-}
+/* Container spacing inside deals section */
 
-/* Give content some spacing from the strip */
 .section-deals > .container {
     position: relative;
     padding-top: 1.5rem;
 }
 
-/* Optional: slightly stronger heading color inside this band */
+/* Heading color inside deals section */
+
 .section-deals .section-heading {
     color: #111827;
 }
 
-/* Media section with subtle highlight */
+/* Media section */
+
 .section-media {
     position: relative;
     background: #f4f4f7;
@@ -321,15 +352,15 @@ body {
     position: relative;
 }
 
-/* Tighten up titles inside band sections */
+/* Section titles in band sections */
+
 .section-deals .section-title,
 .section-media .section-title {
     letter-spacing: 0.08em;
 }
 
-/* =========================
-   Reviews
-   ========================= */
+/* ---------------------- Reviews ---------------------- */
+
 #reviews {
     padding-top: 2.5rem;
     padding-bottom: 2.5rem;
@@ -352,7 +383,7 @@ body {
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: #1877f2;          /* FB blue */
+    background: #1877f2; /* Facebook blue */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -360,9 +391,8 @@ body {
     color: #fff;
 }
 
-/* =========================
-   "Why us" icons & steps
-   ========================= */
+/* ---------------------- "Why us" icons & steps ---------------------- */
+
 .feature-icon {
     width: 48px;
     height: 48px;
@@ -388,51 +418,54 @@ body {
     font-size: 0.9rem;
 }
 
-/* =========================
-   Location / Visit Us
-   ========================= */
+/* ---------------------- Location / Visit Us ---------------------- */
+
 .visit-section {
-    background-color: #2b2b2b;          /* .bg-dark equivalent */
-    color: #f8f9fa;                     /* default text color inside */
+    background-color: #2b2b2b; /* .bg-dark equivalent */
+    color: #f8f9fa;
 }
 
-/* Make "muted" text light-muted instead of gray-on-dark */
+/* Muted text on dark background */
+
 .visit-section .text-muted {
     color: rgba(255, 255, 255, 0.7) !important;
 }
 
-/* Links inside Visit Us section */
+/* Links inside visit section */
+
 .visit-section a {
-    color: #ffc107; /* or var(--primary-color) if you prefer */
+    color: #ffc107;
 }
 
 .visit-section a:hover {
     color: #ffdd57;
 }
 
+/* Location card */
+
 .location-card {
-    color: #212529 !important;          /* dark text inside the white box */
+    color: #212529 !important;
     border-radius: 1rem;
     background-color: #fff;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
 }
+
+/* Opening hours layout */
 
 .opening-hours li {
     display: flex;
     justify-content: space-between;
 }
 
-/* Make Bootstrap ratio iframe fill container */
+/* Ratio iframe helper */
+
 .ratio iframe {
     width: 100%;
     height: 100%;
 }
 
+/* ---------------------- Footer ---------------------- */
 
-
-/* =========================
-   Footer
-   ========================= */
 .footer {
     background-color: #121212;
     color: #ddd;
@@ -448,9 +481,8 @@ body {
     color: var(--primary-color);
 }
 
-/* =========================
-   Back-to-top button & scroll reveal
-   ========================= */
+/* ---------------------- Back-to-top & scroll reveal ---------------------- */
+
 .back-to-top {
     position: fixed;
     right: 1.25rem;
@@ -470,27 +502,31 @@ body {
     font-size: 0.9rem;
 }
 
-/* When visible */
+/* Visible back-to-top */
+
 .back-to-top.show {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
 }
 
-/* Base state for things that will reveal on scroll */
+/* Scroll reveal base state */
+
 .reveal-on-scroll {
     opacity: 0;
     transform: translateY(16px);
     transition: opacity 0.4s ease-out, transform 0.4s ease-out;
 }
 
-/* When visible */
+/* Scroll reveal visible state */
+
 .reveal-visible {
     opacity: 1;
     transform: translateY(0);
 }
 
-/* Slight stagger effect if multiple children */
+/* Optional staggered reveal */
+
 .reveal-on-scroll.reveal-delay-1 {
     transition-delay: 0.1s;
 }
@@ -503,11 +539,8 @@ body {
     transition-delay: 0.3s;
 }
 
-/* =========================
-   Responsive tweaks
-   ========================= */
+/* ---------------------- Responsive tweaks ---------------------- */
 
-/* Small phones: hero video width & back-to-top position */
 @media (max-width: 576px) {
     .hero-fb-video {
         max-width: 80vw;
@@ -518,7 +551,6 @@ body {
     }
 }
 
-/* Tablets and below */
 @media (max-width: 767.98px) {
     .hero-section {
         text-align: center;
@@ -548,40 +580,38 @@ body {
     }
 }
 
-/* =========================
-   VARIANT MODAL THEME
-   (White + Yellow + Red palette)
-   With Black for hover/active
-   ========================= */
+/* ---------------------- Variant modal theme ---------------------- */
 
-/* Modal Background */
 #variantModal .modal-content {
-    background-color: #ffffff; /* White base */
+    background-color: #ffffff;
     color: #111;
     border-radius: 12px;
-    border: 2px solid #ffe08a; /* soft yellow border */
+    border: 2px solid #ffe08a;
     box-shadow: 0 0 20px rgba(255, 180, 0, 0.25);
 }
 
-/* Header */
+/* Modal header */
+
 #variantModal .modal-header {
-    background-color: #fff8e1; /* cream-yellow */
+    background-color: #fff8e1;
     border-bottom: 2px solid #ffd54f;
 }
 
 #variantModal .modal-title {
-    color: var(--primary-color); /* your yellow */
+    color: var(--primary-color);
     font-weight: 800;
 }
 
-/* Section titles */
+/* Modal section titles */
+
 #variantModal h6 {
-    color: #e53935; /* strong red accent */
+    color: #e53935;
     font-weight: 700;
     margin-bottom: 6px;
 }
 
-/* List items (default state) */
+/* List items */
+
 #variantModal .list-group-item {
     background-color: #fff;
     border: 1px solid #e0e0e0;
@@ -590,44 +620,49 @@ body {
 }
 
 /* Hover (non-active) */
+
 #variantModal .list-group-item:not(.active):hover {
-    background-color: #5c5a5a;       /* Black hover */
-    color: #fff;                  /* White text */
+    background-color: #5c5a5a;  /* black hover */
+    color: #fff;
     border-color: #000;
 }
 
-/* Selected item (active) */
+/* Active item */
+
 #variantModal .list-group-item.active {
-    background-color: #2b2b2b;       /* Black */
+    background-color: #2b2b2b;
     border-color: #000;
-    color: #ffe082;               /* Yellow text */
+    color: #ffe082;
     font-weight: 700;
 }
 
-/* Price inside list items */
+/* Price in list items */
+
 #variantModal .price-tag {
     color: #555;
     font-weight: 700;
 }
 
 /* Price when active */
+
 #variantModal .list-group-item.active .price-tag {
-    color: #ffeb3b; /* Bright yellow */
+    color: #ffeb3b;
 }
 
-/* Footer */
+/* Modal footer */
+
 #variantModal .modal-footer {
     background-color: #fff8e1;
     border-top: 2px solid #ffd54f;
 }
 
-/* Footer text */
 #variantModal #variantModalPriceHint {
     color: #444;
     font-weight: 600;
 }
 
-/* Add to cart */
+/* Add-to-cart button */
+
 #variantModal .modal-footer .btn-warning {
     background-color: var(--primary-color);
     border: none;
@@ -637,12 +672,12 @@ body {
     padding: 6px 14px;
 }
 
-/* SPICE TOGGLE ==================================== */
+/* ---------------------- Spice toggle ---------------------- */
 
 #variantModal .spice-toggle {
     background-color: #fff;
     border: 1px solid #e0e0e0;
-    color: #e53935; /* spicy red text */
+    color: #e53935;
     font-weight: 600;
     transition: all 0.2s ease;
 }
@@ -654,104 +689,128 @@ body {
 }
 
 #variantModal .spice-toggle.active {
-    background-color: #e53935; /* strong red when spicy */
+    background-color: #e53935;
     border-color: #b71c1c;
-    color: #fff;
+    color: #ffffff;
     font-weight: 700;
 }
 
-/* Smooth corners for everything */
+/* Smooth corners */
+
 #variantModal .modal-content,
 #variantModal .list-group-item,
 #variantModal .spice-toggle {
     border-radius: 10px;
 }
 
+/* ---------------------- Delivery form box ---------------------- */
+
 .delivery-box {
-    background: #fff;             /* yellow background */
-    border-left: 4px solid #1f1f1f;  /* dark accent */
-    color: #1c1c1c;                  /* dark text */
+    background: #fefff2;
+    border-left: 4px solid #1f1f1f;
+    color: #1c1c1c;
     padding: 1rem;
     border-radius: 0.5rem;
 }
 
-/* Inputs inside the delivery box */
 .delivery-box input,
 .delivery-box select {
-    background-color: #ffffff;       /* white input background */
-    color: #1c1c1c;                  /* dark text */
-    border: 1px solid #ccc;          /* subtle border */
+    background-color: #ffffff;
+    color: #1c1c1c;
+    border: 1px solid #ccc;
 }
 
-/* Placeholder text */
 .delivery-box input::placeholder {
-    color: #666;                     /* darker placeholder for contrast */
+    color: #666;
 }
 
-/* === CART ITEM LIGHT THEME (Matches Shawarma Depot UI) === */
+/* ---------------------- Cart items ---------------------- */
 
 .cart-item {
-    background: #ffffff;                 /* clean white card */
-    border: 1px solid #e3e3e3;           /* very light border */
+    background: #ffffff;
+    border: 1px solid #e3e3e3;
     border-radius: 10px;
     padding: 14px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    color: #1c1c1c;                      /* dark charcoal text */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    color: #1c1c1c;
 }
 
-/* Header: item name + line total */
 .cart-item .item-header {
     display: flex;
     justify-content: space-between;
     font-weight: 700;
     font-size: 0.95rem;
     margin-bottom: 6px;
-    color: #111;                         /* strong dark */
+    color: #111;
 }
 
 .cart-item .item-price {
-    color: #ffb300;                      /* your main yellow accent */
+    color: #ffb300;
     font-weight: 800;
 }
 
-/* Summary text */
 .cart-item .item-summary {
     font-size: 0.8rem;
-    color: #666;                         /* gray descriptive text */
+    color: #666;
     margin-bottom: 12px;
 }
 
-/* Quantity controls */
 .cart-item .qty-box {
     display: flex;
     align-items: center;
     gap: 6px;
 }
 
-/* + / – buttons */
+/* Quantity buttons */
+
 .cart-item .qty-btn {
     width: 30px;
     height: 30px;
     border-radius: 6px;
-    background: #f2f2f2;                 /* soft light gray button bg */
-    border: 1px solid #ccc;              /* thin border */
-    color: #1c1c1c;                      /* dark icon */
+    background: #f2f2f2;
+    border: 1px solid #ccc;
+    color: #1c1c1c;
     transition: 0.15s ease;
 }
 
 .cart-item .qty-btn:hover {
-    background: #ffe08a;                 /* very soft yellow hover */
+    background: #ffe08a;
     border-color: #ffb300;
 }
 
-/* Quantity number */
+/* Quantity badge */
+
 .cart-item .qty-number {
     padding: 2px 12px;
-    background: #ffb300;                 /* yellow pill */
-    color: #1c1c1c;                      /* black text */
+    background: #ffb300;
+    color: #1c1c1c;
     border-radius: 6px;
     font-weight: 700;
     font-size: 1rem;
     min-width: 32px;
     text-align: center;
+}
+
+/* ---------------------- Foodpanda / Grab buttons ---------------------- */
+
+.btn.panda-btn {
+    background-color: #d70f64;
+    border-color: #d70f64;
+    color: #fff;
+}
+
+.btn.panda-btn:hover {
+    background-color: #b40c54;
+    border-color: #b40c54;
+}
+
+.btn.grab-btn {
+    background-color: #00b14f;
+    border-color: #00b14f;
+    color: #fff;
+}
+
+.btn.grab-btn:hover {
+    background-color: #009d45;
+    border-color: #009d45;
 }

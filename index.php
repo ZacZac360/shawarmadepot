@@ -55,7 +55,7 @@
                 </li>
 
                 <li class="nav-item ms-lg-3">
-                    <a class="btn btn-outline-warning fw-semibold px-3" href="cart.php">
+                    <a class="btn btn-outline-warning fw-semibold px-3" href="menu.php">
                         <i class="fa-solid fa-cart-shopping me-1"></i> Cart
                     </a>
                 </li>
@@ -76,7 +76,7 @@
     <!-- Background slider (same images) -->
     <div class="hero-bg">
         <div class="hero-bg-slide" style="background-image: url('assets/images/allmeatshawarmarice.jpg');"></div>
-        <div class="hero-bg-slide" style="background-image: url('assets/images/beefshawarma.jpg');"></div>
+        <div class="hero-bg-slide" style="background-image: url('assets/images/steakandfriesshawarma.jpg');"></div>
         <div class="hero-bg-slide" style="background-image: url('assets/images/chickenshawarmarice.jpg');"></div>
         <div class="hero-bg-slide" style="background-image: url('assets/images/loadedfries.jpg');"></div>
         <div class="hero-bg-slide" style="background-image: url('assets/images/nachos.jpg');"></div>
@@ -240,9 +240,7 @@
                             <h4 class="menu-card-title mb-1">Double Cheese Premium Steak and Fries Shawarma</h4>
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="price-tag mb-0">₱ 130 / 155 [Regular/Large]</span>
-                                <a href="menu.php" class="btn btn-warning btn-sm fw-semibold">
-                                    Order Now
-                                </a>
+
                             </div>
                         </div>
                     </div>
@@ -252,7 +250,7 @@
             <div class="col-lg-6">
                 <div class="card menu-card menu-card-overlay h-100 border-0">
                     <div class="menu-card-image-wrapper">
-                        <img src="assets/images/beefshawarma.jpg" class="menu-card-img" alt="Beef Shawarma">
+                        <img src="assets/images/classicshawarma.jpg" class="menu-card-img" alt="Beef Shawarma">
 
                         <!-- Dark gradient so text is readable -->
                         <div class="menu-card-gradient"></div>
@@ -268,9 +266,7 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="price-tag mb-0">₱ 70 / 85 [Regular/Large]</span>
                                 <span class="price-tag mb-0">₱ 135 / 165 [B1T1 Regular/Large]</span>
-                                <a href="menu.php" class="btn btn-warning btn-sm fw-semibold">
-                                    Order Now
-                                </a>
+
                             </div>
                         </div>
                     </div>
@@ -296,9 +292,7 @@
                             <h4 class="menu-card-title mb-1">Shawarma Rice Overload</h4>
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="price-tag mb-0">₱ 150</span>
-                                <a href="menu.php" class="btn btn-warning btn-sm fw-semibold">
-                                    Order Now
-                                </a>
+
                             </div>
                         </div>
                     </div>
@@ -324,9 +318,7 @@
                             <h4 class="menu-card-title mb-1">Coated Fries</h4>
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="price-tag mb-0">₱ 90 / 190 [Solo/Bucket]</span>
-                                <a href="menu.php" class="btn btn-warning btn-sm fw-semibold">
-                                    Order Now
-                                </a>
+
                             </div>
                         </div>
                     </div>
@@ -340,7 +332,6 @@
         </div>
     </div>
 </section>
-
 
 <!-- CUSTOMER REVIEWS -->
 <section id="reviews" class="py-5 bg-dark text-light reveal-on-scroll">
@@ -415,7 +406,7 @@
 </section>
 
 <!-- FROM FACEBOOK (REELS) -->
-<section class="py-5 section-media reveal-on-scroll">
+<section class="py-5 section-deals reveal-on-scroll">
     <div class="container">
         <div class="row gy-4 align-items-center">
             <div class="col-lg-5">
@@ -487,121 +478,6 @@
 
                     <a href="menu.php" class="btn btn-warning w-100 mt-3 fw-semibold">
                         <i class="fa-solid fa-bag-shopping me-1"></i> Order Now
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- INFORSECTION -->
-<section class="py-5 bg-white" reveal-on-scroll>
-    <div class="container">
-        <div class="row align-items-start gy-4">
-            <div class="col-lg-6">
-                <h1 class="hero-title mb-3">
-                   Street food vibes. Consistent quality.
-                </h1>
-                <p class="text-muted">
-                    Whether you're ending a long day, cramming for exams, or just craving something messy and good,
-                    Shawarma Depot has you covered.
-                </p>
-
-                <div class="row gy-3 mt-3">
-                    <div class="col-sm-6 d-flex">
-                        <div class="me-3">
-                            <div class="feature-icon">
-                                <i class="fa-solid fa-pepper-hot"></i>
-                            </div>
-                        </div>
-                        <div>
-                            <h6 class="fw-bold mb-1">Loaded & Flavorful</h6>
-                            <p class="small text-muted mb-0">
-                                Proper meat, veggies, and sauce — hindi tinipid.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="col-sm-6 d-flex">
-                        <div class="me-3">
-                            <div class="feature-icon">
-                                <i class="fa-solid fa-motorcycle"></i>
-                            </div>
-                        </div>
-                        <div>
-                            <h6 class="fw-bold mb-1">Fast Pickup & Delivery</h6>
-                            <p class="small text-muted mb-0">
-                                Place your order online and just wait for the ping.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="col-sm-6 d-flex">
-                        <div class="me-3">
-                            <div class="feature-icon">
-                                <i class="fa-solid fa-wallet"></i>
-                            </div>
-                        </div>
-                        <div>
-                            <h6 class="fw-bold mb-1">Student-Friendly Pricing</h6>
-                            <p class="small text-muted mb-0">
-                                Solid meals that won't murder your allowance.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="col-sm-6 d-flex">
-                        <div class="me-3">
-                            <div class="feature-icon">
-                                <i class="fa-solid fa-star"></i>
-                            </div>
-                        </div>
-                        <div>
-                            <h6 class="fw-bold mb-1">Local Favorite</h6>
-                            <p class="small text-muted mb-0">
-                                Regulars, barkadas, and families keep coming back.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- How it works timeline -->
-            <div class="col-lg-6">
-                <div class="card border-0 shadow-sm rounded-4 p-4">
-                    <h5 class="fw-bold mb-3">Order in 3 easy steps</h5>
-                    <div class="order-step d-flex mb-3">
-                        <div class="step-number me-3">1</div>
-                        <div>
-                            <h6 class="fw-semibold mb-1">Browse the menu</h6>
-                            <p class="small text-muted mb-0">
-                                Pick your wrap, rice meals, and add-ons straight from the menu page.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="order-step d-flex mb-3">
-                        <div class="step-number me-3">2</div>
-                        <div>
-                            <h6 class="fw-semibold mb-1">Set your details</h6>
-                            <p class="small text-muted mb-0">
-                                Drop your name, contact, and delivery or pickup details at checkout.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="order-step d-flex">
-                        <div class="step-number me-3">3</div>
-                        <div>
-                            <h6 class="fw-semibold mb-1">Confirm & wait</h6>
-                            <p class="small text-muted mb-0">
-                                We'll prep your order — all that's left is to eat.
-                            </p>
-                        </div>
-                    </div>
-
-                    <a href="menu.php" class="btn btn-warning w-100 mt-4">
-                        Start Ordering Now
                     </a>
                 </div>
             </div>
