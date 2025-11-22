@@ -11,7 +11,6 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
           rel="stylesheet"
-          integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
           crossorigin="anonymous">
 
     <!-- Font Awesome -->
@@ -26,12 +25,15 @@
 <!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm sticky-top">
     <div class="container">
-        <a class="navbar-brand fw-bold" href="index.php">
-            Shawarma <span>Depot</span>
+        <a class="navbar-brand d-flex align-items-center" href="index.php">
+            <img src="assets/images/logo.png" alt="Shawarma Depot Logo" width="50" height="50">
+            <div class="ms-3 d-flex flex-column lh-1">
+                <strong>Shawarma</strong>
+                <span>Depot</span>
+            </div>
         </a>
-        <button class="navbar-toggler" type="button"
-                data-bs-toggle="collapse" data-bs-target="#mainNavbar"
-                aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
             <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -41,21 +43,25 @@
                     <a class="nav-link" href="index.php">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="menu.php">Menu</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="track-order.php">Track Order</a>
+                    <a class="nav-link active" href="menu.php">Menu</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="about.php">About</a>
                 </li>
-                <li class="nav-item me-lg-2">
+                <li class="nav-item">
                     <a class="nav-link" href="contact.php">Contact</a>
                 </li>
                 <li class="nav-item">
-                    <a class="btn btn-warning btn-sm text-dark fw-semibold" href="menu.php">
-                        <i class="fa-solid fa-bag-shopping me-1"></i>
-                        Back to Menu
+                    <a class="nav-link" href="track-order.php">Track Order</a>
+                </li>
+                <li class="nav-item ms-lg-3">
+                    <a class="btn btn-outline-warning fw-semibold px-3" href="menu.php">
+                        <i class="fa-solid fa-cart-shopping me-1"></i> Cart
+                    </a>
+                </li>
+                <li class="nav-item ms-lg-3">
+                    <a class="btn btn-warning fw-semibold px-3" href="menu.php">
+                        <i class="fa-solid fa-utensils me-1"></i> Order Now
                     </a>
                 </li>
             </ul>
@@ -72,15 +78,15 @@
                     Checkout
                 </div>
                 <h1 class="section-heading h3 mb-2">
-                    Review your order & enter your details
+                    Review your order & confirm
                 </h1>
                 <p class="text-muted mb-0">
-                    Almost done! Fill out your info below and confirm your order.
+                    Almost done! Check your details and confirm your order.
                 </p>
             </div>
 
             <div class="row g-4">
-                <!-- LEFT: Customer & delivery details -->
+                <!-- LEFT: Checkout confirmation + OTP (2-step) -->
                 <div class="col-lg-7">
                     <div class="delivery-box mb-3">
                         <div class="d-flex align-items-center justify-content-between mb-3">
@@ -88,230 +94,151 @@
                                 CHECKOUT CONFIRMATION
                             </span>
                             <small class="text-muted">
-                                We use this to contact you and deliver your order.
+                                Your details are based on what you entered on the previous page.
                             </small>
                         </div>
 
-                        <!-- 
-                            BACKEND NOTE:
-                            Wrap everything in one <form> that the backend will process.
-                            You can later change `action` to your order processing script.
-                         -->
-                        <form action="" method="post">
-                            <!-- Contact info -->
-                            <h5 class="mb-3">
-                                <i class="fa-solid fa-user me-2 text-warning"></i>
-                                Contact Information
-                            </h5>
+                        <!-- ONE FORM, TWO STEPS (toggled by checkout.js) -->
+                        <form id="checkoutForm" action="order-confirmed.php" method="post" autocomplete="off">
+                            <!-- Hidden fields populated from localStorage via checkout.js -->
+                            <input type="hidden" name="customer_name"        id="hiddenCustomerName">
+                            <input type="hidden" name="customer_phone"       id="hiddenCustomerPhone">
+                            <input type="hidden" name="customer_messenger"   id="hiddenCustomerMessenger">
+                            <input type="hidden" name="customer_email"       id="hiddenCustomerEmail">
 
-                            <div class="row g-3 mb-3">
-                                <div class="col-md-6">
-                                    <label for="customerName" class="form-label small text-uppercase text-muted">
-                                        Full Name
-                                    </label>
-                                    <input type="text"
-                                           class="form-control"
-                                           id="customerName"
-                                           name="customer_name"
-                                           placeholder="Juan Dela Cruz"
-                                           required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="customerPhone" class="form-label small text-uppercase text-muted">
-                                        Mobile Number
-                                    </label>
-                                    <input type="tel"
-                                           class="form-control"
-                                           id="customerPhone"
-                                           name="customer_phone"
-                                           placeholder="09XX XXX XXXX"
-                                           required>
-                                </div>
-                            </div>
+                            <input type="hidden" name="fulfillment_mode"     id="hiddenFulfillmentMode">
+                            <input type="hidden" name="delivery_subdivision" id="hiddenSubdivision">
+                            <input type="hidden" name="delivery_address"     id="hiddenDeliveryAddress">
+                            <input type="hidden" name="delivery_landmark"    id="hiddenDeliveryLandmark">
 
-                            <div class="row g-3 mb-4">
-                                <div class="col-md-6">
-                                    <label for="customerMessenger" class="form-label small text-uppercase text-muted">
-                                        Messenger Name / Link <span class="text-muted">(optional)</span>
-                                    </label>
-                                    <input type="text"
-                                           class="form-control"
-                                           id="customerMessenger"
-                                           name="customer_messenger"
-                                           placeholder="FB name or profile link">
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="customerEmail" class="form-label small text-uppercase text-muted">
-                                        Email <span class="text-muted">(optional)</span>
-                                    </label>
-                                    <input type="email"
-                                           class="form-control"
-                                           id="customerEmail"
-                                           name="customer_email"
-                                           placeholder="you@example.com">
-                                </div>
-                            </div>
+                            <!-- Money -->
+                            <input type="hidden" name="subtotal"             id="hiddenSubtotal">
+                            <input type="hidden" name="delivery_fee"         id="hiddenDeliveryFee">
+                            <input type="hidden" name="total_amount"         id="hiddenTotalAmount">
 
-                            <!-- Fulfillment choice -->
-                            <h5 class="mb-3">
-                                <i class="fa-solid fa-motorcycle me-2 text-warning"></i>
-                                How would you like to get your order?
-                            </h5>
+                            <!-- Cart snapshot -->
+                            <input type="hidden" name="cart_json"            id="hiddenCartJson">
 
-                            <div class="mb-3">
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input"
-                                           type="radio"
-                                           name="fulfillment_mode"
-                                           id="fulfillmentDelivery"
-                                           value="delivery"
-                                           required>
-                                    <label class="form-check-label" for="fulfillmentDelivery">
-                                        Delivery
-                                    </label>
+                            <!-- ========= STEP 1: SUMMARY & PAYMENT ========= -->
+                            <div id="checkoutStep1">
+                                <!-- Summary of contact + delivery / pickup info -->
+                                <h5 class="mb-3">
+                                    <i class="fa-solid fa-user me-2 text-warning"></i>
+                                    Your Details
+                                </h5>
+
+                                <div id="checkoutDetailsSummary"
+                                     class="small text-muted mb-3">
+                                    <!-- Filled by checkout.js from localStorage (shawarma_order_details) -->
+                                    Loading your details...
                                 </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input"
-                                           type="radio"
-                                           name="fulfillment_mode"
-                                           id="fulfillmentPickup"
-                                           value="pickup">
-                                    <label class="form-check-label" for="fulfillmentPickup">
-                                        Pickup
-                                    </label>
-                                </div>
-                            </div>
 
-                            <div class="small text-muted mb-3" id="cartFulfillmentNote">
-                                Choose Delivery or Pickup above.
-                            </div>
-
-                            <!-- Delivery details (shown when Delivery is selected) -->
-                            <div id="deliveryDetailsFields" style="display:none;">
                                 <hr class="my-3">
 
-                                <h6 class="small text-uppercase text-muted mb-2">
-                                    Delivery Details
-                                </h6>
+                                <!-- Payment method -->
+                                <h5 class="mb-3">
+                                    <i class="fa-solid fa-wallet me-2 text-warning"></i>
+                                    Payment
+                                </h5>
 
                                 <div class="mb-3">
-                                    <label for="subdivisionSelect"
+                                    <div class="form-check">
+                                        <input class="form-check-input"
+                                               type="radio"
+                                               name="payment_method"
+                                               id="paymentCOD"
+                                               value="cod"
+                                               checked>
+                                        <label class="form-check-label" for="paymentCOD">
+                                            Cash
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input"
+                                               type="radio"
+                                               name="payment_method"
+                                               id="paymentGCash"
+                                               value="gcash">
+                                        <label class="form-check-label" for="paymentGCash">
+                                            GCash (you’ll receive payment details after confirmation)
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Order notes -->
+                                <div class="mb-3">
+
+                                    <label for="orderNotes"
                                            class="form-label small text-uppercase text-muted">
-                                        Subdivision / Area
+                                        Notes to Shawarma Depot <span class="text-muted">(optional)</span>
                                     </label>
-                                    <select class="form-select"
-                                            id="subdivisionSelect"
-                                            name="delivery_subdivision">
-                                        <option value="">Select your area...</option>
-                                        <optgroup label="San Marino">
-                                            <option value="classic">Classic</option>
-                                            <option value="heights">Heights</option>
-                                            <option value="central">Central</option>
-                                            <option value="phase1">Phase 1</option>
-                                            <option value="phase2">Phase 2</option>
-                                            <option value="phase3">Phase 3</option>
-                                            <option value="phase4">Phase 4</option>
-                                            <option value="phase5">Phase 5</option>
-                                            <option value="north1">North 1</option>
-                                            <option value="north2">North 2</option>
-                                            <option value="south1">South 1</option>
-                                            <option value="south2">South 2</option>
-                                        </optgroup>
-                                        <optgroup label="Outside San Marino">
-                                            <option value="ndgv">North DG Village</option>
-                                            <option value="sdgv">South DG Village</option>
-                                        </optgroup>
-                                    </select>
+
+                                    <textarea class="form-control"
+                                              id="orderNotes"
+                                              name="order_notes"
+                                              rows="3"
+                                              placeholder="Example: less rice, extra spicy, call when outside gate, etc."></textarea>
                                 </div>
 
-                                <div id="deliveryFeeMessage"
-                                     class="alert alert-light border small py-2 mb-3">
-                                    Select your subdivision to calculate delivery fee.
+                                <!-- Step 1 button -->
+                                <div class="d-flex justify-content-between align-items-center mt-4">
+                                    <small class="text-muted">
+                                        By placing your order, you agree to be contacted for confirmation.
+                                    </small>
+                                    <button type="button"
+                                            id="btnConfirmStep1"
+                                            class="btn btn-warning fw-semibold text-dark">
+                                        Confirm Order
+                                        <i class="fa-solid fa-arrow-right-long ms-1"></i>
+                                    </button>
                                 </div>
+                            </div>
 
-                                <!-- These fields are toggled by main.js using #addressFields -->
-                                <div id="addressFields" style="display:none;">
-                                    <div class="mb-3">
-                                        <label for="deliveryAddress"
-                                               class="form-label small text-uppercase text-muted">
-                                            Complete Address
-                                        </label>
-                                        <textarea class="form-control"
-                                                  id="deliveryAddress"
-                                                  name="delivery_address"
-                                                  rows="2"
-                                                  placeholder="Block, lot, street, house color, etc."></textarea>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="deliveryLandmark"
-                                               class="form-label small text-uppercase text-muted">
-                                            Landmark <span class="text-muted">(optional)</span>
-                                        </label>
-                                        <input type="text"
-                                               class="form-control"
-                                               id="deliveryLandmark"
-                                               name="delivery_landmark"
-                                               placeholder="Near sari-sari store, gate, etc.">
+                            <!-- ========= STEP 2: OTP ========= -->
+                            <div id="checkoutStep2" style="display:none;">
+
+                                <h5 class="mb-2">
+                                    <i class="fa-solid fa-shield-halved me-2 text-warning"></i>
+                                    Enter the 6-digit confirmation code
+                                </h5>
+
+                                <p class="text-muted small mb-3">
+                                    Normally this would be sent via SMS or Messenger.
+                                    For testing, use code <strong>000000</strong>.
+                                </p>
+
+                                <div class="mb-3">
+                                    <label for="otpCode"
+                                           class="form-label small text-uppercase text-muted">
+                                        6-digit code
+                                    </label>
+                                    <input type="text"
+                                           class="form-control text-center fs-5"
+                                           id="otpCode"
+                                           maxlength="6"
+                                           placeholder="______"
+                                           inputmode="numeric"
+                                           pattern="[0-9]*">
+                                    <div class="invalid-feedback" id="otpError">
+                                        Incorrect code. Please try again.
                                     </div>
                                 </div>
-                            </div>
 
-                            <!-- Payment method -->
-                            <hr class="my-3">
-
-                            <h5 class="mb-3">
-                                <i class="fa-solid fa-wallet me-2 text-warning"></i>
-                                Payment
-                            </h5>
-
-                            <div class="mb-3">
-                                <div class="form-check">
-                                    <input class="form-check-input"
-                                           type="radio"
-                                           name="payment_method"
-                                           id="paymentCOD"
-                                           value="cod"
-                                           checked>
-                                    <label class="form-check-label" for="paymentCOD">
-                                        Cash on Delivery / Pickup
-                                    </label>
+                                <div class="d-flex justify-content-between align-items-center mt-4">
+                                    <button type="button"
+                                            id="btnBackStep2"
+                                            class="btn btn-outline-secondary btn-sm">
+                                        <i class="fa-solid fa-arrow-left me-1"></i>
+                                        Back
+                                    </button>
+                                    <button type="button"
+                                            id="btnPlaceOrder"
+                                            class="btn btn-warning fw-semibold text-dark d-inline-block">
+                                        Place Order
+                                        <i class="fa-solid fa-check ms-1"></i>
+                                    </button>
                                 </div>
-                                <!-- For future: GCash, online payment, etc. -->
-                                <!--
-                                <div class="form-check">
-                                    <input class="form-check-input"
-                                           type="radio"
-                                           name="payment_method"
-                                           id="paymentGCash"
-                                           value="gcash">
-                                    <label class="form-check-label" for="paymentGCash">
-                                        GCash
-                                    </label>
-                                </div>
-                                -->
-                            </div>
 
-                            <!-- Order notes -->
-                            <div class="mb-3">
-                                <label for="orderNotes"
-                                       class="form-label small text-uppercase text-muted">
-                                    Notes to Shawarma Depot <span class="text-muted">(optional)</span>
-                                </label>
-                                <textarea class="form-control"
-                                          id="orderNotes"
-                                          name="order_notes"
-                                          rows="3"
-                                          placeholder="Example: less rice, extra spicy, call when outside gate, etc."></textarea>
-                            </div>
-
-                            <!-- Place order button (Step 2) -->
-                            <div class="d-flex justify-content-between align-items-center mt-4">
-                                <small class="text-muted">
-                                    By placing your order, you agree to be contacted for confirmation.
-                                </small>
-                                <a href="track-order.php" class="btn btn-warning fw-semibold text-dark">
-                                    <i class="fa-solid fa-arrow-right-long ms-1"></i> Proceed to Checkout
-                                </a>
                             </div>
                         </form>
                     </div>
@@ -330,84 +257,39 @@
                                     Edit order
                                 </a>
                             </div>
+
                             <p class="text-muted small mb-3">
-                                <!-- BACKEND NOTE:
-                                     In the future, populate this list from your session/cart. -->
                                 Review what you’re about to order. This will be confirmed by our staff.
                             </p>
 
-                            <!-- Example items (frontend preview). Replace with PHP loop later. -->
-                            <div class="mb-3">
-                                <div class="cart-item mb-2">
-                                    <div class="item-header">
-                                        <span>Shawarma Wrap – LARGE Solo</span>
-                                        <span class="item-price">₱85</span>
-                                    </div>
-                                    <div class="item-summary">
-                                        Beef • Spicy • + Cheese Sauce
-                                    </div>
-                                    <div class="qty-box">
-                                        <span class="small text-muted me-1">Qty:</span>
-                                        <span class="qty-number">1</span>
-                                    </div>
+                            <!-- Dynamic cart items from localStorage -->
+                            <div id="checkoutCartItems" class="mb-3">
+                                <div class="text-muted small">
+                                    Loading your cart...
                                 </div>
-
-                                <div class="cart-item mb-2">
-                                    <div class="item-header">
-                                        <span>Shawarma Rice – Overload</span>
-                                        <span class="item-price">₱150</span>
-                                    </div>
-                                    <div class="item-summary">
-                                        Chicken • Not spicy
-                                    </div>
-                                    <div class="qty-box">
-                                        <span class="small text-muted me-1">Qty:</span>
-                                        <span class="qty-number">1</span>
-                                    </div>
-                                </div>
-
-                                <div class="cart-item mb-0">
-                                    <div class="item-header">
-                                        <span>Plum Tea – Large</span>
-                                        <span class="item-price">₱70</span>
-                                    </div>
-                                    <div class="item-summary">
-                                        Drinks
-                                    </div>
-                                    <div class="qty-box">
-                                        <span class="small text-muted me-1">Qty:</span>
-                                        <span class="qty-number">2</span>
-                                    </div>
-                                </div>
-
-                                <!-- BACKEND NOTE:
-                                     Replace all of the above with something like:
-                                     <?php foreach ($_SESSION['cart'] as $item): ?>
-                                         ...
-                                     <?php endforeach; ?>
-                                -->
                             </div>
 
                             <hr>
 
-                            <!-- Totals (static for now, backend later) -->
+                            <!-- Totals (dynamic) -->
                             <div class="d-flex justify-content-between mb-1">
                                 <span class="text-muted">Subtotal</span>
-                                <span class="fw-semibold">₱375</span>
+                                <span class="fw-semibold" id="checkoutSubtotal">₱0</span>
                             </div>
-                            <div class="d-flex justify-content-between mb-1">
+                            <div class="d-flex justify-content-between mb-1" id="checkoutDeliveryRow">
                                 <span class="text-muted">
                                     Delivery fee
                                     <i class="fa-solid fa-circle-question ms-1 text-warning"
-                                       title="Based on subdivision selection."></i>
+                                    title="Based on area you selected earlier."></i>
                                 </span>
-                                <span class="fw-semibold text-muted">
+                                <span class="fw-semibold text-muted" id="checkoutDeliveryFeeLabel">
                                     Calculated by area
                                 </span>
                             </div>
+
                             <div class="d-flex justify-content-between mb-3">
                                 <span class="fw-bold">Estimated Total</span>
-                                <span class="fw-bold text-success">₱390</span>
+                                <span class="fw-bold text-success" id="checkoutTotal">₱0</span>
                             </div>
 
                             <div class="alert alert-light border small mb-0">
@@ -417,25 +299,7 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Optional: store info / pickup note -->
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-body">
-                            <h6 class="mb-2">
-                                <i class="fa-solid fa-store me-2 text-warning"></i>
-                                Pickup Location
-                            </h6>
-                            <p class="small text-muted mb-1">
-                                Shawarma Depot – <strong>Your Area Here</strong>
-                            </p>
-                            <p class="small text-muted mb-0">
-                                <!-- Customize this with your real address -->
-                                Inside San Marino, near guardhouse / main road. Exact pin and
-                                directions will be sent after you place your order.
-                            </p>
-                        </div>
-                    </div>
-                </div>
+                </div> <!-- /RIGHT -->
             </div>
         </div>
     </section>
@@ -468,9 +332,9 @@
     </div>
 </footer>
 
-<!-- Bootstrap JS + your main.js -->
+<!-- Bootstrap JS + app scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         crossorigin="anonymous"></script>
-<script src="js/main.js"></script>
+<script type="module" src="assets/js/main.js"></script>
 </body>
 </html>

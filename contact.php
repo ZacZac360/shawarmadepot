@@ -26,13 +26,15 @@
 <!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm sticky-top">
     <div class="container">
-        <a class="navbar-brand fw-bold" href="index.php">
-            Shawarma <span>Depot</span>
+        <a class="navbar-brand d-flex align-items-center" href="index.php">
+            <img src="assets/images/logo.png" alt="Shawarma Depot Logo" width="50" height="50">
+            <div class="ms-3 d-flex flex-column lh-1">
+                <strong>Shawarma</strong>
+                <span>Depot</span>
+            </div>
         </a>
-        <button class="navbar-toggler" type="button"
-                data-bs-toggle="collapse" data-bs-target="#mainNavbar"
-                aria-controls="mainNavbar" aria-expanded="false"
-                aria-label="Toggle navigation">
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
             <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -42,21 +44,25 @@
                     <a class="nav-link" href="index.php">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="menu.php">Menu</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="track-order.php">Track Order</a>
+                    <a class="nav-link active" href="menu.php">Menu</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="about.php">About</a>
                 </li>
-                <li class="nav-item me-lg-2">
-                    <a class="nav-link active" aria-current="page" href="contact.php">Contact</a>
+                <li class="nav-item">
+                    <a class="nav-link" href="contact.php">Contact</a>
                 </li>
                 <li class="nav-item">
-                    <a class="btn btn-warning btn-sm text-dark fw-semibold" href="menu.php">
-                        <i class="fa-solid fa-bag-shopping me-1"></i>
-                        Order Now
+                    <a class="nav-link" href="track-order.php">Track Order</a>
+                </li>
+                <li class="nav-item ms-lg-3">
+                    <a class="btn btn-outline-warning fw-semibold px-3" href="menu.php">
+                        <i class="fa-solid fa-cart-shopping me-1"></i> Cart
+                    </a>
+                </li>
+                <li class="nav-item ms-lg-3">
+                    <a class="btn btn-warning fw-semibold px-3" href="menu.php">
+                        <i class="fa-solid fa-utensils me-1"></i> Order Now
                     </a>
                 </li>
             </ul>
@@ -251,24 +257,18 @@
 </button>
 
 <!-- FOOTER -->
-<footer class="footer mt-5">
+<footer class="footer mt-0 py-3 bg-dark text-light">
     <div class="container">
         <div class="row gy-3 align-items-center">
             <div class="col-md-6 text-center text-md-start">
-                <small class="d-block">
-                    &copy; <?php echo date('Y'); ?> Shawarma Depot. All rights reserved.
-                </small>
-                <small class="text-muted">
-                    The Soul of Real Shawarma – quality beef shawarma starts here.
-                </small>
+                <small>&copy; <?php echo date('Y'); ?> Shawarma Depot. All rights reserved.</small>
             </div>
             <div class="col-md-6 text-center text-md-end">
-                <small class="me-2">Follow us:</small>
-                <a href="https://www.facebook.com/p/Shawarma-Depot-61564260277953"
-                   target="_blank" rel="noopener" class="me-2">
-                    <i class="fa-brands fa-facebook"></i>
+                <a href="about.php" class="me-3 small text-light text-decoration-none">About</a>
+                <a href="contact.php" class="me-3 small text-light text-decoration-none">Contact</a>
+                <a href="admin/login.php" class="small text-light text-decoration-none">
+                    <i class="fa-solid fa-user-gear me-1"></i> Admin
                 </a>
-                <a href="#"><i class="fa-brands fa-instagram"></i></a>
             </div>
         </div>
     </div>
@@ -278,6 +278,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
         crossorigin="anonymous"></script>
-<script src="js/main.js"></script>
+<script type="module" src="assets/js/main.js"></script>
 </body>
 </html>

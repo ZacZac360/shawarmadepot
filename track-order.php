@@ -1,9 +1,122 @@
 <?php
-// track-order.php - Track Order page (frontend, backend-ready shell)
+// track-order.php - Track Order page (frontend + backend)
 
-// In the future, you'll fetch actual order data from the database using these:
-$orderCode = isset($_GET['order_code']) ? trim($_GET['order_code']) : '';
-$placeholderHasResult = !empty($orderCode); // For now, just pretend something was found if code is filled
+// ---------------------- DB connection ----------------------
+$host = "localhost";
+$user = "root";
+$pass = "Pokemon2003";      // your password
+$db   = "shawarma_depot";  // your DB name
+
+$mysqli = new mysqli($host, $user, $pass, $db);
+if ($mysqli->connect_error) {
+    die("Database connection failed: " . $mysqli->connect_error);
+}
+
+// ---------------------- Read query params ----------------------
+$orderCodeInput = trim($_GET['order_code'] ?? $_GET['code'] ?? ''); // support ?code= from order-confirmed
+$orderPhoneInput = trim($_GET['order_phone'] ?? '');
+
+// Normalize phone to digits only for matching
+$phoneDigits = preg_replace('/\D+/', '', $orderPhoneInput);
+
+// Flags / containers for template
+$hasSearched = ($orderCodeInput !== '' || $orderPhoneInput !== '');
+$order       = null;
+$cartItems   = [];
+$errorMsg    = "";
+
+// ---------------------- If form submitted, look up order ----------------------
+if ($hasSearched) {
+    if ($orderCodeInput === '' || $phoneDigits === '') {
+        $errorMsg = "Please enter both order ID and mobile number.";
+    } else {
+        // Match order_code exactly, phone ignoring spaces/dashes/+ etc
+        $sql = "
+            SELECT *
+            FROM orders
+            WHERE order_code = ?
+              AND REPLACE(REPLACE(REPLACE(customer_phone, ' ', ''), '-', ''), '+', '') = ?
+            LIMIT 1
+        ";
+        if ($stmt = $mysqli->prepare($sql)) {
+            $stmt->bind_param("ss", $orderCodeInput, $phoneDigits);
+            if ($stmt->execute()) {
+                $result = $stmt->get_result();
+                if ($result && $result->num_rows === 1) {
+                    $order = $result->fetch_assoc();
+
+                    // Decode cart_json
+                    if (!empty($order['cart_json'])) {
+                        $decoded = json_decode($order['cart_json'], true);
+                        if (is_array($decoded)) {
+                            $cartItems = $decoded;
+                        }
+                    }
+                }
+            }
+            $stmt->close();
+        }
+        if (!$order && $errorMsg === "") {
+            $errorMsg = "We couldn't find an order matching that ID and mobile number.";
+        }
+    }
+}
+
+// ---------------------- Helper: Status display ----------------------
+function humanStatusLabel(string $status): string {
+    switch ($status) {
+        case 'pending':          return 'Pending';
+        case 'confirmed':        return 'Confirmed';
+        case 'preparing':        return 'Preparing';
+        case 'out_for_delivery': return 'Out for delivery';
+        case 'completed':        return 'Completed';
+        case 'cancelled':        return 'Cancelled';
+        default:                 return ucfirst($status);
+    }
+}
+
+function statusBadgeClass(string $status): string {
+    switch ($status) {
+        case 'completed':
+            return 'bg-success-subtle text-success border border-success-subtle';
+        case 'out_for_delivery':
+            return 'bg-info-subtle text-info border border-info-subtle';
+        case 'preparing':
+            return 'bg-warning-subtle text-warning border border-warning-subtle';
+        case 'confirmed':
+            return 'bg-primary-subtle text-primary border border-primary-subtle';
+        case 'cancelled':
+            return 'bg-danger-subtle text-danger border border-danger-subtle';
+        case 'pending':
+        default:
+            return 'bg-secondary-subtle text-secondary border border-secondary-subtle';
+    }
+}
+
+// Map statuses to a simple 4-step flow
+$statusOrder = [
+    'pending'          => 0,
+    'confirmed'        => 1,
+    'preparing'        => 2,
+    'out_for_delivery' => 3,
+    'completed'        => 4, // treat as end of flow
+    'cancelled'        => -1 // special
+];
+
+$currentStepIndex = -1;
+$status = $order['status'] ?? '';
+if (isset($statusOrder[$status])) {
+    $currentStepIndex = $statusOrder[$status];
+}
+
+// Rough progress % for the bar
+$progressPercent = 0;
+if ($currentStepIndex >= 0) {
+    if ($currentStepIndex <= 0)      $progressPercent = 15;
+    elseif ($currentStepIndex == 1)  $progressPercent = 35;
+    elseif ($currentStepIndex == 2)  $progressPercent = 65;
+    elseif ($currentStepIndex >= 3)  $progressPercent = 90;
+}
 ?>
 <!doctype html>
 <html lang="en">
@@ -25,18 +138,22 @@ $placeholderHasResult = !empty($orderCode); // For now, just pretend something w
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100"><!-- full-height page -->
 
 <!-- ---------------------- Navbar ---------------------- -->
 
+<!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm sticky-top">
     <div class="container">
-        <a class="navbar-brand fw-bold" href="index.php">
-            Shawarma <span>Depot</span>
+        <a class="navbar-brand d-flex align-items-center" href="index.php">
+            <img src="assets/images/logo.png" alt="Shawarma Depot Logo" width="50" height="50">
+            <div class="ms-3 d-flex flex-column lh-1">
+                <strong>Shawarma</strong>
+                <span>Depot</span>
+            </div>
         </a>
-        <button class="navbar-toggler" type="button"
-                data-bs-toggle="collapse" data-bs-target="#mainNavbar"
-                aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
             <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -46,23 +163,25 @@ $placeholderHasResult = !empty($orderCode); // For now, just pretend something w
                     <a class="nav-link" href="index.php">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="menu.php">Menu</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="track-order.php">
-                        Track Order
-                    </a>
+                    <a class="nav-link active" href="menu.php">Menu</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="about.php">About</a>
                 </li>
-                <li class="nav-item me-lg-2">
+                <li class="nav-item">
                     <a class="nav-link" href="contact.php">Contact</a>
                 </li>
                 <li class="nav-item">
-                    <a class="btn btn-warning btn-sm text-dark fw-semibold" href="menu.php">
-                        <i class="fa-solid fa-bag-shopping me-1"></i>
-                        Order Now
+                    <a class="nav-link" href="track-order.php">Track Order</a>
+                </li>
+                <li class="nav-item ms-lg-3">
+                    <a class="btn btn-outline-warning fw-semibold px-3" href="menu.php">
+                        <i class="fa-solid fa-cart-shopping me-1"></i> Cart
+                    </a>
+                </li>
+                <li class="nav-item ms-lg-3">
+                    <a class="btn btn-warning fw-semibold px-3" href="menu.php">
+                        <i class="fa-solid fa-utensils me-1"></i> Order Now
                     </a>
                 </li>
             </ul>
@@ -70,7 +189,7 @@ $placeholderHasResult = !empty($orderCode); // For now, just pretend something w
     </div>
 </nav>
 
-<main class="py-4">
+<main class="py-4 flex-grow-1"><!-- stretches to push footer down -->
     <!-- ---------------------- Track order section ---------------------- -->
     <section class="py-4 section-info">
         <div class="container">
@@ -98,14 +217,10 @@ $placeholderHasResult = !empty($orderCode); // For now, just pretend something w
                                 Find your order
                             </h5>
                             <p class="small text-muted mb-3">
-                                Your order ID can be found in the confirmation message we sent
-                                (SMS or Messenger). Use the same mobile number you used when ordering.
+                                Your order ID can be found in the confirmation page or message we sent.
+                                Use the same mobile number you used when ordering.
                             </p>
 
-                            <!-- 
-                                Backend note:
-                                Later, this form will query your orders table using order_code and phone.
-                             -->
                             <form method="get" action="track-order.php">
                                 <div class="mb-3">
                                     <label for="orderCode" class="form-label small text-uppercase text-muted">
@@ -115,8 +230,8 @@ $placeholderHasResult = !empty($orderCode); // For now, just pretend something w
                                            class="form-control"
                                            id="orderCode"
                                            name="order_code"
-                                           placeholder="e.g. SD-2025-00123"
-                                           value="<?php echo htmlspecialchars($orderCode); ?>"
+                                           placeholder="e.g. DY37JLS867"
+                                           value="<?php echo htmlspecialchars($orderCodeInput); ?>"
                                            required>
                                 </div>
 
@@ -129,8 +244,16 @@ $placeholderHasResult = !empty($orderCode); // For now, just pretend something w
                                            id="orderPhone"
                                            name="order_phone"
                                            placeholder="09XX XXX XXXX"
+                                           value="<?php echo htmlspecialchars($orderPhoneInput); ?>"
                                            required>
                                 </div>
+
+                                <?php if ($hasSearched && $errorMsg): ?>
+                                    <div class="alert alert-danger py-2 small mb-3">
+                                        <i class="fa-solid fa-circle-exclamation me-1"></i>
+                                        <?php echo htmlspecialchars($errorMsg); ?>
+                                    </div>
+                                <?php endif; ?>
 
                                 <div class="d-grid d-sm-flex align-items-center justify-content-between mt-3">
                                     <button type="submit" class="btn btn-warning fw-semibold text-dark mb-2 mb-sm-0">
@@ -148,14 +271,14 @@ $placeholderHasResult = !empty($orderCode); // For now, just pretend something w
                     <div class="alert alert-light border small mt-3 mb-0">
                         <i class="fa-solid fa-shield-halved me-1 text-warning"></i>
                         For your safety, only orders with matching order ID and phone number
-                        will be shown here once verification is fully enabled.
+                        will be shown here.
                     </div>
                 </div>
 
                 <!-- Status / details column -->
                 <div class="col-lg-7">
-                    <?php if ($placeholderHasResult): ?>
-                        <!-- ---------------------- Example result (placeholder) ---------------------- -->
+                    <?php if ($order): ?>
+                        <!-- ---------------------- Live result from DB ---------------------- -->
                         <div class="card shadow-sm border-0 mb-3">
                             <div class="card-body">
                                 <div class="d-flex flex-wrap align-items-center justify-content-between mb-2">
@@ -163,78 +286,80 @@ $placeholderHasResult = !empty($orderCode); // For now, just pretend something w
                                         <div class="small text-uppercase text-muted mb-1">
                                             Order ID
                                         </div>
-                                        <div class="fw-bold">
-                                            <?php echo htmlspecialchars($orderCode); ?>
-                                            <!-- Example: SD-2025-00123 -->
+                                        <div class="fw-bold font-monospace">
+                                            <?php echo htmlspecialchars($order['order_code']); ?>
                                         </div>
                                     </div>
                                     <div class="text-end mt-2 mt-sm-0">
                                         <div class="small text-uppercase text-muted mb-1">
                                             Current status
                                         </div>
-                                        <span class="badge bg-success-subtle text-success border border-success-subtle">
-                                            <i class="fa-solid fa-motorcycle me-1"></i>
-                                            Out for delivery
+                                        <span class="badge <?php echo statusBadgeClass($status); ?>">
+                                            <?php if ($status === 'out_for_delivery'): ?>
+                                                <i class="fa-solid fa-motorcycle me-1"></i>
+                                            <?php elseif ($status === 'preparing'): ?>
+                                                <i class="fa-solid fa-fire-burner me-1"></i>
+                                            <?php elseif ($status === 'completed'): ?>
+                                                <i class="fa-solid fa-circle-check me-1"></i>
+                                            <?php elseif ($status === 'cancelled'): ?>
+                                                <i class="fa-solid fa-circle-xmark me-1"></i>
+                                            <?php else: ?>
+                                                <i class="fa-solid fa-receipt me-1"></i>
+                                            <?php endif; ?>
+                                            <?php echo htmlspecialchars(humanStatusLabel($status)); ?>
                                         </span>
                                     </div>
                                 </div>
 
+                                <?php if (!empty($order['created_at'])): ?>
+                                    <div class="small text-muted mb-2">
+                                        Placed at:
+                                        <strong><?php echo htmlspecialchars($order['created_at']); ?></strong>
+                                    </div>
+                                <?php endif; ?>
+
                                 <hr>
 
-                                <!-- Stepper style status using plain Bootstrap -->
-                                <div class="mb-3">
-                                    <div class="d-flex justify-content-between text-center">
-                                        <div class="flex-fill">
-                                            <div class="badge rounded-pill bg-warning text-dark">
-                                                <i class="fa-solid fa-receipt"></i>
-                                            </div>
-                                            <div class="small mt-1 fw-semibold">
-                                                Order placed
-                                            </div>
-                                            <div class="small text-muted">
-                                                Confirmed
-                                            </div>
+                                <?php if ($status !== 'cancelled'): ?>
+                                    <!-- Stepper style status (based on status enum) -->
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between text-center">
+                                            <?php
+                                            $steps = [
+                                                ['icon' => 'fa-receipt',     'label' => 'Order placed', 'minIndex' => 0],
+                                                ['icon' => 'fa-check',       'label' => 'Confirmed',    'minIndex' => 1],
+                                                ['icon' => 'fa-fire-burner', 'label' => 'Preparing',    'minIndex' => 2],
+                                                ['icon' => 'fa-motorcycle',  'label' => 'Out for delivery / Completed', 'minIndex' => 3],
+                                            ];
+                                            foreach ($steps as $idx => $step):
+                                                $active = ($currentStepIndex >= $step['minIndex']);
+                                                $badgeClass = $active ? 'bg-warning text-dark' : 'bg-secondary text-light';
+                                                ?>
+                                                <div class="flex-fill">
+                                                    <div class="badge rounded-pill <?php echo $badgeClass; ?>">
+                                                        <i class="fa-solid <?php echo $step['icon']; ?>"></i>
+                                                    </div>
+                                                    <div class="small mt-1 fw-semibold">
+                                                        <?php echo htmlspecialchars($step['label']); ?>
+                                                    </div>
+                                                    <div class="small text-muted">
+                                                        <?php echo $active ? 'Done' : 'Pending'; ?>
+                                                    </div>
+                                                </div>
+                                            <?php endforeach; ?>
                                         </div>
-                                        <div class="flex-fill">
-                                            <div class="badge rounded-pill bg-warning text-dark">
-                                                <i class="fa-solid fa-check"></i>
-                                            </div>
-                                            <div class="small mt-1 fw-semibold">
-                                                Verified
-                                            </div>
-                                            <div class="small text-muted">
-                                                Phone confirmed
-                                            </div>
-                                        </div>
-                                        <div class="flex-fill">
-                                            <div class="badge rounded-pill bg-warning text-dark">
-                                                <i class="fa-solid fa-fire-burner"></i>
-                                            </div>
-                                            <div class="small mt-1 fw-semibold">
-                                                Preparing
-                                            </div>
-                                            <div class="small text-muted">
-                                                In the kitchen
-                                            </div>
-                                        </div>
-                                        <div class="flex-fill">
-                                            <div class="badge rounded-pill bg-success text-dark">
-                                                <i class="fa-solid fa-motorcycle"></i>
-                                            </div>
-                                            <div class="small mt-1 fw-semibold">
-                                                Out for delivery
-                                            </div>
-                                            <div class="small text-muted">
-                                                Rider on the way
-                                            </div>
-                                        </div>
-                                    </div>
 
-                                    <!-- Simple progress bar under the steps -->
-                                    <div class="progress mt-3" style="height: 6px;">
-                                        <div class="progress-bar bg-warning" style="width: 85%;"></div>
+                                        <div class="progress mt-3" style="height: 6px;">
+                                            <div class="progress-bar bg-warning" style="width: <?php echo $progressPercent; ?>%;"></div>
+                                        </div>
                                     </div>
-                                </div>
+                                <?php else: ?>
+                                    <div class="alert alert-danger small mb-3">
+                                        <i class="fa-solid fa-circle-info me-1"></i>
+                                        This order has been marked as <strong>cancelled</strong>.  
+                                        If this is unexpected, please contact Shawarma Depot.
+                                    </div>
+                                <?php endif; ?>
 
                                 <!-- Order basic info -->
                                 <div class="row g-3">
@@ -243,7 +368,7 @@ $placeholderHasResult = !empty($orderCode); // For now, just pretend something w
                                             Name
                                         </div>
                                         <div class="fw-semibold">
-                                            Juan Dela Cruz
+                                            <?php echo htmlspecialchars($order['customer_name']); ?>
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
@@ -251,7 +376,7 @@ $placeholderHasResult = !empty($orderCode); // For now, just pretend something w
                                             Mobile
                                         </div>
                                         <div class="fw-semibold">
-                                            09XX XXX XXXX
+                                            <?php echo htmlspecialchars($order['customer_phone']); ?>
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
@@ -259,60 +384,95 @@ $placeholderHasResult = !empty($orderCode); // For now, just pretend something w
                                             Fulfillment
                                         </div>
                                         <div class="fw-semibold">
-                                            Delivery – San Marino Classic
+                                            <?php
+                                            $modeLabel = ($order['fulfillment_mode'] === 'delivery')
+                                                ? 'Delivery'
+                                                : 'Pickup';
+                                            $extra = '';
+                                            if ($order['fulfillment_mode'] === 'delivery' && !empty($order['delivery_subdivision'])) {
+                                                $extra = ' – ' . $order['delivery_subdivision'];
+                                            }
+                                            echo htmlspecialchars($modeLabel . $extra);
+                                            ?>
                                         </div>
                                     </div>
-                                    <div class="col-sm-6">
-                                        <div class="small text-uppercase text-muted mb-1">
-                                            Placed at
+                                    <?php if ($order['fulfillment_mode'] === 'delivery'): ?>
+                                        <div class="col-sm-6">
+                                            <div class="small text-uppercase text-muted mb-1">
+                                                Address
+                                            </div>
+                                            <div class="fw-semibold small">
+                                                <?php
+                                                $addr = trim(($order['delivery_address'] ?? '') . ' ' . ($order['delivery_landmark'] ?? ''));
+                                                echo nl2br(htmlspecialchars($addr ?: 'Not specified'));
+                                                ?>
+                                            </div>
                                         </div>
-                                        <div class="fw-semibold">
-                                            Today • 6:32 PM
+                                    <?php else: ?>
+                                        <div class="col-sm-6">
+                                            <div class="small text-uppercase text-muted mb-1">
+                                                Pickup point
+                                            </div>
+                                            <div class="fw-semibold small">
+                                                Shawarma Depot pickup location
+                                            </div>
                                         </div>
-                                    </div>
+                                    <?php endif; ?>
                                 </div>
 
                                 <hr>
 
-                                <!-- Order items summary (static example for now) -->
+                                <!-- Order items summary (from cart_json) -->
                                 <h6 class="mb-2">
                                     <i class="fa-solid fa-bowl-food me-2 text-warning"></i>
                                     Items in this order
                                 </h6>
 
-                                <ul class="list-unstyled small mb-3">
-                                    <li class="d-flex justify-content-between">
-                                        <span>Shawarma Wrap – LARGE Solo (Beef, Spicy)</span>
-                                        <span class="fw-semibold">x1</span>
-                                    </li>
-                                    <li class="d-flex justify-content-between">
-                                        <span>Shawarma Rice – Overload (Chicken)</span>
-                                        <span class="fw-semibold">x1</span>
-                                    </li>
-                                    <li class="d-flex justify-content-between">
-                                        <span>Plum Tea – Large</span>
-                                        <span class="fw-semibold">x2</span>
-                                    </li>
-                                </ul>
+                                <?php if (!empty($cartItems)): ?>
+                                    <ul class="list-unstyled small mb-3">
+                                        <?php foreach ($cartItems as $item): ?>
+                                            <?php
+                                            $iname   = htmlspecialchars($item['name'] ?? 'Item');
+                                            $summary = htmlspecialchars($item['summary'] ?? '');
+                                            $qty     = (int)($item['qty'] ?? 0);
+                                            ?>
+                                            <li class="mb-1">
+                                                <div class="d-flex justify-content-between">
+                                                    <div>
+                                                        <?php echo $iname; ?>
+                                                        <?php if ($summary): ?>
+                                                            <span class="text-muted"> – <?php echo $summary; ?></span>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                    <span class="fw-semibold">x<?php echo $qty; ?></span>
+                                                </div>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                <?php else: ?>
+                                    <p class="small text-muted mb-3">
+                                        No item details available for this order.
+                                    </p>
+                                <?php endif; ?>
 
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="small text-muted">
-                                        Estimated total
+                                        Total amount
                                     </div>
                                     <div class="fw-bold fs-5 text-success">
-                                        ₱390
+                                        ₱<?php echo number_format((float)$order['total_amount'], 2); ?>
                                     </div>
                                 </div>
 
                                 <div class="alert alert-light border small mt-3 mb-0">
                                     <i class="fa-solid fa-circle-info me-1 text-warning"></i>
-                                    Once backend is connected, this section will show live data
-                                    from your orders, including updated status from the admin panel.
+                                    As the admin updates the order status in the dashboard,
+                                    this page will automatically reflect the latest progress.
                                 </div>
                             </div>
                         </div>
 
-                    <?php else: ?>
+                    <?php elseif (!$hasSearched): ?>
 
                         <!-- ---------------------- Empty state / instructions ---------------------- -->
                         <div class="card shadow-sm border-0">
@@ -322,8 +482,9 @@ $placeholderHasResult = !empty($orderCode); // For now, just pretend something w
                                     Waiting for a tracking request
                                 </h5>
                                 <p class="text-muted mb-3">
-                                    After placing an order, you’ll receive an order ID via SMS or Messenger.
-                                    Type it on the left together with your mobile number to see updates here.
+                                    After placing an order, you’ll see your order ID on the confirmation page
+                                    and in our messages. Type it on the left together with your mobile number
+                                    to see updates here.
                                 </p>
                                 <ul class="text-muted small mb-0">
                                     <li>Order just placed? It may take a short moment to appear.</li>
@@ -333,6 +494,24 @@ $placeholderHasResult = !empty($orderCode); // For now, just pretend something w
                             </div>
                         </div>
 
+                    <?php else: ?>
+                        <!-- Searched but no result (errorMsg already shown above) -->
+                        <div class="card shadow-sm border-0">
+                            <div class="card-body text-center text-md-start">
+                                <h5 class="card-title mb-2">
+                                    <i class="fa-solid fa-circle-question me-2 text-warning"></i>
+                                    No matching order found
+                                </h5>
+                                <p class="text-muted mb-2">
+                                    We couldn't find an order with that combination of order ID and mobile number.
+                                </p>
+                                <ul class="text-muted small mb-0">
+                                    <li>Double-check if the order ID has no extra spaces or typos.</li>
+                                    <li>Use the exact same mobile number you gave when ordering.</li>
+                                    <li>If this keeps happening, send us a message so we can assist you.</li>
+                                </ul>
+                            </div>
+                        </div>
                     <?php endif; ?>
                 </div>
             </div>
@@ -347,23 +526,19 @@ $placeholderHasResult = !empty($orderCode); // For now, just pretend something w
     <i class="fa-solid fa-arrow-up"></i>
 </button>
 
-<!-- ---------------------- Footer ---------------------- -->
-
-<footer class="footer mt-5">
+<!-- FOOTER (unchanged) -->
+<footer class="footer mt-0 py-3 bg-dark text-light">
     <div class="container">
         <div class="row gy-3 align-items-center">
             <div class="col-md-6 text-center text-md-start">
-                <small class="d-block">
-                    &copy; <?php echo date('Y'); ?> Shawarma Depot. All rights reserved.
-                </small>
-                <small class="text-muted">
-                    Fresh shawarma, friendly service, and overload toppings.
-                </small>
+                <small>&copy; <?php echo date('Y'); ?> Shawarma Depot. All rights reserved.</small>
             </div>
             <div class="col-md-6 text-center text-md-end">
-                <small class="me-2">Follow us:</small>
-                <a href="#" class="me-2"><i class="fa-brands fa-facebook"></i></a>
-                <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                <a href="about.php" class="me-3 small text-light text-decoration-none">About</a>
+                <a href="contact.php" class="me-3 small text-light text-decoration-none">Contact</a>
+                <a href="admin/login.php" class="small text-light text-decoration-none">
+                    <i class="fa-solid fa-user-gear me-1"></i> Admin
+                </a>
             </div>
         </div>
     </div>
@@ -373,6 +548,6 @@ $placeholderHasResult = !empty($orderCode); // For now, just pretend something w
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
         crossorigin="anonymous"></script>
-<script src="js/main.js"></script>
+<script type="module" src="assets/js/main.js"></script>
 </body>
 </html>

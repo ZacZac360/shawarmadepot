@@ -111,73 +111,89 @@
                 </div>
                 <!-- These fields only show when DELIVERY is selected -->
                     <div id="deliveryDetailsFields" style="display:none;">
-                                        <!-- Coverage + partner apps (always visible) -->
-                    <div id="deliveryIntro" class="small text-muted mb-2">
-                        Our delivery service covers nearby areas of San Marino City, Dasmariñas.
-                        For areas beyond our coverage, you can still order via:
+                        <!-- Coverage + partner apps (always visible) -->
+                        <div id="deliveryIntro" class="small text-muted mb-2">
+                            Our delivery service covers nearby areas of San Marino City, Dasmariñas.
+                            For areas beyond our coverage, you can still order via:
+                        </div>
+                        <div class="mb-3 d-flex flex-wrap gap-2">
+                            <a href="https://www.foodpanda.ph/restaurant/aduq/shawarma-depot-dasmarinas-cavite"
+                            target="_blank"
+                            class="btn panda-btn btn-sm fw-semibold">
+                                🐼 Foodpanda
+                            </a>
+                            <a href="https://food.grab.com/ph/en/restaurant/shawarma-depot-dasmarinas-delivery/2-C7LKAVJUAK3TV2?"
+                            target="_blank"
+                            class="btn grab-btn btn-sm fw-semibold">
+                                🛵 GrabFood
+                            </a>
+                        </div>
+
+                        <!-- Subdivision Selection -->
+                        <label class="small fw-semibold mb-1">Select Subdivision:</label>
+                        <select id="subdivisionSelect" class="form-select form-select-sm mb-2">
+                            <option value="">-- Select your subdivision --</option>
+
+                            <optgroup label="San Marino City">
+                                <option value="classic">San Marino Classic (₱15 DF + ₱15 gate)</option>
+                                <option value="heights">San Marino Heights (₱15 DF)</option>
+                                <option value="central">San Marino Central (₱15 DF)</option>
+                                <option value="phase1">San Marino Phase 1 (₱15 DF)</option>
+                                <option value="phase2">San Marino Phase 2 (₱15 DF)</option>
+                                <option value="phase3">San Marino Phase 3 (₱15 DF)</option>
+                                <option value="phase4">San Marino Phase 4 (₱15 DF)</option>
+                                <option value="phase5">San Marino Phase 5 (₱15 DF)</option>
+                                <option value="north1">San Marino North 1 (₱15 DF)</option>
+                                <option value="north2">San Marino North 2 (₱15 DF)</option>
+                                <option value="south1">San Marino South 1 (₱15 DF)</option>
+                                <option value="south2">San Marino South 2 (₱15 DF)</option>
+                            </optgroup>
+
+                            <optgroup label="Outside Areas (Pickup / 25 + gate)">
+                                <option value="ndgv">North Dasma Garden Villa (₱25 DF + ₱10 gate)</option>
+                                <option value="sdgv">South Dasma Garden Villa (₱25 DF + ₱10 gate)</option>
+                            </optgroup>
+                        </select>
+
+                        <!-- Address Fields -->
+                        <div id="addressFields" style="display:none;">
+                            <label class="small fw-semibold mb-1">Block &amp; Lot:</label>
+                            <input type="text" id="addrBlkLot" class="form-control form-control-sm mb-2"
+                                placeholder="e.g. Block 3 Lot 4">
+
+                            <label class="small fw-semibold mb-1">Landmark:</label>
+                            <input type="text" id="addrLandmark" class="form-control form-control-sm mb-2"
+                                placeholder="e.g. Red gate near Phase 2 park">
+
+                            <label class="small fw-semibold mb-1">Customer Name:</label>
+                            <input type="text" id="addrName" class="form-control form-control-sm mb-2"
+                                placeholder="Your full name">
+
+                            <label class="small fw-semibold mb-1">Contact Number:</label>
+                            <input type="text" id="addrPhone" class="form-control form-control-sm mb-2"
+                                placeholder="09XXXXXXXXX">
+                        </div>
+
+                        <!-- Fee message (changes based on subdivision) -->
+                        <div id="deliveryFeeMessage" class="small text-muted mt-1">
+                            Select your subdivision to calculate delivery fee.
+                        </div>
                     </div>
-                    <div class="mb-3 d-flex flex-wrap gap-2">
-                        <a href="https://www.foodpanda.ph/restaurant/aduq/shawarma-depot-dasmarinas-cavite"
-                        target="_blank"
-                        class="btn panda-btn btn-sm fw-semibold">
-                            🐼 Foodpanda
-                        </a>
-                        <a href="https://food.grab.com/ph/en/restaurant/shawarma-depot-dasmarinas-delivery/2-C7LKAVJUAK3TV2?"
-                        target="_blank"
-                        class="btn grab-btn btn-sm fw-semibold">
-                            🛵 GrabFood
-                        </a>
-                    </div>
-                    <!-- Subdivision Selection -->
-                    <label class="small fw-semibold mb-1">Select Subdivision:</label>
-                    <select id="subdivisionSelect" class="form-select form-select-sm mb-2">
-                        <option value="">-- Select your subdivision --</option>
 
-                        <optgroup label="San Marino City">
-                            <option value="classic">San Marino Classic (₱15 DF + ₱15 gate)</option>
-                            <option value="heights">San Marino Heights (₱15 DF)</option>
-                            <option value="central">San Marino Central (₱15 DF)</option>
-                            <option value="phase1">San Marino Phase 1 (₱15 DF)</option>
-                            <option value="phase2">San Marino Phase 2 (₱15 DF)</option>
-                            <option value="phase3">San Marino Phase 3 (₱15 DF)</option>
-                            <option value="phase4">San Marino Phase 4 (₱15 DF)</option>
-                            <option value="phase5">San Marino Phase 5 (₱15 DF)</option>
-                            <option value="north1">San Marino North 1 (₱15 DF)</option>
-                            <option value="north2">San Marino North 2 (₱15 DF)</option>
-                            <option value="south1">San Marino South 1 (₱15 DF)</option>
-                            <option value="south2">San Marino South 2 (₱15 DF)</option>
-                        </optgroup>
-
-                        <optgroup label="Outside Areas (Pickup / 25 + gate)">
-                            <option value="ndgv">North Dasma Garden Villa (₱25 DF + ₱10 gate)</option>
-                            <option value="sdgv">South Dasma Garden Villa (₱25 DF + ₱10 gate)</option>
-                        </optgroup>
-                    </select>
-
-                    <!-- Address Fields -->
-                    <div id="addressFields" style="display:none;">
-                        <label class="small fw-semibold mb-1">Block &amp; Lot:</label>
-                        <input type="text" id="addrBlkLot" class="form-control form-control-sm mb-2"
-                            placeholder="e.g. Block 3 Lot 4">
-
-                        <label class="small fw-semibold mb-1">Landmark:</label>
-                        <input type="text" id="addrLandmark" class="form-control form-control-sm mb-2"
-                            placeholder="e.g. Red gate near Phase 2 park">
-
+                    <!-- These fields only show when PICKUP is selected -->
+                    <div id="pickupDetailsFields" style="display:none;">
                         <label class="small fw-semibold mb-1">Customer Name:</label>
-                        <input type="text" id="addrName" class="form-control form-control-sm mb-2"
+                        <input type="text" id="pickupName" class="form-control form-control-sm mb-2"
                             placeholder="Your full name">
 
                         <label class="small fw-semibold mb-1">Contact Number:</label>
-                        <input type="text" id="addrPhone" class="form-control form-control-sm mb-2"
+                        <input type="text" id="pickupPhone" class="form-control form-control-sm mb-2"
                             placeholder="09XXXXXXXXX">
-                    </div>
 
-                    <!-- Fee message (changes based on subdivision) -->
-                    <div id="deliveryFeeMessage" class="small text-muted mt-1">
-                        Select your subdivision to calculate delivery fee.
+                        <div class="small text-muted mt-1">
+                            We’ll confirm your pickup order via text before preparing.
+                        </div>
                     </div>
-                </div>
             </div>
         </div>
 
@@ -920,7 +936,7 @@
         crossorigin="anonymous"></script>
 
 <!-- Custom JS -->
-<script src="assets/js/main.js"></script>
+<script type="module" src="assets/js/main.js"></script>
 
 </body>
 </html>

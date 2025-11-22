@@ -594,7 +594,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 
 <!-- custom JS -->
-<script src="assets/js/main.js"></script>
+<script type="module" src="assets/js/main.js"></script>
 
 </body>
 </html>
