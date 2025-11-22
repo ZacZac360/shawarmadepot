@@ -125,9 +125,67 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
             if ($stmt->execute()) {
                 $insert_ok = true;
+
+                // Get the auto-increment ID of the order we just inserted
+                $order_id = $stmt->insert_id;
+
+                // Insert each cart item into order_items
+                if (!empty($cart_items) && $order_id) {
+                    $itemStmt = $mysqli->prepare("
+                        INSERT INTO order_items (
+                            order_id,
+                            product_key,
+                            product_name,
+                            summary,
+                            unit_price,
+                            quantity,
+                            line_total,
+                            raw_json
+                        ) VALUES (
+                            ?, ?, ?, ?, ?, ?, ?, ?
+                        )
+                    ");
+
+                    if ($itemStmt) {
+                        foreach ($cart_items as $item) {
+                            $product_key  = $item["key"]      ?? null;
+                            $product_name = $item["name"]     ?? "Item";
+                            $summary      = $item["summary"]  ?? "";
+                            $qty          = isset($item["qty"]) ? (int)$item["qty"] : 0;
+                            $unit         = isset($item["unitPrice"]) ? (float)$item["unitPrice"] : 0.0;
+                            $line_total   = $unit * $qty;
+                            $raw_json     = json_encode($item, JSON_UNESCAPED_UNICODE);
+
+                            // order_id (i),
+                            // product_key (s),
+                            // product_name (s),
+                            // summary (s),
+                            // unit_price (d),
+                            // quantity (i),
+                            // line_total (d),
+                            // raw_json (s)
+                            $itemStmt->bind_param(
+                                "isssdids",
+                                $order_id,
+                                $product_key,
+                                $product_name,
+                                $summary,
+                                $unit,
+                                $qty,
+                                $line_total,
+                                $raw_json
+                            );
+
+                            $itemStmt->execute(); // we’ll ignore per-item errors for now
+                        }
+
+                        $itemStmt->close();
+                    }
+                }
             } else {
                 $error_msg = "Execute failed: " . $stmt->error;
             }
+
 
             $stmt->close();
         }

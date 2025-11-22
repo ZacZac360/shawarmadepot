@@ -12,8 +12,8 @@ if ($mysqli->connect_error) {
     die("Database connection failed: " . $mysqli->connect_error);
 }
 
-// ---------------------- Read query params ----------------------
-$orderCodeInput = trim($_GET['order_code'] ?? $_GET['code'] ?? ''); // support ?code= from order-confirmed
+// ---------------------- Read query params (from GET) ----------------------
+$orderCodeInput  = trim($_GET['order_code'] ?? $_GET['code'] ?? ''); // support ?code= from order-confirmed
 $orderPhoneInput = trim($_GET['order_phone'] ?? '');
 
 // Normalize phone to digits only for matching
@@ -25,7 +25,7 @@ $order       = null;
 $cartItems   = [];
 $errorMsg    = "";
 
-// ---------------------- If form submitted, look up order ----------------------
+// ---------------------- If GET search submitted, look up order ----------------------
 if ($hasSearched) {
     if ($orderCodeInput === '' || $phoneDigits === '') {
         $errorMsg = "Please enter both order ID and mobile number.";
@@ -58,6 +58,66 @@ if ($hasSearched) {
         }
         if (!$order && $errorMsg === "") {
             $errorMsg = "We couldn't find an order matching that ID and mobile number.";
+        }
+    }
+}
+
+// ---------------------- Cancellation logic (backend) ----------------------
+
+// Fake OTP for cancellation
+const CANCEL_OTP = "000000";
+
+$cancelError   = "";
+$cancelSuccess = "";
+
+// We submit cancellation with POST, but keep the search context via GET (?order_code=&order_phone=)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_action'])) {
+    $enteredOtp       = trim($_POST['otp_code'] ?? "");
+    $orderToCancel    = trim($_POST['cancel_order_code'] ?? "");
+    $phoneDigitsCancel = preg_replace('/\D+/', '', trim($_POST['cancel_phone'] ?? ""));
+
+    if ($enteredOtp !== CANCEL_OTP) {
+        $cancelError = "Incorrect code. For testing, use 000000.";
+    } else {
+        // Fetch order to cancel
+        $stmt = $mysqli->prepare("
+            SELECT * FROM orders
+            WHERE order_code = ?
+              AND REPLACE(REPLACE(REPLACE(customer_phone,' ',''),'-',''),'+','') = ?
+            LIMIT 1
+        ");
+        if ($stmt) {
+            $stmt->bind_param("ss", $orderToCancel, $phoneDigitsCancel);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $found  = $result->fetch_assoc();
+            $stmt->close();
+        }
+
+        if (empty($found)) {
+            $cancelError = "No matching order found for cancellation.";
+        } else {
+            if (!in_array($found['status'], ['pending', 'confirmed'], true)) {
+                $cancelError = "This order can no longer be cancelled.";
+            } else {
+                // Update DB status
+                $stmt2 = $mysqli->prepare("UPDATE orders SET status='cancelled' WHERE id=?");
+                if ($stmt2) {
+                    $oid = (int)$found['id'];
+                    $stmt2->bind_param("i", $oid);
+                    $stmt2->execute();
+                    $stmt2->close();
+
+                    $cancelSuccess = "Your order has been successfully cancelled.";
+
+                    // If the currently viewed order matches, update it in memory too
+                    if ($order && $order['order_code'] === $found['order_code']) {
+                        $order['status'] = 'cancelled';
+                    }
+                } else {
+                    $cancelError = "We couldn't update your order at this time.";
+                }
+            }
         }
     }
 }
@@ -140,8 +200,6 @@ if ($currentStepIndex >= 0) {
 </head>
 <body class="d-flex flex-column min-vh-100"><!-- full-height page -->
 
-<!-- ---------------------- Navbar ---------------------- -->
-
 <!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm sticky-top">
     <div class="container">
@@ -190,7 +248,6 @@ if ($currentStepIndex >= 0) {
 </nav>
 
 <main class="py-4 flex-grow-1"><!-- stretches to push footer down -->
-    <!-- ---------------------- Track order section ---------------------- -->
     <section class="py-4 section-info">
         <div class="container">
 
@@ -278,7 +335,7 @@ if ($currentStepIndex >= 0) {
                 <!-- Status / details column -->
                 <div class="col-lg-7">
                     <?php if ($order): ?>
-                        <!-- ---------------------- Live result from DB ---------------------- -->
+                        <!-- Live result from DB -->
                         <div class="card shadow-sm border-0 mb-3">
                             <div class="card-body">
                                 <div class="d-flex flex-wrap align-items-center justify-content-between mb-2">
@@ -321,7 +378,7 @@ if ($currentStepIndex >= 0) {
                                 <hr>
 
                                 <?php if ($status !== 'cancelled'): ?>
-                                    <!-- Stepper style status (based on status enum) -->
+                                    <!-- Stepper style status -->
                                     <div class="mb-3">
                                         <div class="d-flex justify-content-between text-center">
                                             <?php
@@ -334,7 +391,7 @@ if ($currentStepIndex >= 0) {
                                             foreach ($steps as $idx => $step):
                                                 $active = ($currentStepIndex >= $step['minIndex']);
                                                 $badgeClass = $active ? 'bg-warning text-dark' : 'bg-secondary text-light';
-                                                ?>
+                                            ?>
                                                 <div class="flex-fill">
                                                     <div class="badge rounded-pill <?php echo $badgeClass; ?>">
                                                         <i class="fa-solid <?php echo $step['icon']; ?>"></i>
@@ -353,11 +410,65 @@ if ($currentStepIndex >= 0) {
                                             <div class="progress-bar bg-warning" style="width: <?php echo $progressPercent; ?>%;"></div>
                                         </div>
                                     </div>
+
+                                    <!-- Cancellation area (only if pending / confirmed) -->
+                                    <?php if (in_array($status, ['pending', 'confirmed'], true)): ?>
+                                        <hr>
+                                        <h6 class="text-uppercase small text-muted mb-2">Cancel this order</h6>
+
+                                        <?php if ($cancelError): ?>
+                                            <div class="alert alert-danger small py-2 mb-2">
+                                                <i class="fa-solid fa-circle-exclamation me-1"></i>
+                                                <?php echo htmlspecialchars($cancelError); ?>
+                                            </div>
+                                        <?php endif; ?>
+
+                                        <?php if ($cancelSuccess): ?>
+                                            <div class="alert alert-success small py-2 mb-2">
+                                                <i class="fa-solid fa-circle-check me-1"></i>
+                                                <?php echo htmlspecialchars($cancelSuccess); ?>
+                                            </div>
+                                        <?php endif; ?>
+
+                                        <?php if (!$cancelSuccess): ?>
+                                            <form method="post"
+                                                  class="small"
+                                                  action="track-order.php?order_code=<?php echo urlencode($orderCodeInput); ?>&order_phone=<?php echo urlencode($orderPhoneInput); ?>">
+                                                <input type="hidden" name="cancel_action" value="1">
+                                                <input type="hidden" name="cancel_order_code" value="<?php echo htmlspecialchars($order['order_code']); ?>">
+                                                <input type="hidden" name="cancel_phone" value="<?php echo htmlspecialchars($orderPhoneInput); ?>">
+
+                                                <div class="mb-2">
+                                                    <label class="form-label small text-uppercase text-muted">
+                                                        Confirmation Code
+                                                    </label>
+                                                    <input type="text"
+                                                           name="otp_code"
+                                                           maxlength="6"
+                                                           class="form-control form-control-sm"
+                                                           placeholder="______"
+                                                           inputmode="numeric"
+                                                           pattern="[0-9]*">
+                                                    <div class="form-text">
+                                                        For testing, use <strong>000000</strong>.
+                                                    </div>
+                                                </div>
+
+                                                <button type="submit"
+                                                        class="btn btn-outline-danger btn-sm fw-semibold">
+                                                    <i class="fa-solid fa-ban me-1"></i>
+                                                    Cancel my order
+                                                </button>
+                                            </form>
+                                        <?php endif; ?>
+                                    <?php endif; ?>
+
                                 <?php else: ?>
+                                    <!-- Cancelled state -->
                                     <div class="alert alert-danger small mb-3">
-                                        <i class="fa-solid fa-circle-info me-1"></i>
-                                        This order has been marked as <strong>cancelled</strong>.  
-                                        If this is unexpected, please contact Shawarma Depot.
+                                        <i class="fa-solid fa-circle-xmark me-1"></i>
+                                        This order has been <strong>cancelled</strong>.<br>
+                                        If this was a mistake, please place a new order.
                                     </div>
                                 <?php endif; ?>
 
@@ -474,7 +585,7 @@ if ($currentStepIndex >= 0) {
 
                     <?php elseif (!$hasSearched): ?>
 
-                        <!-- ---------------------- Empty state / instructions ---------------------- -->
+                        <!-- Empty state / instructions -->
                         <div class="card shadow-sm border-0">
                             <div class="card-body text-center text-md-start">
                                 <h5 class="card-title mb-2">
@@ -519,14 +630,13 @@ if ($currentStepIndex >= 0) {
     </section>
 </main>
 
-<!-- ---------------------- Back-to-top button ---------------------- -->
-
+<!-- Back-to-top button -->
 <button type="button"
         class="btn btn-warning text-dark fw-bold back-to-top">
     <i class="fa-solid fa-arrow-up"></i>
 </button>
 
-<!-- FOOTER (unchanged) -->
+<!-- FOOTER -->
 <footer class="footer mt-0 py-3 bg-dark text-light">
     <div class="container">
         <div class="row gy-3 align-items-center">
