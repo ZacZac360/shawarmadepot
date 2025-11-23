@@ -45,7 +45,9 @@ $cart_items    = [];
 $insert_ok     = false;
 $error_msg     = "";
 
-// Process order on POST
+// ===============================
+// 1) POST REQUEST: create order
+// ===============================
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $order_code           = generateOrderCode();
@@ -69,7 +71,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $cart_json = "[]";
     }
 
-    // Decode cart for display even if insert fails
+    // Decode cart for display if needed
     $cart_items = json_decode($cart_json, true);
     if (!is_array($cart_items)) {
         $cart_items = [];
@@ -156,14 +158,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             $line_total   = $unit * $qty;
                             $raw_json     = json_encode($item, JSON_UNESCAPED_UNICODE);
 
-                            // order_id (i),
-                            // product_key (s),
-                            // product_name (s),
-                            // summary (s),
-                            // unit_price (d),
-                            // quantity (i),
-                            // line_total (d),
-                            // raw_json (s)
                             $itemStmt->bind_param(
                                 "isssdids",
                                 $order_id,
@@ -176,25 +170,90 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                                 $raw_json
                             );
 
-                            $itemStmt->execute(); // we’ll ignore per-item errors for now
+                            $itemStmt->execute(); // ignore per-item errors for now
                         }
-
                         $itemStmt->close();
                     }
                 }
+
+                $stmt->close();
+
+                // IMPORTANT: POST → Redirect → GET
+                header(
+                    "Location: order-confirmed.php?code=" .
+                    urlencode($order_code) .
+                    "&phone=" . urlencode($customer_phone)
+                );
+                exit;
+
             } else {
                 $error_msg = "Execute failed: " . $stmt->error;
+                $stmt->close();
             }
-
-
-            $stmt->close();
         }
     }
+
+// ===============================
+// 2) GET REQUEST: show existing order
+// ===============================
 } else {
-    // GET request – no POST data
-    $error_msg = "This page is only available right after placing an order.";
+    $code  = trim($_GET['code']  ?? '');
+    $phone = trim($_GET['phone'] ?? '');
+
+    if ($code !== '' && $phone !== '') {
+        $stmt = $mysqli->prepare("
+            SELECT *
+            FROM orders
+            WHERE order_code = ?
+              AND customer_phone = ?
+            LIMIT 1
+        ");
+
+        if ($stmt) {
+            $stmt->bind_param("ss", $code, $phone);
+            if ($stmt->execute()) {
+                $res = $stmt->get_result();
+                $row = $res->fetch_assoc();
+            }
+            $stmt->close();
+        }
+
+        if (!empty($row)) {
+            // We have an order; treat as "insert ok" for display purposes
+            $insert_ok           = true;
+
+            $order_code           = $row['order_code']           ?? '';
+            $customer_name        = $row['customer_name']        ?? '';
+            $customer_phone       = $row['customer_phone']       ?? '';
+            $customer_messenger   = $row['customer_messenger']   ?? '';
+            $customer_email       = $row['customer_email']       ?? '';
+            $fulfillment_mode     = $row['fulfillment_mode']     ?? '';
+            $delivery_subdivision = $row['delivery_subdivision'] ?? '';
+            $delivery_address     = $row['delivery_address']     ?? '';
+            $delivery_landmark    = $row['delivery_landmark']    ?? '';
+            $payment_method       = $row['payment_method']       ?? '';
+            $order_notes          = $row['order_notes']          ?? '';
+
+            $subtotal      = (float)($row['subtotal']      ?? 0);
+            $delivery_fee  = (float)($row['delivery_fee']  ?? 0);
+            $total_amount  = (float)($row['total_amount']  ?? 0);
+
+            $cart_json  = $row['cart_json'] ?? '[]';
+            $cart_items = json_decode($cart_json, true);
+            if (!is_array($cart_items)) {
+                $cart_items = [];
+            }
+
+        } else {
+            $error_msg = "We couldn't find that order. It may have been removed.";
+        }
+
+    } else {
+        $error_msg = "This page is only available right after placing an order.";
+    }
 }
 ?>
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -321,8 +380,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                                 </p>
 
                                 <div class="mt-4 d-grid gap-2">
-                                    <a href="track-order.php?code=<?php echo urlencode($order_code); ?>"
-                                       class="btn btn-outline-dark btn-sm">
+                                    <a href="track-order.php?order_code=<?php echo urlencode($order_code); ?>&order_phone=<?php echo urlencode($customer_phone); ?>"
+                                        class="btn btn-outline-dark btn-sm">
                                         <i class="fa-solid fa-truck-fast me-1"></i>
                                         Track this order
                                     </a>

@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const STORAGE_KEY = "shawarma_order_details";
 
     const DELIVERY_ZONES = {
-        classic:  { fee: 15, gate: 15 },
+        classic:  { fee: 15, gate: 10 },
         heights:  { fee: 15, gate: 0 },
         central:  { fee: 15, gate: 0 },
         phase1:   { fee: 15, gate: 0 },

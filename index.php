@@ -49,7 +49,6 @@
                     <a class="nav-link" href="contact.php">Contact</a>
                 </li>
                 
-                <!-- NEW -->
                 <li class="nav-item">
                     <a class="nav-link" href="track-order.php">Track Order</a>
                 </li>
@@ -73,7 +72,7 @@
 
 <!-- HERO SECTION -->
 <section class="hero-section position-relative overflow-hidden">
-    <!-- Background slider (same images) -->
+    <!-- Background slider-->
     <div class="hero-bg">
         <div class="hero-bg-slide" style="background-image: url('assets/images/allmeatshawarmarice.jpg');"></div>
         <div class="hero-bg-slide" style="background-image: url('assets/images/steakandfriesshawarma.jpg');"></div>
@@ -130,47 +129,11 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Quick Order Card -->
-            <div class="col-lg-5">
-                <div class="bg-dark text-light rounded-4 p-4 shadow-lg hero-order-card">
-                    <h5 class="fw-bold mb-1">
-                        <i class="fa-solid fa-bag-shopping text-warning me-2"></i> Order in seconds
-                    </h5>
-                    <p class="small text-light opacity-75 mb-0">
-                        Choose your craving and we'll prep your shawarma fresh.
-                    </p>
-
-                    <!-- Order Type -->
-                    <div class="mb-3">
-                        <label class="form-label small text-uppercase text-muted mb-1">Order type</label>
-                        <div class="btn-group w-100" role="group">
-                            <input type="radio" class="btn-check" name="orderType" id="pickup" autocomplete="off" checked>
-                            <label class="btn btn-outline-light btn-sm" for="pickup">
-                                <i class="fa-solid fa-store me-1"></i> Pickup
-                            </label>
-
-                            <input type="radio" class="btn-check" name="orderType" id="delivery" autocomplete="off">
-                            <label class="btn btn-outline-light btn-sm" for="delivery">
-                                <i class="fa-solid fa-motorcycle me-1"></i> Delivery
-                            </label>
-                        </div>
-                    </div>
-                    <a href="menu.php" class="btn btn-warning w-100 fw-semibold mb-2">
-                        Order Now
-                    </a>
-
-                    <div class="d-flex justify-content-between small">
-                        <span><i class="fa-solid fa-clock me-1 text-warning"></i> 4:00 PM – 11:00 PM</span>
-                        <span><i class="fa-solid fa-location-dot me-1 text-warning"></i> San Marino City</span>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 </section>
 
-<!-- QUICK LINKS STRIP (like tiles) -->
+<!-- QUICK LINKS STRIP -->
 <section class="py-3 bg-light border-bottom">
     <div class="container">
         <div class="row g-3 text-center text-md-start">
@@ -227,15 +190,12 @@
                     <div class="menu-card-image-wrapper">
                         <img src="assets/images/doublecheese.jpg" class="menu-card-img" alt="Double Cheese Premium Steak and Fries Shawarma">
 
-                        <!-- Dark gradient so text is readable -->
                         <div class="menu-card-gradient"></div>
 
-                        <!-- Badge -->
                         <div class="featured-tag badge bg-warning text-dark">
                             Best Seller
                         </div>
 
-                        <!-- Content on top of image -->
                         <div class="menu-card-content">
                             <h4 class="menu-card-title mb-1">Double Cheese Premium Steak and Fries Shawarma</h4>
                             <div class="d-flex justify-content-between align-items-center">
@@ -252,15 +212,12 @@
                     <div class="menu-card-image-wrapper">
                         <img src="assets/images/classicshawarma.jpg" class="menu-card-img" alt="Beef Shawarma">
 
-                        <!-- Dark gradient so text is readable -->
                         <div class="menu-card-gradient"></div>
 
-                        <!-- Badge -->
                         <div class="featured-tag badge bg-warning text-dark">
                             Best Seller
                         </div>
 
-                        <!-- Content on top of image -->
                         <div class="menu-card-content">
                             <h4 class="menu-card-title mb-1">Beef Shawarma</h4>
                             <div class="d-flex justify-content-between align-items-center">
@@ -279,15 +236,12 @@
                     <div class="menu-card-image-wrapper">
                         <img src="assets/images/shawarmaveggiesrice.jpg" class="menu-card-img" alt="Shawarma Rice Overload">
 
-                        <!-- Dark gradient so text is readable -->
                         <div class="menu-card-gradient"></div>
 
-                        <!-- Badge -->
                         <div class="featured-tag badge bg-warning text-dark">
                             Best Seller
                         </div>
 
-                        <!-- Content on top of image -->
                         <div class="menu-card-content">
                             <h4 class="menu-card-title mb-1">Shawarma Rice Overload</h4>
                             <div class="d-flex justify-content-between align-items-center">
@@ -305,15 +259,12 @@
                     <div class="menu-card-image-wrapper">
                         <img src="assets/images/loadedfries.jpg" class="menu-card-img" alt="Coated Fries">
 
-                        <!-- Dark gradient so text is readable -->
                         <div class="menu-card-gradient"></div>
 
-                        <!-- Badge -->
                         <div class="featured-tag badge bg-warning text-dark">
                             Best Seller
                         </div>
 
-                        <!-- Content on top of image -->
                         <div class="menu-card-content">
                             <h4 class="menu-card-title mb-1">Coated Fries</h4>
                             <div class="d-flex justify-content-between align-items-center">
@@ -500,7 +451,7 @@
                     <h6 class="fw-bold mb-2">
                         <i class="fa-solid fa-location-dot me-2 text-warning"></i> Store Location <br><br>
                     </h6>
-                    <!-- Customize: exact address pulled from FB page -->
+                    <!-- exact address pulled from FB page -->
                     <p class="mb-1">
                         Blk 16 Lot 26 Laos St Corner Lebanon St
                         San Marino City, Cavite
@@ -513,7 +464,7 @@
                             <i class="fa-solid fa-clock me-2 text-warning"></i> Opening Hours
                         </h6>
                         <ul class="list-unstyled opening-hours small text-muted mb-0">
-                            <!-- Customize: actual schedule -->
+                            <!-- actual schedule -->
                             <li><span>Everyday</span> <span>4:00 PM – 11:00 PM</span></li>
                         </ul>
                     </div>
@@ -521,7 +472,7 @@
                         <h6 class="fw-bold mb-2">
                             <i class="fa-solid fa-phone me-2 text-warning"></i> Contact
                         </h6>
-                        <!-- Customize: phone number / FB link -->
+                        <!-- phone number / FB link -->
                         <p class="small mb-1 text-muted">
                             Email: <strong>shawarmadepot2021@gmail.com</strong>
                         </p>
@@ -532,7 +483,7 @@
                 </div>
             </div>
 
-            <!-- Optional map / image -->
+            <!-- map image -->
             <div class="col-lg-6">
                 <div class="ratio ratio-16x9 rounded-4 overflow-hidden shadow-sm">
                     <iframe 

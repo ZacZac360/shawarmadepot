@@ -20,7 +20,7 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
 
 <!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm sticky-top">
@@ -69,7 +69,7 @@
     </div>
 </nav>
 
-<main class="py-4">
+<main class="py-4 flex-grow-1">
     <section class="py-4">
         <div class="container">
             <!-- Page heading -->
@@ -287,15 +287,9 @@
                                 </span>
                             </div>
 
-                            <div class="d-flex justify-content-between mb-3">
+                            <div class="d-flex justify-content-between mb-0">
                                 <span class="fw-bold">Estimated Total</span>
                                 <span class="fw-bold text-success" id="checkoutTotal">₱0</span>
-                            </div>
-
-                            <div class="alert alert-light border small mb-0">
-                                <i class="fa-solid fa-circle-info me-1 text-warning"></i>
-                                Final total (including exact delivery fee) will be confirmed
-                                via message or call before we prepare your order.
                             </div>
                         </div>
                     </div>
@@ -311,22 +305,18 @@
     <i class="fa-solid fa-arrow-up"></i>
 </button>
 
-<!-- FOOTER -->
-<footer class="footer mt-5">
+<footer class="footer mt-0 py-3 bg-dark text-light mt-auto">
     <div class="container">
         <div class="row gy-3 align-items-center">
             <div class="col-md-6 text-center text-md-start">
-                <small class="d-block">
-                    &copy; <?php echo date('Y'); ?> Shawarma Depot. All rights reserved.
-                </small>
-                <small class="text-muted">
-                    Fresh shawarma, friendly service, and overload toppings.
-                </small>
+                <small>&copy; <?php echo date('Y'); ?> Shawarma Depot. All rights reserved.</small>
             </div>
             <div class="col-md-6 text-center text-md-end">
-                <small class="me-2">Follow us:</small>
-                <a href="#" class="me-2"><i class="fa-brands fa-facebook"></i></a>
-                <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                <a href="about.php" class="me-3 small text-light text-decoration-none">About</a>
+                <a href="contact.php" class="me-3 small text-light text-decoration-none">Contact</a>
+                <a href="admin/login.php" class="small text-light text-decoration-none">
+                    <i class="fa-solid fa-user-gear me-1"></i> Admin
+                </a>
             </div>
         </div>
     </div>
@@ -336,5 +326,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         crossorigin="anonymous"></script>
 <script type="module" src="assets/js/main.js"></script>
+
 </body>
 </html>

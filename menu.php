@@ -1,5 +1,5 @@
 <?php
-// menu.php - full menu (frontend only)
+// menu.php - full menu
 ?>
 <!doctype html>
 <html lang="en">
@@ -135,7 +135,7 @@
                             <option value="">-- Select your subdivision --</option>
 
                             <optgroup label="San Marino City">
-                                <option value="classic">San Marino Classic (₱15 DF + ₱15 gate)</option>
+                                <option value="classic">San Marino Classic (₱15 DF + ₱10 gate)</option>
                                 <option value="heights">San Marino Heights (₱15 DF)</option>
                                 <option value="central">San Marino Central (₱15 DF)</option>
                                 <option value="phase1">San Marino Phase 1 (₱15 DF)</option>
@@ -191,7 +191,7 @@
                             placeholder="09XXXXXXXXX">
 
                         <div class="small text-muted mt-1">
-                            We’ll confirm your pickup order via text before preparing.
+                            We'll confirm your pickup order via text before preparing.
                         </div>
                     </div>
             </div>
@@ -819,7 +819,7 @@
                 </section>
 
                 <p class="text-muted small mt-4">
-                    * Menu and prices based on Shawarma Depot’s current offerings. Items and pricing may change depending on availability and promos.
+                    * Menu and prices based on Shawarma Depot's current offerings. Items and pricing may change depending on availability and promos.
                 </p>
             </div>
 
@@ -854,9 +854,14 @@
                             <span id="cartTotal">₱0</span>
                         </div>
 
-                        <a href="checkout.php" class="btn btn-warning w-100 btn-sm fw-semibold mt-3">
-                            <i class="fa-solid fa-bag-shopping me-1"></i> Proceed to Checkout
-                        </a>
+                        <div id="menuCheckoutErrors" class="alert alert-danger small d-none mt-2 mb-0"></div>
+
+                        <button type="button"
+                                id="btnProceedCheckout"
+                                class="btn btn-warning w-100 btn-sm fw-semibold mt-2">
+                            <i class="fa-solid fa-bag-shopping me-1"></i>
+                            Proceed to Checkout
+                        </button>
                     </div>
                 </div>
             </div>
@@ -920,7 +925,7 @@
             <div class="fw-semibold">Order Shawarma Now</div>
             <div class="small text-muted">Open 4:00 PM – 11:00 PM</div>
         </div>
-        <a href="cart.php" class="btn btn-warning btn-sm fw-semibold">
+        <a href="menu.php" class="btn btn-warning btn-sm fw-semibold">
             <i class="fa-solid fa-bag-shopping me-1"></i> View Cart
         </a>
     </div>

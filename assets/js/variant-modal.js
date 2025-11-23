@@ -509,7 +509,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     section.appendChild(heading);
 
                     const list = document.createElement("div");
-                    list.className = "list-group small";
+                    list.className = "list-group small js-required-group";
+
 
                     group.options.forEach((opt) => {
                         const optionBtn = document.createElement("button");
@@ -533,8 +534,11 @@ document.addEventListener("DOMContentLoaded", function () {
                             optionBtn.classList.add("active");
 
                             selections[group.key] = opt;
+                            // remove error style once this group is satisfied
+                            list.classList.remove("border", "border-danger");
                             updateHint();
                         });
+
 
                         list.appendChild(optionBtn);
                     });
@@ -563,106 +567,141 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Simple products
             } else if (product.options) {
-                let selected        = null;
-                const extrasSelected = new Map();
-                let spicyFlag       = false;
+            let selected        = null;
+            const extrasSelected = new Map();
+            let spicyFlag       = false;
 
-                const updateHint = () => {
-                    if (!selected) {
-                        priceHint.textContent = "Pick an option to see the price.";
-                        CURRENT_CONFIG = null;
-                        return;
-                    }
-
-                    let extrasTotal = 0;
-                    const extrasArr = [];
-                    extrasSelected.forEach((opt) => {
-                        extrasTotal += opt.price || 0;
-                        extrasArr.push(opt);
-                    });
-
-                    const labels = [selected.label];
-                    if (product.spiceToggle && spicyFlag) labels.push("Spicy");
-                    if (extrasArr.length) {
-                        labels.push(
-                            `${extrasArr.length} extra${extrasArr.length > 1 ? "s" : ""}`
-                        );
-                    }
-
-                    const total     = selected.price + extrasTotal;
-                    const labelText = labels.join(" • ");
-
-                    priceHint.textContent = `${labelText} – ₱${total}`;
-
-                    CURRENT_CONFIG = {
-                        productKey:  key,
-                        productName: product.name,
-                        baseLabel:   selected.label,
-                        basePrice:   selected.price,
-                        meatLabel:   null,
-                        sizeLabel:   null,
-                        spicy:       spicyFlag,
-                        extrasTotal,
-                        extrasIds:   extrasArr.map((e) => e.id),
-                        summaryText: labelText
-                    };
-                };
-
-                if (product.autoSelect && product.options.length === 1) {
-                    selected = product.options[0];
-                } else {
-                    product.options.forEach((opt) => {
-                        const optionBtn = document.createElement("button");
-                        optionBtn.type = "button";
-                        optionBtn.className =
-                            "list-group-item list-group-item-action d-flex justify-content-between align-items-center";
-                        optionBtn.innerHTML = `
-                            <span>${opt.label}</span>
-                            <span class="fw-semibold price-tag mb-0">₱${opt.price}</span>
-                        `;
-                        optionBtn.addEventListener("click", () => {
-                            optionsContainer
-                                .querySelectorAll(".list-group-item.active")
-                                .forEach((el) => el.classList.remove("active"));
-                            optionBtn.classList.add("active");
-                            selected = opt;
-                            updateHint();
-                        });
-                        optionsContainer.appendChild(optionBtn);
-                    });
+            const updateHint = () => {
+                if (!selected) {
+                    priceHint.textContent = "Pick an option to see the price.";
+                    CURRENT_CONFIG = null;
+                    return;
                 }
 
-                buildSpiceSection(product, (flag) => {
-                    spicyFlag = flag;
-                    updateHint();
+                let extrasTotal = 0;
+                const extrasArr = [];
+                extrasSelected.forEach((opt) => {
+                    extrasTotal += opt.price || 0;
+                    extrasArr.push(opt);
                 });
 
-                buildExtrasSection(product, (opt, active) => {
-                    if (active) {
-                        extrasSelected.set(opt.id, opt);
-                    } else {
-                        extrasSelected.delete(opt.id);
-                    }
-                    updateHint();
+                const labels = [selected.label];
+                if (product.spiceToggle && spicyFlag) labels.push("Spicy");
+                if (extrasArr.length) {
+                    labels.push(
+                        `${extrasArr.length} extra${extrasArr.length > 1 ? "s" : ""}`
+                    );
+                }
+
+                const total     = selected.price + extrasTotal;
+                const labelText = labels.join(" • ");
+
+                priceHint.textContent = `${labelText} – ₱${total}`;
+
+                CURRENT_CONFIG = {
+                    productKey:  key,
+                    productName: product.name,
+                    baseLabel:   selected.label,
+                    basePrice:   selected.price,
+                    meatLabel:   null,
+                    sizeLabel:   null,
+                    spicy:       spicyFlag,
+                    extrasTotal,
+                    extrasIds:   extrasArr.map((e) => e.id),
+                    summaryText: labelText
+                };
+            };
+
+            if (product.autoSelect && product.options.length === 1) {
+                selected = product.options[0];
+            } else {
+                const simpleList = document.createElement("div");
+                simpleList.className = "list-group small js-required-group";
+
+                product.options.forEach((opt) => {
+                    const optionBtn = document.createElement("button");
+                    optionBtn.type = "button";
+                    optionBtn.className =
+                        "list-group-item list-group-item-action d-flex justify-content-between align-items-center";
+                    optionBtn.innerHTML = `
+                        <span>${opt.label}</span>
+                        <span class="fw-semibold price-tag mb-0">₱${opt.price}</span>
+                    `;
+                    optionBtn.addEventListener("click", () => {
+                        simpleList
+                            .querySelectorAll(".list-group-item.active")
+                            .forEach((el) => el.classList.remove("active"));
+                        optionBtn.classList.add("active");
+                        selected = opt;
+                        simpleList.classList.remove("border", "border-danger");
+                        updateHint();
+                    });
+                    simpleList.appendChild(optionBtn);
                 });
 
-                updateHint();
+                optionsContainer.appendChild(simpleList);
             }
+
+            buildSpiceSection(product, (flag) => {
+                spicyFlag = flag;
+                updateHint();
+            });
+
+            buildExtrasSection(product, (opt, active) => {
+                if (active) {
+                    extrasSelected.set(opt.id, opt);
+                } else {
+                    extrasSelected.delete(opt.id);
+                }
+                updateHint();
+            });
+
+            updateHint();
+            }
+
 
             variantModal.show();
         });
     });
 
-    if (addBtn) {
+    const highlightMissingSelections = () => {
+        if (!optionsContainer) return;
+        const requiredGroups = optionsContainer.querySelectorAll(".js-required-group");
+
+        requiredGroups.forEach((group) => {
+            const hasActive = group.querySelector(".active");
+            group.classList.remove("border", "border-danger");
+            if (!hasActive) {
+                group.classList.add("border", "border-danger");
+
+                if (group.animate) {
+                    group.animate(
+                        [
+                            { transform: "translateX(0)" },
+                            { transform: "translateX(-3px)" },
+                            { transform: "translateX(3px)" },
+                            { transform: "translateX(0)" }
+                        ],
+                        { duration: 180, iterations: 2 }
+                    );
+                }
+            }
+        });
+    };
+
+
+        if (addBtn) {
         addBtn.addEventListener("click", () => {
             if (!CURRENT_CONFIG || !CURRENT_CONFIG.basePrice) {
                 if (priceHint) {
                     priceHint.textContent = "Please pick your options first.";
                 }
+                highlightMissingSelections();
                 return;
             }
             window.addToCartFromConfig(CURRENT_CONFIG);
             variantModal.hide();
         });
     }
+
 });

@@ -7,6 +7,9 @@ document.addEventListener("DOMContentLoaded", function () {
     let fulfillmentMode = "";     // "", "delivery", "pickup"
     let deliveryFee = 0;
     let hasDeliveryZone = false;
+    // Tracks if user has tried to proceed at least once
+    let hasAttemptedCheckout = false;
+
 
     const cartItemsEl           = document.getElementById("cartItems");
     const cartSubtotalEl        = document.getElementById("cartSubtotal");
@@ -15,6 +18,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const cartItemCountEl       = document.getElementById("cartItemCount");
     const cartFulfillmentNoteEl = document.getElementById("cartFulfillmentNote");
     const cartDeliveryRowEl     = document.getElementById("cartDeliveryRow");
+    const proceedBtn = document.getElementById("btnProceedCheckout");
+    const errorBox   = document.getElementById("menuCheckoutErrors");
 
     if (cartDeliveryRowEl) {
         cartDeliveryRowEl.style.setProperty("display", "none", "important");
@@ -83,9 +88,16 @@ document.addEventListener("DOMContentLoaded", function () {
             cartItemsEl.classList.add("text-muted");
             cartItemsEl.innerHTML = "No items yet. Come try out what we have!";
             updateCartTotals();
-            return;
+
+            // Revalidate so "empty cart" error shows up again after removing last item
+            if (typeof validateCheckout === "function") {
+                validateCheckout({ showErrors: hasAttemptedCheckout, allowRedirect: false });
+            }
+
+            return; // <- important: end function here when cart is empty
         }
 
+        // Non-empty cart branch
         cartItemsEl.classList.remove("text-muted");
 
         let html = "";
@@ -149,6 +161,12 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         updateCartTotals();
+
+        // Auto-validate after each cart change, but only *show* errors
+        // after they’ve tried to proceed at least once.
+        if (typeof validateCheckout === "function") {
+            validateCheckout({ showErrors: hasAttemptedCheckout, allowRedirect: false });
+        }
     }
 
     // ---------------------- Add to cart helper ----------------------
@@ -227,4 +245,166 @@ document.addEventListener("DOMContentLoaded", function () {
     // a shorthand for other scripts
     window.updateCartTotals = updateCartTotals;
     window.addToCartFromConfig = addToCartFromConfig;
+
+    // ---------------------- Proceed to Checkout validation ----------------------
+
+
+    function clearFieldError(el) {
+        if (!el) return;
+        el.classList.remove("is-invalid");
+    }
+
+    function setFieldError(el) {
+        if (!el) return;
+        el.classList.add("is-invalid");
+        if (el.animate) {
+            el.animate(
+                [
+                    { transform: "translateX(0)" },
+                    { transform: "translateX(-3px)" },
+                    { transform: "translateX(3px)" },
+                    { transform: "translateX(0)" }
+                ],
+                { duration: 180, iterations: 2 }
+            );
+        }
+    }
+
+    function validateCheckout({ showErrors = true, allowRedirect = false } = {}) {
+        if (errorBox && showErrors) {
+            errorBox.classList.add("d-none");
+            errorBox.innerHTML = "";
+        }
+
+        const radioDelivery = document.getElementById("fulfillmentDelivery");
+        const radioPickup   = document.getElementById("fulfillmentPickup");
+
+        const subdivision   = document.getElementById("subdivisionSelect");
+        const addrBlkLot    = document.getElementById("addrBlkLot");
+        const addrLandmark  = document.getElementById("addrLandmark");
+        const addrName      = document.getElementById("addrName");
+        const addrPhone     = document.getElementById("addrPhone");
+
+        const pickupName    = document.getElementById("pickupName");
+        const pickupPhone   = document.getElementById("pickupPhone");
+
+        // Clear old highlights
+        [
+            subdivision, addrBlkLot, addrLandmark, addrName, addrPhone,
+            pickupName, pickupPhone
+        ].forEach(clearFieldError);
+
+        const errors = [];
+
+        // 1. Cart must not be empty
+        if (!cart.length) {
+            errors.push("Your cart is empty. Please add at least one item.");
+        }
+
+        // 2. Fulfillment mode required
+        const mode =
+            (radioDelivery && radioDelivery.checked) ? "delivery" :
+            (radioPickup && radioPickup.checked)     ? "pickup"   : "";
+
+        if (!mode) {
+            errors.push("Please choose whether this is for Delivery or Pickup.");
+        }
+
+        // 3. Mode-specific required fields
+        if (mode === "delivery") {
+            if (!subdivision || !subdivision.value.trim()) {
+                errors.push("Please select your subdivision.");
+                setFieldError(subdivision);
+            }
+            if (!addrBlkLot || !addrBlkLot.value.trim()) {
+                errors.push("Please enter your Block & Lot.");
+                setFieldError(addrBlkLot);
+            }
+            if (!addrLandmark || !addrLandmark.value.trim()) {
+                errors.push("Please enter a landmark so the rider can find you.");
+                setFieldError(addrLandmark);
+            }
+            if (!addrName || !addrName.value.trim()) {
+                errors.push("Please enter your name for delivery.");
+                setFieldError(addrName);
+            }
+            if (!addrPhone || !addrPhone.value.trim()) {
+                errors.push("Please enter your contact number for delivery.");
+                setFieldError(addrPhone);
+            }
+
+            // Make sure fee was computed for a valid zone
+            if (window.CartState) {
+                const st = window.CartState.getFulfillmentState();
+                if (!st.hasZone) {
+                    errors.push("Please choose a valid subdivision so we can compute your delivery fee.");
+                    setFieldError(subdivision);
+                }
+            }
+
+        } else if (mode === "pickup") {
+            if (!pickupName || !pickupName.value.trim()) {
+                errors.push("Please enter your name for pickup.");
+                setFieldError(pickupName);
+            }
+            if (!pickupPhone || !pickupPhone.value.trim()) {
+                errors.push("Please enter your contact number for pickup.");
+                setFieldError(pickupPhone);
+            }
+        }
+
+        if (errors.length) {
+            if (errorBox && showErrors) {
+                errorBox.innerHTML =
+                    "<ul class='mb-0'>" +
+                    errors.map(e => `<li>${e}</li>`).join("") +
+                    "</ul>";
+                errorBox.classList.remove("d-none");
+            }
+            return false;
+        }
+
+        // No errors: clear box
+        if (errorBox && showErrors) {
+            errorBox.classList.add("d-none");
+            errorBox.innerHTML = "";
+        }
+
+        if (allowRedirect) {
+            window.location.href = "checkout.php";
+        }
+        return true;
+    }
+
+    // Button click => validate + redirect if OK
+    if (proceedBtn) {
+        proceedBtn.addEventListener("click", () => {
+            hasAttemptedCheckout = true;
+            validateCheckout({ showErrors: true, allowRedirect: true });
+        });
+    }
+
+    // Live-update errors when the user fixes fields
+    const reactiveInputs = [
+        document.getElementById("fulfillmentDelivery"),
+        document.getElementById("fulfillmentPickup"),
+        document.getElementById("subdivisionSelect"),
+        document.getElementById("addrBlkLot"),
+        document.getElementById("addrLandmark"),
+        document.getElementById("addrName"),
+        document.getElementById("addrPhone"),
+        document.getElementById("pickupName"),
+        document.getElementById("pickupPhone")
+    ];
+
+    reactiveInputs.forEach((el) => {
+        if (!el) return;
+        const evt = (el.type === "radio" || el.tagName === "SELECT") ? "change" : "input";
+        el.addEventListener(evt, () => {
+            // Only show errors live *after* they've tried once
+            validateCheckout({ showErrors: hasAttemptedCheckout, allowRedirect: false });
+        });
+    });
+
+
 });
