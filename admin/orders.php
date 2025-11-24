@@ -24,7 +24,7 @@ $STATUS_LABELS = [
     'pending'          => 'Pending',
     'confirmed'        => 'Confirmed',
     'preparing'        => 'Preparing',
-    'out_for_delivery' => 'Out for Delivery',
+    'out_for_delivery' => 'Out for Delivery / Ready for Pickup',
     'completed'        => 'Completed',
     'cancelled'        => 'Cancelled',
 ];
@@ -48,8 +48,9 @@ $STATUS_NEXT = [
     'cancelled'        => null,
 ];
 
-$flash_message = "";
-$flash_type    = "success";
+$flash_message = $_SESSION['flash_message'] ?? "";
+$flash_type    = $_SESSION['flash_type'] ?? "success";
+unset($_SESSION['flash_message'], $_SESSION['flash_type']);
 
 // ---------------------- Handle status advance (POST) ----------------------
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'advance_status') {
@@ -72,34 +73,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             $next_status    = $STATUS_NEXT[$current_status] ?? null;
 
             if ($next_status === null) {
-                $flash_message = "Order #{$order_id} is already {$STATUS_LABELS[$current_status]} and cannot be advanced further.";
-                $flash_type    = "warning";
+                $_SESSION['flash_message'] = "Order #{$order_id} is already {$STATUS_LABELS[$current_status]} and cannot be advanced further.";
+                $_SESSION['flash_type']    = "warning";
             } else {
                 $stmt = $mysqli->prepare("UPDATE orders SET status = ? WHERE id = ?");
                 if ($stmt) {
                     $stmt->bind_param("si", $next_status, $order_id);
                     if ($stmt->execute()) {
-                        $flash_message = "Order #{$order_id} status updated to " . $STATUS_LABELS[$next_status] . ".";
-                        $flash_type    = "success";
+                        $_SESSION['flash_message'] = "Order #{$order_id} status updated to " . $STATUS_LABELS[$next_status] . ".";
+                        $_SESSION['flash_type']    = "success";
                     } else {
-                        $flash_message = "Failed to update status: " . $stmt->error;
-                        $flash_type    = "danger";
+                        $_SESSION['flash_message'] = "Failed to update status: " . $stmt->error;
+                        $_SESSION['flash_type']    = "danger";
                     }
                     $stmt->close();
                 } else {
-                    $flash_message = "Failed to prepare update statement.";
-                    $flash_type    = "danger";
+                    $_SESSION['flash_message'] = "Failed to prepare update statement.";
+                    $_SESSION['flash_type']    = "danger";
                 }
             }
         } else {
-            $flash_message = "Order not found.";
-            $flash_type    = "danger";
+            $_SESSION['flash_message'] = "Order not found.";
+            $_SESSION['flash_type']    = "danger";
         }
     } else {
-        $flash_message = "Invalid order.";
-        $flash_type    = "danger";
+        $_SESSION['flash_message'] = "Invalid order.";
+        $_SESSION['flash_type']    = "danger";
     }
+
+    // 🔁 Redirect to break the POST → refresh loop
+    // optionally preserve current filter:
+    $redirectStatus = $_GET['status'] ?? 'all';
+    header("Location: orders.php?status=" . urlencode($redirectStatus));
+    exit;
 }
+
 
 // ---------------------- Filter by status (GET) ----------------------
 $current_filter = $_GET['status'] ?? 'all';
@@ -286,20 +294,21 @@ if (!empty($orders)) {
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             <?php endif; ?>
-
-            <?php if (empty($orders)): ?>
-                <div class="card shadow-sm border-0">
-                    <div class="card-body text-center py-5">
-                        <p class="mb-1">
-                            <i class="fa-solid fa-clipboard-list fa-2x text-muted mb-2"></i>
-                        </p>
-                        <p class="mb-1 fw-semibold">No orders found.</p>
-                        <p class="text-muted small mb-0">
-                            Once customers start placing orders, they will appear here.
-                        </p>
+            
+            <div id="js-orders-live">
+                <?php if (empty($orders)): ?>
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body text-center py-5">
+                            <p class="mb-1">
+                                <i class="fa-solid fa-clipboard-list fa-2x text-muted mb-2"></i>
+                            </p>
+                            <p class="mb-1 fw-semibold">No orders found.</p>
+                            <p class="text-muted small mb-0">
+                                Once customers start placing orders, they will appear here.
+                            </p>
+                        </div>
                     </div>
-                </div>
-            <?php else: ?>
+                <?php else: ?>
 
                 <!-- Orders list -->
                 <div class="row g-3">
@@ -535,7 +544,7 @@ if (!empty($orders)) {
                         </div>
                     <?php endforeach; ?>
                 </div>
-
+            </div>
             <?php endif; ?>
         </div>
     </section>
@@ -573,5 +582,36 @@ if (!empty($orders)) {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         crossorigin="anonymous"></script>
 <script type="module" src="../assets/js/main.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const container = document.getElementById('js-orders-live');
+    if (!container) return;
+
+    // Keep current filter (?status=…) in the URL
+    const baseUrl = new URL(window.location.href);
+
+    function refreshOrders() {
+        fetch(baseUrl.toString(), { cache: 'no-store' })
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const updated = doc.getElementById('js-orders-live');
+                if (updated) {
+                    // Replace inner content with the new HTML
+                    container.innerHTML = updated.innerHTML;
+                }
+            })
+            .catch(err => {
+                console.error('Orders auto-refresh failed:', err);
+            });
+    }
+
+    // e.g. every 5 seconds
+    setInterval(refreshOrders, 5000);
+});
+</script>
+
 </body>
 </html>

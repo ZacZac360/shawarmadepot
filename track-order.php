@@ -128,7 +128,7 @@ function humanStatusLabel(string $status): string {
         case 'pending':          return 'Pending';
         case 'confirmed':        return 'Confirmed';
         case 'preparing':        return 'Preparing';
-        case 'out_for_delivery': return 'Out for delivery';
+        case 'out_for_delivery': return 'Out for Delivery / Ready for Pickup';
         case 'completed':        return 'Completed';
         case 'cancelled':        return 'Cancelled';
         default:                 return ucfirst($status);
@@ -175,7 +175,8 @@ if ($currentStepIndex >= 0) {
     if ($currentStepIndex <= 0)      $progressPercent = 15;
     elseif ($currentStepIndex == 1)  $progressPercent = 35;
     elseif ($currentStepIndex == 2)  $progressPercent = 65;
-    elseif ($currentStepIndex >= 3)  $progressPercent = 90;
+    elseif ($currentStepIndex == 3)  $progressPercent = 90;
+    elseif ($currentStepIndex >= 4)  $progressPercent = 100;
 }
 ?>
 <!doctype html>
@@ -334,6 +335,7 @@ if ($currentStepIndex >= 0) {
 
                 <!-- Status / details column -->
                 <div class="col-lg-7">
+                    <div id="js-track-status-wrapper">
                     <?php if ($order): ?>
                         <!-- Live result from DB -->
                         <div class="card shadow-sm border-0 mb-3">
@@ -386,7 +388,8 @@ if ($currentStepIndex >= 0) {
                                                 ['icon' => 'fa-receipt',     'label' => 'Order placed', 'minIndex' => 0],
                                                 ['icon' => 'fa-check',       'label' => 'Confirmed',    'minIndex' => 1],
                                                 ['icon' => 'fa-fire-burner', 'label' => 'Preparing',    'minIndex' => 2],
-                                                ['icon' => 'fa-motorcycle',  'label' => 'Out for delivery / Completed', 'minIndex' => 3],
+                                                ['icon' => 'fa-motorcycle',  'label' => 'Out for delivery / Pickup', 'minIndex' => 3],
+                                                ['icon' => 'fa-thumbs-up',  'label' => 'Completed', 'minIndex' => 4],
                                             ];
                                             foreach ($steps as $idx => $step):
                                                 $active = ($currentStepIndex >= $step['minIndex']);
@@ -624,6 +627,7 @@ if ($currentStepIndex >= 0) {
                             </div>
                         </div>
                     <?php endif; ?>
+                    </div>
                 </div>
             </div>
         </div>
@@ -659,5 +663,38 @@ if ($currentStepIndex >= 0) {
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
         crossorigin="anonymous"></script>
 <script type="module" src="assets/js/main.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const wrapper = document.getElementById('js-track-status-wrapper');
+
+    // If there's no found order (e.g. initial empty form), do nothing
+    if (!wrapper) return;
+
+    function refreshTrackOrder() {
+        // Re-fetch the same URL, including ?order_code=…&last4=…
+        fetch(window.location.href, { cache: 'no-store' })
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const newWrapper = doc.getElementById('js-track-status-wrapper');
+
+                // Only replace if the new HTML also has a result
+                if (newWrapper) {
+                    wrapper.innerHTML = newWrapper.innerHTML;
+                }
+            })
+            .catch(err => {
+                console.error('Track-order auto-refresh failed:', err);
+            });
+    }
+
+    // Refresh every 5 seconds
+    setInterval(refreshTrackOrder, 5000);
+});
+</script>
+
+
 </body>
 </html>

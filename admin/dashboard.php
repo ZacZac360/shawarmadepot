@@ -195,185 +195,187 @@ if ($stmt && $stmt->execute()) {
             </div>
 
             <!-- Top stats cards -->
-            <div class="row g-3 mb-4">
-                <div class="col-md-3 col-sm-6">
-                    <div class="card shadow-sm border-0 h-100">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                <span class="small text-uppercase text-muted">Total Orders</span>
-                                <i class="fa-solid fa-layer-group text-muted"></i>
-                            </div>
-                            <h3 class="mb-0">
-                                <?php echo $total_orders; ?>
-                            </h3>
-                            <small class="text-muted">All-time in the system</small>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-3 col-sm-6">
-                    <div class="card shadow-sm border-0 h-100">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                <span class="small text-uppercase text-muted">Pending</span>
-                                <i class="fa-solid fa-hourglass-half text-muted"></i>
-                            </div>
-                            <h3 class="mb-0">
-                                <?php echo $status_counts['pending']; ?>
-                            </h3>
-                            <small class="text-muted">Waiting for confirmation</small>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-3 col-sm-6">
-                    <div class="card shadow-sm border-0 h-100">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                <span class="small text-uppercase text-muted">Preparing</span>
-                                <i class="fa-solid fa-fire-burner text-muted"></i>
-                            </div>
-                            <h3 class="mb-0">
-                                <?php echo $status_counts['preparing']; ?>
-                            </h3>
-                            <small class="text-muted">Currently being cooked</small>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-3 col-sm-6">
-                    <div class="card shadow-sm border-0 h-100">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                <span class="small text-uppercase text-muted">Today</span>
-                                <i class="fa-solid fa-calendar-day text-muted"></i>
-                            </div>
-                            <h3 class="mb-0">
-                                <?php echo $today_orders; ?>
-                            </h3>
-                            <small class="text-muted">Orders placed today</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Status breakdown + latest orders -->
-            <div class="row g-3">
-                <!-- Status breakdown -->
-                <div class="col-lg-5">
-                    <div class="card shadow-sm border-0 h-100">
-                        <div class="card-body">
-                            <h5 class="card-title mb-3">
-                                <i class="fa-solid fa-chart-pie me-2 text-warning"></i>
-                                Orders by Status
-                            </h5>
-
-                            <?php if ($total_orders === 0): ?>
-                                <p class="text-muted small mb-0">
-                                    No orders yet. Once customers start ordering, you'll see numbers here.
-                                </p>
-                            <?php else: ?>
-                                <ul class="list-group list-group-flush">
-                                    <?php foreach ($STATUS_LABELS as $key => $label): ?>
-                                        <?php
-                                            $count = $status_counts[$key] ?? 0;
-                                            $badgeClass = $STATUS_BADGE_CLASS[$key] ?? 'bg-secondary';
-                                        ?>
-                                        <li class="list-group-item d-flex justify-content-between align-items-center small">
-                                            <span>
-                                                <span class="badge <?php echo $badgeClass; ?> me-2">
-                                                    &nbsp;
-                                                </span>
-                                                <?php echo htmlspecialchars($label); ?>
-                                            </span>
-                                            <span class="fw-semibold">
-                                                <?php echo $count; ?>
-                                            </span>
-                                        </li>
-                                    <?php endforeach; ?>
-                                </ul>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Latest orders -->
-                <div class="col-lg-7">
-                    <div class="card shadow-sm border-0 h-100">
-                        <div class="card-body">
-                            <h5 class="card-title mb-3 d-flex justify-content-between align-items-center">
-                                <span>
-                                    <i class="fa-solid fa-clock-rotate-left me-2 text-warning"></i>
-                                    Latest Orders
-                                </span>
-                                <a href="orders.php" class="small text-decoration-none">
-                                    View all
-                                    <i class="fa-solid fa-arrow-right ms-1"></i>
-                                </a>
-                            </h5>
-
-                            <?php if (empty($latest_orders)): ?>
-                                <p class="text-muted small mb-0">
-                                    No orders yet. Once orders come in, the latest five will show here.
-                                </p>
-                            <?php else: ?>
-                                <div class="table-responsive">
-                                    <table class="table table-sm align-middle mb-0">
-                                        <thead class="table-light">
-                                            <tr>
-                                                <th>Order</th>
-                                                <th>Customer</th>
-                                                <th class="text-end">Total</th>
-                                                <th>Status</th>
-                                                <th class="text-end">Placed</th>
-                                                <th></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                        <?php foreach ($latest_orders as $o): ?>
-                                            <?php
-                                                $st      = $o['status'] ?? 'pending';
-                                                $stLabel = $STATUS_LABELS[$st] ?? ucfirst($st);
-                                                $stClass = $STATUS_BADGE_CLASS[$st] ?? 'bg-secondary';
-                                            ?>
-                                            <tr>
-                                                <td class="small">
-                                                    <span class="badge bg-dark text-warning me-1">
-                                                        <span class="font-monospace">
-                                                            <?php echo htmlspecialchars($o['order_code']); ?>
-                                                        </span>
-                                                    </span>
-                                                    <span class="text-muted small">
-                                                        #<?php echo (int)$o['id']; ?>
-                                                    </span>
-                                                </td>
-                                                <td class="small">
-                                                    <?php echo htmlspecialchars($o['customer_name']); ?>
-                                                </td>
-                                                <td class="small text-end">
-                                                    ₱<?php echo number_format((float)$o['total_amount'], 2); ?>
-                                                </td>
-                                                <td class="small">
-                                                    <span class="badge <?php echo $stClass; ?>">
-                                                        <?php echo htmlspecialchars($stLabel); ?>
-                                                    </span>
-                                                </td>
-                                                <td class="small text-end">
-                                                    <?php echo htmlspecialchars($o['created_at']); ?>
-                                                </td>
-                                                <td class="text-end">
-                                                    <a href="order-details.php?id=<?php echo (int)$o['id']; ?>"
-                                                       class="btn btn-sm btn-outline-dark">
-                                                        <i class="fa-solid fa-magnifying-glass me-1"></i>
-                                                        View
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        <?php endforeach; ?>
-                                        </tbody>
-                                    </table>
+             <div id="js-dashboard-live">
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3 col-sm-6">
+                        <div class="card shadow-sm border-0 h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="small text-uppercase text-muted">Total Orders</span>
+                                    <i class="fa-solid fa-layer-group text-muted"></i>
                                 </div>
-                            <?php endif; ?>
+                                <h3 class="mb-0">
+                                    <?php echo $total_orders; ?>
+                                </h3>
+                                <small class="text-muted">All-time in the system</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 col-sm-6">
+                        <div class="card shadow-sm border-0 h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="small text-uppercase text-muted">Pending</span>
+                                    <i class="fa-solid fa-hourglass-half text-muted"></i>
+                                </div>
+                                <h3 class="mb-0">
+                                    <?php echo $status_counts['pending']; ?>
+                                </h3>
+                                <small class="text-muted">Waiting for confirmation</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 col-sm-6">
+                        <div class="card shadow-sm border-0 h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="small text-uppercase text-muted">Preparing</span>
+                                    <i class="fa-solid fa-fire-burner text-muted"></i>
+                                </div>
+                                <h3 class="mb-0">
+                                    <?php echo $status_counts['preparing']; ?>
+                                </h3>
+                                <small class="text-muted">Currently being cooked</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 col-sm-6">
+                        <div class="card shadow-sm border-0 h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="small text-uppercase text-muted">Today</span>
+                                    <i class="fa-solid fa-calendar-day text-muted"></i>
+                                </div>
+                                <h3 class="mb-0">
+                                    <?php echo $today_orders; ?>
+                                </h3>
+                                <small class="text-muted">Orders placed today</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Status breakdown + latest orders -->
+                <div class="row g-3">
+                    <!-- Status breakdown -->
+                    <div class="col-lg-5">
+                        <div class="card shadow-sm border-0 h-100">
+                            <div class="card-body">
+                                <h5 class="card-title mb-3">
+                                    <i class="fa-solid fa-chart-pie me-2 text-warning"></i>
+                                    Orders by Status
+                                </h5>
+
+                                <?php if ($total_orders === 0): ?>
+                                    <p class="text-muted small mb-0">
+                                        No orders yet. Once customers start ordering, you'll see numbers here.
+                                    </p>
+                                <?php else: ?>
+                                    <ul class="list-group list-group-flush">
+                                        <?php foreach ($STATUS_LABELS as $key => $label): ?>
+                                            <?php
+                                                $count = $status_counts[$key] ?? 0;
+                                                $badgeClass = $STATUS_BADGE_CLASS[$key] ?? 'bg-secondary';
+                                            ?>
+                                            <li class="list-group-item d-flex justify-content-between align-items-center small">
+                                                <span>
+                                                    <span class="badge <?php echo $badgeClass; ?> me-2">
+                                                        &nbsp;
+                                                    </span>
+                                                    <?php echo htmlspecialchars($label); ?>
+                                                </span>
+                                                <span class="fw-semibold">
+                                                    <?php echo $count; ?>
+                                                </span>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Latest orders -->
+                    <div class="col-lg-7">
+                        <div class="card shadow-sm border-0 h-100">
+                            <div class="card-body">
+                                <h5 class="card-title mb-3 d-flex justify-content-between align-items-center">
+                                    <span>
+                                        <i class="fa-solid fa-clock-rotate-left me-2 text-warning"></i>
+                                        Latest Orders
+                                    </span>
+                                    <a href="orders.php" class="small text-decoration-none">
+                                        View all
+                                        <i class="fa-solid fa-arrow-right ms-1"></i>
+                                    </a>
+                                </h5>
+
+                                <?php if (empty($latest_orders)): ?>
+                                    <p class="text-muted small mb-0">
+                                        No orders yet. Once orders come in, the latest five will show here.
+                                    </p>
+                                <?php else: ?>
+                                    <div class="table-responsive">
+                                        <table class="table table-sm align-middle mb-0">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>Order</th>
+                                                    <th>Customer</th>
+                                                    <th class="text-end">Total</th>
+                                                    <th>Status</th>
+                                                    <th class="text-end">Placed</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            <?php foreach ($latest_orders as $o): ?>
+                                                <?php
+                                                    $st      = $o['status'] ?? 'pending';
+                                                    $stLabel = $STATUS_LABELS[$st] ?? ucfirst($st);
+                                                    $stClass = $STATUS_BADGE_CLASS[$st] ?? 'bg-secondary';
+                                                ?>
+                                                <tr>
+                                                    <td class="small">
+                                                        <span class="badge bg-dark text-warning me-1">
+                                                            <span class="font-monospace">
+                                                                <?php echo htmlspecialchars($o['order_code']); ?>
+                                                            </span>
+                                                        </span>
+                                                        <span class="text-muted small">
+                                                            #<?php echo (int)$o['id']; ?>
+                                                        </span>
+                                                    </td>
+                                                    <td class="small">
+                                                        <?php echo htmlspecialchars($o['customer_name']); ?>
+                                                    </td>
+                                                    <td class="small text-end">
+                                                        ₱<?php echo number_format((float)$o['total_amount'], 2); ?>
+                                                    </td>
+                                                    <td class="small">
+                                                        <span class="badge <?php echo $stClass; ?>">
+                                                            <?php echo htmlspecialchars($stLabel); ?>
+                                                        </span>
+                                                    </td>
+                                                    <td class="small text-end">
+                                                        <?php echo htmlspecialchars($o['created_at']); ?>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <a href="order-details.php?id=<?php echo (int)$o['id']; ?>"
+                                                        class="btn btn-sm btn-outline-dark">
+                                                            <i class="fa-solid fa-magnifying-glass me-1"></i>
+                                                            View
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -414,5 +416,32 @@ if ($stmt && $stmt->execute()) {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         crossorigin="anonymous"></script>
 <script type="module" src="../assets/js/main.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const liveBox = document.getElementById('js-dashboard-live');
+    if (!liveBox) return;
+
+    function refreshDashboard() {
+        fetch(window.location.href, { cache: 'no-store' })
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const updated = doc.getElementById('js-dashboard-live');
+                if (updated) {
+                    liveBox.innerHTML = updated.innerHTML;
+                }
+            })
+            .catch(err => {
+                console.error('Dashboard auto-refresh failed:', err);
+            });
+    }
+
+    // e.g. every 7 seconds
+    setInterval(refreshDashboard, 7000);
+});
+</script>
+
 </body>
 </html>
