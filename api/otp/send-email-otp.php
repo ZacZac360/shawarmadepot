@@ -78,13 +78,6 @@ $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 $curlErr  = curl_error($ch);
 curl_close($ch);
 
-// DEBUG ONLY – REMOVE LATER
-file_put_contents(__DIR__ . '/brevo_debug.log', 
-    "Key (first 12 chars): " . substr($BREVO_API_KEY, 0, 12) . "...\n" .
-    "HTTP $httpCode\n$response\n\n", 
-    FILE_APPEND
-);
-
 
 
 
