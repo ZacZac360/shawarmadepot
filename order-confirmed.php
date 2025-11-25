@@ -32,7 +32,7 @@ function sendOrderConfirmationEmail($email, $name, $order_code, $cart_items, $su
     }
 
     // Same Brevo config as send-email-otp.php
-    $BREVO_API_KEY  = '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';
+    $BREVO_API_KEY  = 'YOUR-API-KEY-HERE';
     $SENDER_EMAIL   = 'crispino.zyrus@gmail.com';
     $SENDER_NAME    = 'Shawarma Depot';
 
