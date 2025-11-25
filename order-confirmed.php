@@ -1,6 +1,8 @@
 <?php
 // order-confirmed.php
 
+session_start();
+
 // DB connection
 $host = "localhost";
 $user = "root";
@@ -45,28 +47,45 @@ $cart_items    = [];
 $insert_ok     = false;
 $error_msg     = "";
 
+// Determine where order data comes from
+$isPaymongoReturn = (
+    $_SERVER['REQUEST_METHOD'] === 'GET'
+    && isset($_GET['via'])
+    && $_GET['via'] === 'paymongo'
+    && isset($_SESSION['pending_order'])
+);
+
+// Default: data from POST (COD flow)
+$data = $_POST;
+
+// PayMongo return: use data saved in session
+if ($isPaymongoReturn) {
+    $data = $_SESSION['pending_order'];
+}
+
+
 // ===============================
 // 1) POST REQUEST: create order
 // ===============================
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-    $order_code           = generateOrderCode();
-    $customer_name        = trim($_POST["customer_name"]        ?? "");
-    $customer_phone       = trim($_POST["customer_phone"]       ?? "");
-    $customer_messenger   = trim($_POST["customer_messenger"]   ?? "");
-    $customer_email       = trim($_POST["customer_email"]       ?? "");
-    $fulfillment_mode     = trim($_POST["fulfillment_mode"]     ?? "");
-    $delivery_subdivision = trim($_POST["delivery_subdivision"] ?? "");
-    $delivery_address     = trim($_POST["delivery_address"]     ?? "");
-    $delivery_landmark    = trim($_POST["delivery_landmark"]    ?? "");
-    $payment_method       = trim($_POST["payment_method"]       ?? "");
-    $order_notes          = trim($_POST["order_notes"]          ?? "");
+    $customer_name        = trim($data['customer_name']        ?? '');
+    $customer_phone       = trim($data['customer_phone']       ?? '');
+    $customer_messenger   = trim($data['customer_messenger']   ?? '');
+    $customer_email       = trim($data['customer_email']       ?? '');
+    $fulfillment_mode     = trim($data['fulfillment_mode']     ?? '');
+    $delivery_subdivision = trim($data['delivery_subdivision'] ?? '');
+    $delivery_address     = trim($data['delivery_address']     ?? '');
+    $delivery_landmark    = trim($data['delivery_landmark']    ?? '');
+    $payment_method       = trim($data['payment_method']       ?? '');
+    $order_notes          = trim($data['order_notes']          ?? '');
 
-    $subtotal      = isset($_POST["subtotal"])     ? (float)$_POST["subtotal"]     : 0;
-    $delivery_fee  = isset($_POST["delivery_fee"]) ? (float)$_POST["delivery_fee"] : 0;
-    $total_amount  = isset($_POST["total_amount"]) ? (float)$_POST["total_amount"] : 0;
 
-    $cart_json = $_POST["cart_json"] ?? "[]";
+    $subtotal      = floatval($data['subtotal']      ?? 0);
+    $delivery_fee  = floatval($data['delivery_fee']  ?? 0);
+    $total_amount  = floatval($data['total_amount']  ?? 0);
+
+    $cart_json     = $data['cart_json'] ?? '[]';
     if ($cart_json === "") {
         $cart_json = "[]";
     }
@@ -81,6 +100,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if ($customer_name === "" || $customer_phone === "" || $fulfillment_mode === "") {
         $error_msg = "Missing required fields (name, phone, or fulfillment mode).";
     } else {
+
+        // Generate a unique tracking code for this order
+        $order_code = generateOrderCode();
+
         $stmt = $mysqli->prepare("
             INSERT INTO orders (
                 order_code,

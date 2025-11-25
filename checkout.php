@@ -1,6 +1,12 @@
 <?php
 // checkout.php - Checkout page (frontend-first, backend-ready)
 ?>
+
+<?php
+$paymongo_cancelled = isset($_GET['paymongo_cancel']);
+?>
+
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -21,6 +27,13 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="d-flex flex-column min-vh-100">
+
+<?php if (!empty($paymongo_cancelled)): ?>
+    <div class="alert alert-warning small">
+        Online payment was cancelled or failed. 
+        You can try again, or choose <strong>Cash</strong> as your payment method.
+    </div>
+<?php endif; ?>
 
 <!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm sticky-top">
@@ -155,12 +168,12 @@
                                     </div>
                                     <div class="form-check">
                                         <input class="form-check-input"
-                                               type="radio"
-                                               name="payment_method"
-                                               id="paymentGCash"
-                                               value="gcash">
-                                        <label class="form-check-label" for="paymentGCash">
-                                            GCash (you’ll receive payment details after confirmation)
+                                            type="radio"
+                                            name="payment_method"
+                                            id="paymentPayMongo"
+                                            value="paymongo">
+                                        <label class="form-check-label" for="paymentPayMongo">
+                                            Online Payment (PayMongo – cards & e-wallet)
                                         </label>
                                     </div>
                                 </div>
@@ -259,7 +272,7 @@
                             </div>
 
                             <p class="text-muted small mb-3">
-                                Review what you’re about to order. This will be confirmed by our staff.
+                                Review what you’re about to order.
                             </p>
 
                             <!-- Dynamic cart items from localStorage -->

@@ -45,6 +45,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const hiddenCartJson         = document.getElementById("hiddenCartJson");
 
+    const paymentMethodInputs = document.querySelectorAll('input[name="payment_method"]');
+
+    function getSelectedPaymentMethod() {
+        const checked = document.querySelector('input[name="payment_method"]:checked');
+        return checked ? checked.value : 'cod';
+    }
+
+
     // ---------- DELIVERY ZONES ----------
     const DELIVERY_ZONES = {
         classic:  { fee: 15, gate: 10 },
@@ -354,18 +362,64 @@ document.addEventListener("DOMContentLoaded", function () {
 
     recalcTotals();
 
-    // ---------- STEP 1 → STEP 2 ----------
+    // ---------- STEP 1 → (STEP 2 FOR COD) OR PAYMONGO REDIRECT ----------
     if (btnConfirmStep1 && step1Box && step2Box) {
-        btnConfirmStep1.addEventListener("click", function () {
-            // Just toggle visibility
+        btnConfirmStep1.addEventListener("click", async function () {
+            const method = getSelectedPaymentMethod();
+
+            // Always sync hidden fields first (so PHP gets the latest data)
+            syncHiddenFields();
+
+            if (method === "cod") {
+                // Old behavior: go to OTP step
+                step1Box.style.display = "none";
+                step2Box.style.display = "block";
+
+                if (otpCodeInput) {
+                    otpCodeInput.value = "";
+                    otpCodeInput.classList.remove("is-invalid");
+                    otpCodeInput.focus();
+                }
+                return;
+            }
+
+            if (method === "paymongo") {
+                // New behavior: create Checkout Session then redirect to PayMongo
+                btnConfirmStep1.disabled = true;
+                const originalLabel = btnConfirmStep1.innerHTML;
+                btnConfirmStep1.innerHTML = 'Opening payment page...';
+
+                try {
+                    const formData = new FormData(checkoutForm);
+
+                    const res = await fetch("api/payments/paymongo-checkout.php", {
+                        method: "POST",
+                        body: formData
+                    });
+
+                    const data = await res.json();
+                    console.log("PayMongo Checkout response:", data);
+
+                    if (data.status === "ok" && data.checkout_url) {
+                        // 🔥 Actual redirect to PayMongo's hosted checkout page
+                        window.location.href = data.checkout_url;
+                    } else {
+                        alert("Online payment failed to start. Please try again or choose Cash.");
+                    }
+                } catch (err) {
+                    console.error("PayMongo Checkout error:", err);
+                    alert("There was a problem contacting the payment service.");
+                } finally {
+                    btnConfirmStep1.disabled = false;
+                    btnConfirmStep1.innerHTML = originalLabel;
+                }
+
+                return;
+            }
+
+            // Fallback: treat as COD if something weird happens
             step1Box.style.display = "none";
             step2Box.style.display = "block";
-
-            if (otpCodeInput) {
-                otpCodeInput.value = "";
-                otpCodeInput.classList.remove("is-invalid");
-                otpCodeInput.focus();
-            }
         });
     }
 
@@ -375,31 +429,40 @@ document.addEventListener("DOMContentLoaded", function () {
             step1Box.style.display = "block";
         });
     }
-
-    // ---------- OTP CHECK + FINAL SUBMIT ----------
+    
+    // ---------- OTP CHECK + FINAL SUBMIT (COD ONLY) ----------
     if (btnPlaceOrder && checkoutForm) {
         btnPlaceOrder.addEventListener("click", function () {
-        if (!otpCodeInput) return;
+            const method = getSelectedPaymentMethod();
 
-        const otpValue = otpCodeInput.value.trim();
-        if (otpValue !== HARD_CODED_OTP) {
-            otpCodeInput.classList.add("is-invalid");
-            if (otpError) {
-                otpError.textContent = "Incorrect code. For testing, use 000000.";
+            // Safety: OTP screen is only for COD
+            if (method !== "cod") {
+                // Just in case user somehow gets here with paymongo selected
+                checkoutForm.submit();
+                return;
             }
-            return;
-        }
 
-        otpCodeInput.classList.remove("is-invalid");
-        if (otpError) otpError.textContent = "";
+            if (!otpCodeInput) return;
 
-        // IMPORTANT: sync everything into hidden inputs JUST BEFORE submit
-        syncHiddenFields();
+            const otpValue = otpCodeInput.value.trim();
+            if (otpValue !== HARD_CODED_OTP) {
+                otpCodeInput.classList.add("is-invalid");
+                if (otpError) {
+                    otpError.textContent = "Incorrect code. For testing, use 000000.";
+                }
+                return;
+            }
 
-        // ✅ Submit as POST to order-confirmed.php
-        checkoutForm.submit();
-    });
-}
+            otpCodeInput.classList.remove("is-invalid");
+            if (otpError) otpError.textContent = "";
+
+            // Sync everything into hidden inputs JUST BEFORE submit
+            syncHiddenFields();
+
+            // Submit as POST to order-confirmed.php
+            checkoutForm.submit();
+        });
+    }
 
 
     console.log("Loaded order details:", details);
