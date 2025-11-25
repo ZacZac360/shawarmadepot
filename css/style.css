@@ -815,9 +815,7 @@ main {
     border-color: #009d45;
 }
 
-/* ----------------------
-   Variant modal missing selection highlight
-   ---------------------- */
+/* ---------------------- Variant modal missing selection highlight ---------------------- */
 .variant-group-missing {
     border: 1px solid rgba(220, 53, 69, 0.7); /* similar to bg-danger tone */
     border-radius: 0.5rem;
@@ -835,4 +833,14 @@ main {
 
 .variant-shake {
     animation: variant-shake 0.3s ease;
+}
+
+
+/* Center reCAPTCHA box inside modal */
+#modalCaptchaBox {
+    text-align: center;
+}
+
+#modalCaptchaBox .g-recaptcha {
+    display: inline-block;
 }

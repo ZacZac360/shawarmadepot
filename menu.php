@@ -940,8 +940,49 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         crossorigin="anonymous"></script>
 
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
 <!-- Custom JS -->
 <script type="module" src="assets/js/main.js"></script>
+
+<!-- CAPTCHA CONFIRMATION MODAL -->
+<div class="modal fade" id="captchaModal" tabindex="-1" aria-labelledby="captchaModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="captchaModalLabel">
+            Verify You're Human
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body text-center">
+        <p class="small text-muted mb-2">
+            Please complete the CAPTCHA to proceed to checkout.
+        </p>
+
+        <div id="modalCaptchaBox" class="w-100 mb-3">
+            <div class="g-recaptcha"
+                data-sitekey="6LeG9RcsAAAAAGt5EdHWA29Q-sMkMRuxB1ad-e9O"
+                id="captchaContainer"></div>
+        </div>
+
+        <div id="captchaModalError" class="alert alert-danger small mt-2 d-none">
+            Please verify the CAPTCHA before continuing.
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn btn-warning btn-sm fw-semibold" id="captchaConfirmBtn">
+            Continue to Checkout
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
 
 </body>
 </html>

@@ -275,6 +275,27 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $error_msg = "This page is only available right after placing an order.";
     }
 }
+
+// Build tracking URL + QR code URL (only if we have a valid order)
+$track_url = "";
+$qr_url    = "";
+
+if ($insert_ok && $order_code && $customer_phone) {
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host   = $_SERVER['HTTP_HOST'] ?? 'localhost';
+
+    // Directory where order-confirmed.php lives (e.g. /shawarmadepot)
+    $dir = rtrim(dirname($_SERVER['REQUEST_URI'] ?? ''), '/\\');
+
+    // Full URL to track-order.php with the same params you already use
+    $track_url = $scheme . '://' . $host . $dir .
+        '/track-order.php?order_code=' . urlencode($order_code) .
+        '&order_phone=' . urlencode($customer_phone);
+
+    // External QR microservice (goQR / qrserver)
+    $qr_url = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' .
+        urlencode($track_url);
+}
 ?>
 
 <!doctype html>
@@ -413,6 +434,20 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                                         Back to Menu
                                     </a>
                                 </div>
+
+                                <?php if (!empty($qr_url) && !empty($track_url)): ?>
+                                    <hr class="my-3">
+                                    <div class="text-center">
+                                        <img src="<?php echo htmlspecialchars($qr_url); ?>"
+                                            alt="QR code to track this order"
+                                            class="img-fluid border rounded p-1 bg-white"
+                                            style="max-width: 220px;">
+                                        <p class="small text-muted mt-2 mb-0">
+                                            You may also san this QR to view your tracking page<br>
+                                        </p>
+                                    </div>
+                                <?php endif; ?>
+
                             </div>
                         </div>
                     </div>

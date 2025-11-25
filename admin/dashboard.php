@@ -137,11 +137,6 @@ if ($stmt && $stmt->execute()) {
                         <i class="fa-solid fa-receipt me-1"></i> Orders
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="menu.php">
-                        <i class="fa-solid fa-burger me-1"></i> Menu
-                    </a>
-                </li>
                 <li class="nav-item ms-lg-3">
                     <a class="btn btn-outline-light btn-sm" href="../index.php" target="_blank">
                         <i class="fa-solid fa-globe me-1"></i> View Site
@@ -438,7 +433,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
 
-    // e.g. every 7 seconds
+    //every 7 seconds
     setInterval(refreshDashboard, 7000);
 });
 </script>

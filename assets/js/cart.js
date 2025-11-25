@@ -296,12 +296,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const errors = [];
 
-        // 1. Cart must not be empty
+        // Cart must not be empty
         if (!cart.length) {
             errors.push("Your cart is empty. Please add at least one item.");
         }
 
-        // 2. Fulfillment mode required
+        // Fulfillment mode required
         const mode =
             (radioDelivery && radioDelivery.checked) ? "delivery" :
             (radioPickup && radioPickup.checked)     ? "pickup"   : "";
@@ -310,7 +310,7 @@ document.addEventListener("DOMContentLoaded", function () {
             errors.push("Please choose whether this is for Delivery or Pickup.");
         }
 
-        // 3. Mode-specific required fields
+        // Mode-specific required fields
         if (mode === "delivery") {
             if (!subdivision || !subdivision.value.trim()) {
                 errors.push("Please select your subdivision.");
@@ -353,6 +353,23 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
 
+        // reCAPTCHA (only enforce when actually trying to go to checkout)
+        if (allowRedirect) {
+            try {
+                if (typeof grecaptcha !== "undefined") {
+                    const captchaResponse = grecaptcha.getResponse();
+                    if (!captchaResponse) {
+                        errors.push("Please verify you're not a robot before proceeding.");
+                    }
+                } else {
+                    console.warn("reCAPTCHA not loaded; skipping captcha check.");
+                }
+            } catch (e) {
+                console.error("Error while checking reCAPTCHA", e);
+            }
+        }
+
+        // If there are errors, show them and block redirect
         if (errors.length) {
             if (errorBox && showErrors) {
                 errorBox.innerHTML =
@@ -376,11 +393,20 @@ document.addEventListener("DOMContentLoaded", function () {
         return true;
     }
 
+
     // Button click => validate + redirect if OK
     if (proceedBtn) {
         proceedBtn.addEventListener("click", () => {
             hasAttemptedCheckout = true;
-            validateCheckout({ showErrors: true, allowRedirect: true });
+            const valid = validateCheckout({
+                showErrors: true,
+                allowRedirect: false
+            })
+            if (valid) {
+                // Open CAPTCHA modal instead of redirecting
+                const captchaModal = new bootstrap.Modal(document.getElementById("captchaModal"));
+                captchaModal.show();
+            }
         });
     }
 
@@ -401,10 +427,30 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!el) return;
         const evt = (el.type === "radio" || el.tagName === "SELECT") ? "change" : "input";
         el.addEventListener(evt, () => {
-            // Only show errors live *after* they've tried once
+            // Only show errors live after they've tried once
             validateCheckout({ showErrors: hasAttemptedCheckout, allowRedirect: false });
         });
     });
+
+    const captchaConfirmBtn = document.getElementById("captchaConfirmBtn");
+    const captchaModalError = document.getElementById("captchaModalError");
+
+    if (captchaConfirmBtn) {
+        captchaConfirmBtn.addEventListener("click", () => {
+
+            const captchaResponse = grecaptcha.getResponse();
+
+            if (!captchaResponse) {
+                captchaModalError.classList.remove("d-none");
+                captchaModalError.textContent = "Please verify the CAPTCHA.";
+                return;
+            }
+
+            // CAPTCHA ok → redirect now
+            window.location.href = "checkout.php";
+        });
+    }
+
 
 
 });
