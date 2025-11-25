@@ -64,9 +64,7 @@ if ($isPaymongoReturn) {
 }
 
 
-// ===============================
-// 1) POST REQUEST: create order
-// ===============================
+// POST REQUEST: create order
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $customer_name        = trim($data['customer_name']        ?? '');
@@ -80,12 +78,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $payment_method       = trim($data['payment_method']       ?? '');
     $order_notes          = trim($data['order_notes']          ?? '');
 
-
     $subtotal      = floatval($data['subtotal']      ?? 0);
     $delivery_fee  = floatval($data['delivery_fee']  ?? 0);
     $total_amount  = floatval($data['total_amount']  ?? 0);
 
-    $cart_json     = $data['cart_json'] ?? '[]';
+    $cart_json = $data['cart_json'] ?? '[]';
     if ($cart_json === "") {
         $cart_json = "[]";
     }
@@ -101,124 +98,141 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $error_msg = "Missing required fields (name, phone, or fulfillment mode).";
     } else {
 
-        // Generate a unique tracking code for this order
-        $order_code = generateOrderCode();
+        // OTP verification required ONLY if COD
+        if ($payment_method === "cod") {
+            $otpVerified = $_SESSION['otp_verified'] ?? false;
+            $otpEmail    = $_SESSION['otp_email'] ?? null;
 
-        $stmt = $mysqli->prepare("
-            INSERT INTO orders (
-                order_code,
-                customer_name,
-                customer_phone,
-                customer_messenger,
-                customer_email,
-                fulfillment_mode,
-                delivery_subdivision,
-                delivery_address,
-                delivery_landmark,
-                payment_method,
-                order_notes,
-                subtotal,
-                delivery_fee,
-                total_amount,
-                cart_json
-            ) VALUES (
-                ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
-            )
-        ");
-
-        if (!$stmt) {
-            $error_msg = "Prepare failed: " . $mysqli->error;
-        } else {
-            $stmt->bind_param(
-                "sssssssssssddds",
-                $order_code,
-                $customer_name,
-                $customer_phone,
-                $customer_messenger,
-                $customer_email,
-                $fulfillment_mode,
-                $delivery_subdivision,
-                $delivery_address,
-                $delivery_landmark,
-                $payment_method,
-                $order_notes,
-                $subtotal,
-                $delivery_fee,
-                $total_amount,
-                $cart_json
-            );
-
-            if ($stmt->execute()) {
-                $insert_ok = true;
-
-                // Get the auto-increment ID of the order we just inserted
-                $order_id = $stmt->insert_id;
-
-                // Insert each cart item into order_items
-                if (!empty($cart_items) && $order_id) {
-                    $itemStmt = $mysqli->prepare("
-                        INSERT INTO order_items (
-                            order_id,
-                            product_key,
-                            product_name,
-                            summary,
-                            unit_price,
-                            quantity,
-                            line_total,
-                            raw_json
-                        ) VALUES (
-                            ?, ?, ?, ?, ?, ?, ?, ?
-                        )
-                    ");
-
-                    if ($itemStmt) {
-                        foreach ($cart_items as $item) {
-                            $product_key  = $item["key"]      ?? null;
-                            $product_name = $item["name"]     ?? "Item";
-                            $summary      = $item["summary"]  ?? "";
-                            $qty          = isset($item["qty"]) ? (int)$item["qty"] : 0;
-                            $unit         = isset($item["unitPrice"]) ? (float)$item["unitPrice"] : 0.0;
-                            $line_total   = $unit * $qty;
-                            $raw_json     = json_encode($item, JSON_UNESCAPED_UNICODE);
-
-                            $itemStmt->bind_param(
-                                "isssdids",
-                                $order_id,
-                                $product_key,
-                                $product_name,
-                                $summary,
-                                $unit,
-                                $qty,
-                                $line_total,
-                                $raw_json
-                            );
-
-                            $itemStmt->execute(); // ignore per-item errors for now
-                        }
-                        $itemStmt->close();
-                    }
-                }
-
-                $stmt->close();
-
-                // IMPORTANT: POST → Redirect → GET
-                header(
-                    "Location: order-confirmed.php?code=" .
-                    urlencode($order_code) .
-                    "&phone=" . urlencode($customer_phone)
-                );
-                exit;
-
-            } else {
-                $error_msg = "Execute failed: " . $stmt->error;
-                $stmt->close();
+            if (!$otpVerified) {
+                $error_msg = "OTP verification is required for cash orders. Please go back and enter the code.";
+            } elseif (!$otpEmail || strcasecmp($otpEmail, $customer_email) !== 0) {
+                $error_msg = "The OTP was not verified for this email address.";
             }
         }
-    }
 
-// ===============================
-// 2) GET REQUEST: show existing order
-// ===============================
+        // Only proceed with DB insert if no error so far
+        if ($error_msg === "") {
+
+            // Generate a unique tracking code for this order
+            $order_code = generateOrderCode();
+
+            $stmt = $mysqli->prepare("
+                INSERT INTO orders (
+                    order_code,
+                    customer_name,
+                    customer_phone,
+                    customer_messenger,
+                    customer_email,
+                    fulfillment_mode,
+                    delivery_subdivision,
+                    delivery_address,
+                    delivery_landmark,
+                    payment_method,
+                    order_notes,
+                    subtotal,
+                    delivery_fee,
+                    total_amount,
+                    cart_json
+                ) VALUES (
+                    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+                )
+            ");
+
+            if (!$stmt) {
+                $error_msg = "Prepare failed: " . $mysqli->error;
+            } else {
+                $stmt->bind_param(
+                    "sssssssssssddds",
+                    $order_code,
+                    $customer_name,
+                    $customer_phone,
+                    $customer_messenger,
+                    $customer_email,
+                    $fulfillment_mode,
+                    $delivery_subdivision,
+                    $delivery_address,
+                    $delivery_landmark,
+                    $payment_method,
+                    $order_notes,
+                    $subtotal,
+                    $delivery_fee,
+                    $total_amount,
+                    $cart_json
+                );
+
+                if ($stmt->execute()) {
+                    $insert_ok = true;
+
+                    // Get the auto-increment ID of the order we just inserted
+                    $order_id = $stmt->insert_id;
+
+                    // Insert each cart item into order_items
+                    if (!empty($cart_items) && $order_id) {
+                        $itemStmt = $mysqli->prepare("
+                            INSERT INTO order_items (
+                                order_id,
+                                product_key,
+                                product_name,
+                                summary,
+                                unit_price,
+                                quantity,
+                                line_total,
+                                raw_json
+                            ) VALUES (
+                                ?, ?, ?, ?, ?, ?, ?, ?
+                            )
+                        ");
+
+                        if ($itemStmt) {
+                            foreach ($cart_items as $item) {
+                                $product_key  = $item["key"]      ?? null;
+                                $product_name = $item["name"]     ?? "Item";
+                                $summary      = $item["summary"]  ?? "";
+                                $qty          = isset($item["qty"]) ? (int)$item["qty"] : 0;
+                                $unit         = isset($item["unitPrice"]) ? (float)$item["unitPrice"] : 0.0;
+                                $line_total   = $unit * $qty;
+                                $raw_json     = json_encode($item, JSON_UNESCAPED_UNICODE);
+
+                                $itemStmt->bind_param(
+                                    "isssdids",
+                                    $order_id,
+                                    $product_key,
+                                    $product_name,
+                                    $summary,
+                                    $unit,
+                                    $qty,
+                                    $line_total,
+                                    $raw_json
+                                );
+
+                                $itemStmt->execute(); // ignore per-item errors for now
+                            }
+                            $itemStmt->close();
+                        }
+                    }
+
+                    $stmt->close();
+
+                    // Clear OTP session after success
+                    unset($_SESSION['otp_email'], $_SESSION['otp_code'], $_SESSION['otp_expires'], $_SESSION['otp_verified']);
+
+                    // IMPORTANT: POST → Redirect → GET
+                    header(
+                        "Location: order-confirmed.php?code=" .
+                        urlencode($order_code) .
+                        "&phone=" . urlencode($customer_phone)
+                    );
+                    exit;
+
+                } else {
+                    $error_msg = "Execute failed: " . $stmt->error;
+                    $stmt->close();
+                }
+            }
+        } // end if no error
+    } // end basic fields check
+
+// GET REQUEST: show existing order
 } else {
     $code  = trim($_GET['code']  ?? '');
     $phone = trim($_GET['phone'] ?? '');
@@ -275,6 +289,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $error_msg = "This page is only available right after placing an order.";
     }
 }
+
+
 
 // Build tracking URL + QR code URL (only if we have a valid order)
 $track_url = "";

@@ -178,6 +178,25 @@ $paymongo_cancelled = isset($_GET['paymongo_cancel']);
                                     </div>
                                 </div>
 
+                                <!-- Email for OTP (shown only for Cash via JS) -->
+                                <div class="mb-3" id="codEmailWrapper" style="display: none;">
+                                    <label for="checkoutEmail"
+                                        class="form-label small text-uppercase text-muted">
+                                        Email for OTP verification (Cash only)
+                                    </label>
+                                    <input type="email"
+                                        class="form-control"
+                                        id="checkoutEmail"
+                                        placeholder="juan@example.com">
+                                    <div class="form-text">
+                                        We’ll send a one-time code here to confirm your cash order.
+                                    </div>
+                                    <div class="invalid-feedback" id="emailError">
+                                        Please enter a valid email address.
+                                    </div>
+                                </div>
+
+
                                 <!-- Order notes -->
                                 <div class="mb-3">
 
@@ -215,10 +234,10 @@ $paymongo_cancelled = isset($_GET['paymongo_cancel']);
                                     Enter the 6-digit confirmation code
                                 </h5>
 
-                                <p class="text-muted small mb-3">
-                                    Normally this would be sent via SMS or Messenger.
-                                    For testing, use code <strong>000000</strong>.
+                                <p class="text-muted small mb-3" id="otpHelpText">
+                                    We’ve sent a 6-digit confirmation code to your email. Enter it below to confirm your cash order.
                                 </p>
+
 
                                 <div class="mb-3">
                                     <label for="otpCode"

@@ -11,7 +11,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const btnPlaceOrder    = document.getElementById("btnPlaceOrder");
     const otpCodeInput     = document.getElementById("otpCode");
     const otpError         = document.getElementById("otpError");
-    const HARD_CODED_OTP   = "000000";
+    const otpHelpText      = document.getElementById("otpHelpText");
+
+    // Email for COD-only OTP
+    const codEmailWrapper  = document.getElementById("codEmailWrapper");
+    const codEmailInput    = document.getElementById("checkoutEmail");
+    const codEmailError    = document.getElementById("emailError");
 
     // ---------- SUMMARY ELEMENTS ----------
     const detailsSummaryEl = document.getElementById("checkoutDetailsSummary");
@@ -28,30 +33,54 @@ document.addEventListener("DOMContentLoaded", function () {
     const fulfillmentPu    = document.getElementById("fulfillmentPickup");
     const subdivisionSel   = document.getElementById("subdivisionSelect");
 
-        // ---------- HIDDEN FIELDS (for POST to PHP) ----------
-    const hiddenCustomerName     = document.getElementById("hiddenCustomerName");
-    const hiddenCustomerPhone    = document.getElementById("hiddenCustomerPhone");
-    const hiddenCustomerMessenger= document.getElementById("hiddenCustomerMessenger");
-    const hiddenCustomerEmail    = document.getElementById("hiddenCustomerEmail");
+    // ---------- HIDDEN FIELDS (for POST to PHP) ----------
+    const hiddenCustomerName      = document.getElementById("hiddenCustomerName");
+    const hiddenCustomerPhone     = document.getElementById("hiddenCustomerPhone");
+    const hiddenCustomerMessenger = document.getElementById("hiddenCustomerMessenger");
+    const hiddenCustomerEmail     = document.getElementById("hiddenCustomerEmail");
 
-    const hiddenFulfillmentMode  = document.getElementById("hiddenFulfillmentMode");
-    const hiddenSubdivision      = document.getElementById("hiddenSubdivision");
-    const hiddenDeliveryAddress  = document.getElementById("hiddenDeliveryAddress");
-    const hiddenDeliveryLandmark = document.getElementById("hiddenDeliveryLandmark");
+    const hiddenFulfillmentMode   = document.getElementById("hiddenFulfillmentMode");
+    const hiddenSubdivision       = document.getElementById("hiddenSubdivision");
+    const hiddenDeliveryAddress   = document.getElementById("hiddenDeliveryAddress");
+    const hiddenDeliveryLandmark  = document.getElementById("hiddenDeliveryLandmark");
 
-    const hiddenSubtotal         = document.getElementById("hiddenSubtotal");
-    const hiddenDeliveryFee      = document.getElementById("hiddenDeliveryFee");
-    const hiddenTotalAmount      = document.getElementById("hiddenTotalAmount");
+    const hiddenSubtotal          = document.getElementById("hiddenSubtotal");
+    const hiddenDeliveryFee       = document.getElementById("hiddenDeliveryFee");
+    const hiddenTotalAmount       = document.getElementById("hiddenTotalAmount");
 
-    const hiddenCartJson         = document.getElementById("hiddenCartJson");
+    const hiddenCartJson          = document.getElementById("hiddenCartJson");
 
     const paymentMethodInputs = document.querySelectorAll('input[name="payment_method"]');
 
     function getSelectedPaymentMethod() {
         const checked = document.querySelector('input[name="payment_method"]:checked');
-        return checked ? checked.value : 'cod';
+        return checked ? checked.value : "cod";
     }
 
+    function isValidEmail(email) {
+        return /\S+@\S+\.\S+/.test(email);
+    }
+
+    function updateEmailForPayment() {
+        if (!codEmailWrapper || !codEmailInput) return;
+        const method = getSelectedPaymentMethod();
+
+        if (method === "cod") {
+            codEmailWrapper.style.display = "block";
+        } else {
+            codEmailWrapper.style.display = "none";
+            codEmailInput.value = "";
+            codEmailInput.classList.remove("is-invalid");
+            if (codEmailError) codEmailError.textContent = "Please enter a valid email address.";
+        }
+    }
+
+    if (paymentMethodInputs && paymentMethodInputs.length) {
+        paymentMethodInputs.forEach((inp) => {
+            inp.addEventListener("change", updateEmailForPayment);
+        });
+    }
+    updateEmailForPayment();
 
     // ---------- DELIVERY ZONES ----------
     const DELIVERY_ZONES = {
@@ -84,7 +113,8 @@ document.addEventListener("DOMContentLoaded", function () {
         blockLot: "",
         landmark: "",
         customerName: "",
-        phone: ""
+        phone: "",
+        email: ""
     };
 
     try {
@@ -98,18 +128,18 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Fill hidden customer + address fields from details
-    if (hiddenCustomerName)      hiddenCustomerName.value     = details.customerName || "";
-    if (hiddenCustomerPhone)     hiddenCustomerPhone.value    = details.phone || "";
-    if (hiddenCustomerMessenger) hiddenCustomerMessenger.value= details.messenger || "";
-    if (hiddenCustomerEmail)     hiddenCustomerEmail.value    = details.email || "";
+    if (hiddenCustomerName)      hiddenCustomerName.value      = details.customerName || "";
+    if (hiddenCustomerPhone)     hiddenCustomerPhone.value     = details.phone || "";
+    if (hiddenCustomerMessenger) hiddenCustomerMessenger.value = details.messenger || "";
 
-    if (hiddenFulfillmentMode)   hiddenFulfillmentMode.value  = details.fulfillmentMode || "";
-    if (hiddenSubdivision)       hiddenSubdivision.value      = details.subdivision || "";
+    // For email, we now mainly use the checkout email field
+    if (hiddenCustomerEmail)     hiddenCustomerEmail.value     = details.email || "";
 
-    // For address, we stored blockLot + landmark in details
-    if (hiddenDeliveryAddress)   hiddenDeliveryAddress.value  = details.blockLot || "";
-    if (hiddenDeliveryLandmark)  hiddenDeliveryLandmark.value = details.landmark || "";
+    if (hiddenFulfillmentMode)   hiddenFulfillmentMode.value   = details.fulfillmentMode || "";
+    if (hiddenSubdivision)       hiddenSubdivision.value       = details.subdivision || "";
 
+    if (hiddenDeliveryAddress)   hiddenDeliveryAddress.value   = details.blockLot || "";
+    if (hiddenDeliveryLandmark)  hiddenDeliveryLandmark.value  = details.landmark || "";
 
     // ---------- RENDER "YOUR DETAILS" SUMMARY ----------
     if (detailsSummaryEl) {
@@ -199,7 +229,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-
     if (!cart.length) {
         if (itemsContainer) {
             itemsContainer.innerHTML = `
@@ -240,62 +269,69 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function syncHiddenFields() {
-    // Make sure we have the latest details from localStorage, just in case
-    try {
-        const stored = localStorage.getItem("shawarma_order_details");
-        if (stored) {
-            const parsed = JSON.parse(stored) || {};
-            details = Object.assign(details, parsed);
-        }
-    } catch (e) {
-        console.error("Failed to refresh details before submit", e);
-    }
-
-    // 1) Customer + address stuff
-    if (hiddenCustomerName)       hiddenCustomerName.value      = details.customerName || "";
-    if (hiddenCustomerPhone)      hiddenCustomerPhone.value     = details.phone || "";
-    if (hiddenCustomerMessenger)  hiddenCustomerMessenger.value = details.messenger || "";
-    if (hiddenCustomerEmail)      hiddenCustomerEmail.value     = details.email || "";
-
-    if (hiddenFulfillmentMode)    hiddenFulfillmentMode.value   = details.fulfillmentMode || "";
-    if (hiddenSubdivision)        hiddenSubdivision.value       = details.subdivision || "";
-
-    if (hiddenDeliveryAddress)    hiddenDeliveryAddress.value   = details.blockLot || "";
-    if (hiddenDeliveryLandmark)   hiddenDeliveryLandmark.value  = details.landmark || "";
-
-    // 2) Cart snapshot
-    if (hiddenCartJson) {
+        // Refresh details from localStorage just in case
         try {
-            hiddenCartJson.value = JSON.stringify(cart || []);
+            const stored = localStorage.getItem("shawarma_order_details");
+            if (stored) {
+                const parsed = JSON.parse(stored) || {};
+                details = Object.assign(details, parsed);
+            }
         } catch (e) {
-            hiddenCartJson.value = "[]";
+            console.error("Failed to refresh details before submit", e);
         }
+
+        // 1) Customer + address stuff
+        if (hiddenCustomerName)       hiddenCustomerName.value      = details.customerName || "";
+        if (hiddenCustomerPhone)      hiddenCustomerPhone.value     = details.phone || "";
+        if (hiddenCustomerMessenger)  hiddenCustomerMessenger.value = details.messenger || "";
+
+        // email: prefer the one typed here on checkout
+        if (hiddenCustomerEmail) {
+            if (codEmailInput && codEmailInput.value.trim()) {
+                hiddenCustomerEmail.value = codEmailInput.value.trim();
+            } else {
+                hiddenCustomerEmail.value = details.email || "";
+            }
+        }
+
+        if (hiddenFulfillmentMode)    hiddenFulfillmentMode.value   = details.fulfillmentMode || "";
+        if (hiddenSubdivision)        hiddenSubdivision.value       = details.subdivision || "";
+
+        if (hiddenDeliveryAddress)    hiddenDeliveryAddress.value   = details.blockLot || "";
+        if (hiddenDeliveryLandmark)   hiddenDeliveryLandmark.value  = details.landmark || "";
+
+        // 2) Cart snapshot
+        if (hiddenCartJson) {
+            try {
+                hiddenCartJson.value = JSON.stringify(cart || []);
+            } catch (e) {
+                hiddenCartJson.value = "[]";
+            }
+        }
+
+        // 3) Money
+        let sub = 0;
+        if (Array.isArray(cart)) {
+            cart.forEach(item => {
+                sub += (item.unitPrice || 0) * (item.qty || 0);
+            });
+        }
+
+        const mode        = details.fulfillmentMode || "pickup";
+        const subdivision = details.subdivision || "";
+        let deliveryFee   = 0;
+
+        if (mode === "delivery") {
+            const zone = DELIVERY_ZONES[subdivision];
+            if (zone) deliveryFee = zone.fee + zone.gate;
+        }
+
+        const total = sub + deliveryFee;
+
+        if (hiddenSubtotal)     hiddenSubtotal.value     = sub.toFixed(2);
+        if (hiddenDeliveryFee)  hiddenDeliveryFee.value  = deliveryFee.toFixed(2);
+        if (hiddenTotalAmount)  hiddenTotalAmount.value  = total.toFixed(2);
     }
-
-    // 3) Money
-    let subtotal = 0;
-    if (Array.isArray(cart)) {
-        cart.forEach(item => {
-            subtotal += (item.unitPrice || 0) * (item.qty || 0);
-        });
-    }
-
-    const mode        = details.fulfillmentMode || "pickup";
-    const subdivision = details.subdivision || "";
-    let deliveryFee   = 0;
-
-    if (mode === "delivery") {
-        const zone = DELIVERY_ZONES[subdivision];
-        if (zone) deliveryFee = zone.fee + zone.gate;
-    }
-
-    const total = subtotal + deliveryFee;
-
-    if (hiddenSubtotal)     hiddenSubtotal.value     = subtotal.toFixed(2);
-    if (hiddenDeliveryFee)  hiddenDeliveryFee.value  = deliveryFee.toFixed(2);
-    if (hiddenTotalAmount)  hiddenTotalAmount.value  = total.toFixed(2);
-}
-
 
     // ---------- TOTALS + DELIVERY ROW ----------
     function recalcTotals() {
@@ -324,7 +360,6 @@ document.addEventListener("DOMContentLoaded", function () {
             effDeliveryFee = calcDeliveryFee(subdivision);
         }
 
-        // Show only for real delivery with a fee
         if (deliveryRow) {
             const shouldShowDeliveryRow =
                 mode === "delivery" && subdivision && effDeliveryFee > 0;
@@ -336,7 +371,6 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
 
-        // Label text
         if (mode === "delivery" && effDeliveryFee > 0) {
             feeLabel.textContent = formatPeso(effDeliveryFee);
         } else {
@@ -346,7 +380,6 @@ document.addEventListener("DOMContentLoaded", function () {
         const total = subtotal + effDeliveryFee;
         totalEl.textContent = formatPeso(total);
 
-        // 🔥 Push values into hidden money + mode/subdivision
         if (hiddenSubtotal)      hiddenSubtotal.value      = subtotal.toFixed(2);
         if (hiddenDeliveryFee)   hiddenDeliveryFee.value   = effDeliveryFee.toFixed(2);
         if (hiddenTotalAmount)   hiddenTotalAmount.value   = total.toFixed(2);
@@ -354,7 +387,6 @@ document.addEventListener("DOMContentLoaded", function () {
         if (hiddenFulfillmentMode) hiddenFulfillmentMode.value = mode || "";
         if (hiddenSubdivision)     hiddenSubdivision.value     = subdivision || "";
     }
-
 
     if (fulfillmentDel) fulfillmentDel.addEventListener("change", recalcTotals);
     if (fulfillmentPu)  fulfillmentPu.addEventListener("change", recalcTotals);
@@ -367,27 +399,84 @@ document.addEventListener("DOMContentLoaded", function () {
         btnConfirmStep1.addEventListener("click", async function () {
             const method = getSelectedPaymentMethod();
 
-            // Always sync hidden fields first (so PHP gets the latest data)
+            // Always sync hidden fields first
             syncHiddenFields();
 
             if (method === "cod") {
-                // Old behavior: go to OTP step
-                step1Box.style.display = "none";
-                step2Box.style.display = "block";
-
-                if (otpCodeInput) {
-                    otpCodeInput.value = "";
-                    otpCodeInput.classList.remove("is-invalid");
-                    otpCodeInput.focus();
+                // Validate email
+                if (!codEmailInput) {
+                    alert("Email input is missing.");
+                    return;
                 }
+                const email = codEmailInput.value.trim();
+                if (!email || !isValidEmail(email)) {
+                    codEmailInput.classList.add("is-invalid");
+                    if (codEmailError) {
+                        codEmailError.textContent = "Please enter a valid email address.";
+                    }
+                    return;
+                }
+                codEmailInput.classList.remove("is-invalid");
+                if (codEmailError) codEmailError.textContent = "Please enter a valid email address.";
+
+                // Push email into hidden field so PHP sees it
+                if (hiddenCustomerEmail) {
+                    hiddenCustomerEmail.value = email;
+                }
+
+                // Call backend to send OTP email
+                btnConfirmStep1.disabled = true;
+                const originalLabel = btnConfirmStep1.innerHTML;
+                btnConfirmStep1.innerHTML = "Sending code...";
+
+                try {
+                    const formData = new FormData();
+                    formData.append("email", email);
+
+                    const res = await fetch("api/otp/send-email-otp.php", {
+                        method: "POST",
+                        body: formData
+                    });
+
+                    const data = await res.json();
+                    console.log("send-email-otp response:", data);
+
+                    if (!data.success) {
+                        alert(data.message || "Failed to send verification code. Please try again.");
+                        return;
+                    }
+
+                    // Go to OTP step
+                    step1Box.style.display = "none";
+                    step2Box.style.display = "block";
+
+                    if (otpHelpText) {
+                        otpHelpText.textContent =
+                            "We’ve sent a 6-digit confirmation code to " + email +
+                            ". Enter it below to confirm your cash order.";
+                    }
+
+                    if (otpCodeInput) {
+                        otpCodeInput.value = "";
+                        otpCodeInput.classList.remove("is-invalid");
+                        otpCodeInput.focus();
+                    }
+                } catch (err) {
+                    console.error("Error calling send-email-otp:", err);
+                    alert("There was a problem sending the verification code.");
+                } finally {
+                    btnConfirmStep1.disabled = false;
+                    btnConfirmStep1.innerHTML = originalLabel;
+                }
+
                 return;
             }
 
             if (method === "paymongo") {
-                // New behavior: create Checkout Session then redirect to PayMongo
+                // Online payment via PayMongo (unchanged)
                 btnConfirmStep1.disabled = true;
                 const originalLabel = btnConfirmStep1.innerHTML;
-                btnConfirmStep1.innerHTML = 'Opening payment page...';
+                btnConfirmStep1.innerHTML = "Opening payment page...";
 
                 try {
                     const formData = new FormData(checkoutForm);
@@ -401,7 +490,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     console.log("PayMongo Checkout response:", data);
 
                     if (data.status === "ok" && data.checkout_url) {
-                        // 🔥 Actual redirect to PayMongo's hosted checkout page
                         window.location.href = data.checkout_url;
                     } else {
                         alert("Online payment failed to start. Please try again or choose Cash.");
@@ -429,43 +517,81 @@ document.addEventListener("DOMContentLoaded", function () {
             step1Box.style.display = "block";
         });
     }
-    
+
     // ---------- OTP CHECK + FINAL SUBMIT (COD ONLY) ----------
     if (btnPlaceOrder && checkoutForm) {
-        btnPlaceOrder.addEventListener("click", function () {
+        btnPlaceOrder.addEventListener("click", async function () {
             const method = getSelectedPaymentMethod();
 
-            // Safety: OTP screen is only for COD
+            // If somehow on this screen with PayMongo selected, just submit
             if (method !== "cod") {
-                // Just in case user somehow gets here with paymongo selected
                 checkoutForm.submit();
                 return;
             }
 
             if (!otpCodeInput) return;
 
-            const otpValue = otpCodeInput.value.trim();
-            if (otpValue !== HARD_CODED_OTP) {
+            const code = otpCodeInput.value.trim();
+            if (code.length !== 6 || !/^[0-9]+$/.test(code)) {
                 otpCodeInput.classList.add("is-invalid");
                 if (otpError) {
-                    otpError.textContent = "Incorrect code. For testing, use 000000.";
+                    otpError.textContent = "Please enter the 6-digit code.";
                 }
                 return;
             }
 
-            otpCodeInput.classList.remove("is-invalid");
-            if (otpError) otpError.textContent = "";
+            const email =
+                (codEmailInput && codEmailInput.value.trim())
+                    ? codEmailInput.value.trim()
+                    : (hiddenCustomerEmail ? hiddenCustomerEmail.value.trim() : "");
 
-            // Sync everything into hidden inputs JUST BEFORE submit
-            syncHiddenFields();
+            if (!email) {
+                alert("Missing email for verification.");
+                return;
+            }
 
-            // Submit as POST to order-confirmed.php
-            checkoutForm.submit();
+            btnPlaceOrder.disabled = true;
+            const originalText = btnPlaceOrder.innerHTML;
+            btnPlaceOrder.innerHTML = "Verifying...";
+
+            try {
+                const formData = new FormData();
+                formData.append("email", email);
+                formData.append("code", code);
+
+                const res = await fetch("api/otp/verify-email-otp.php", {
+                    method: "POST",
+                    body: formData
+                });
+
+                const data = await res.json();
+                console.log("verify-email-otp response:", data);
+
+                if (!data.success) {
+                    otpCodeInput.classList.add("is-invalid");
+                    if (otpError) {
+                        otpError.textContent = data.message || "Incorrect code. Please try again.";
+                    }
+                    return;
+                }
+
+                otpCodeInput.classList.remove("is-invalid");
+                if (otpError) otpError.textContent = "";
+
+                // Sync everything again just before submit
+                syncHiddenFields();
+
+                checkoutForm.submit();
+            } catch (err) {
+                console.error("Error verifying OTP:", err);
+                alert("There was a problem verifying your code. Please try again.");
+            } finally {
+                btnPlaceOrder.disabled = false;
+                btnPlaceOrder.innerHTML = originalText;
+            }
         });
     }
 
-
     console.log("Loaded order details:", details);
     console.log("Loaded cart:", cart);
-
 });
