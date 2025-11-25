@@ -14,6 +14,154 @@ if ($mysqli->connect_error) {
     die("Database connection failed: " . $mysqli->connect_error);
 }
 
+// Helper: build tracking URL (reused for page + email)
+function buildTrackUrl($order_code, $customer_phone) {
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host   = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    $dir    = rtrim(dirname($_SERVER['REQUEST_URI'] ?? ''), '/\\');
+
+    return $scheme . '://' . $host . $dir .
+        '/track-order.php?order_code=' . urlencode($order_code) .
+        '&order_phone=' . urlencode($customer_phone);
+}
+
+// Helper: send order confirmation email via Brevo
+function sendOrderConfirmationEmail($email, $name, $order_code, $cart_items, $subtotal, $delivery_fee, $total_amount, $track_url) {
+    if (!$email) {
+        return; // nothing to do
+    }
+
+    // Same Brevo config as send-email-otp.php
+    $BREVO_API_KEY  = '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';
+    $SENDER_EMAIL   = 'crispino.zyrus@gmail.com';
+    $SENDER_NAME    = 'Shawarma Depot';
+
+    $BREVO_API_KEY = trim($BREVO_API_KEY);
+
+    // Build items table HTML
+    $rowsHtml = '';
+    if (is_array($cart_items) && !empty($cart_items)) {
+        foreach ($cart_items as $item) {
+            $nameItem = htmlspecialchars($item['name'] ?? 'Item', ENT_QUOTES, 'UTF-8');
+            $summary  = htmlspecialchars($item['summary'] ?? '', ENT_QUOTES, 'UTF-8');
+            $qty      = (int)($item['qty'] ?? 0);
+            $unit     = (float)($item['unitPrice'] ?? 0);
+            $line     = $qty * $unit;
+
+            $rowsHtml .= '
+                <tr>
+                    <td style="padding:4px 8px;border:1px solid #ddd;">' . $nameItem . '</td>
+                    <td style="padding:4px 8px;border:1px solid #ddd;font-size:12px;color:#666;">' . $summary . '</td>
+                    <td style="padding:4px 8px;border:1px solid #ddd;text-align:right;">' . $qty . '</td>
+                    <td style="padding:4px 8px;border:1px solid #ddd;text-align:right;">₱' . number_format($unit, 2) . '</td>
+                    <td style="padding:4px 8px;border:1px solid #ddd;text-align:right;">₱' . number_format($line, 2) . '</td>
+                </tr>
+            ';
+        }
+    } else {
+        $rowsHtml = '
+            <tr>
+                <td colspan="5" style="padding:8px;border:1px solid #ddd;text-align:center;color:#666;font-size:13px;">
+                    No items were recorded for this order.
+                </td>
+            </tr>
+        ';
+    }
+
+    $nameSafe = htmlspecialchars($name ?: 'Customer', ENT_QUOTES, 'UTF-8');
+    $orderCodeSafe = htmlspecialchars($order_code, ENT_QUOTES, 'UTF-8');
+    $trackUrlSafe = htmlspecialchars($track_url, ENT_QUOTES, 'UTF-8');
+
+    $htmlContent = '
+    <html>
+    <body style="font-family: Arial, sans-serif; background-color:#f5f5f5; padding:20px;">
+        <div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:8px;padding:20px;border:1px solid #eee;">
+            <h2 style="margin-top:0;color:#333;">Thank you for your order, ' . $nameSafe . '!</h2>
+            <p style="font-size:14px;color:#555;">
+                Your shawarma order has been received and is now in the queue.
+            </p>
+
+            <p style="font-size:14px;color:#555;">
+                <strong>Tracking code:</strong>
+                <span style="display:inline-block;background:#222;color:#ffb300;padding:4px 8px;border-radius:4px;font-family:monospace;">
+                    ' . $orderCodeSafe . '
+                </span>
+            </p>
+
+            <p style="font-size:14px;color:#555;">
+                You can track this order online here:<br>
+                <a href="' . $trackUrlSafe . '" style="color:#ff9800;" target="_blank">' . $trackUrlSafe . '</a>
+            </p>
+
+            <h3 style="font-size:16px;margin-top:24px;border-top:1px solid #eee;padding-top:12px;">Order summary</h3>
+
+            <table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:12px;">
+                <thead>
+                    <tr style="background:#f9f9f9;">
+                        <th style="padding:6px 8px;border:1px solid #ddd;text-align:left;">Item</th>
+                        <th style="padding:6px 8px;border:1px solid #ddd;text-align:left;">Details</th>
+                        <th style="padding:6px 8px;border:1px solid #ddd;text-align:right;">Qty</th>
+                        <th style="padding:6px 8px;border:1px solid #ddd;text-align:right;">Unit</th>
+                        <th style="padding:6px 8px;border:1px solid #ddd;text-align:right;">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ' . $rowsHtml . '
+                </tbody>
+            </table>
+
+            <div style="text-align:right;font-size:14px;">
+                <div><span style="color:#666;">Subtotal:</span> <strong>₱' . number_format($subtotal, 2) . '</strong></div>';
+
+    if ($delivery_fee > 0) {
+        $htmlContent .= '
+                <div><span style="color:#666;">Delivery fee:</span> <strong>₱' . number_format($delivery_fee, 2) . '</strong></div>';
+    }
+
+    $htmlContent .= '
+                <div style="margin-top:4px;font-size:15px;">
+                    <span style="color:#333;">Total:</span>
+                    <strong style="color:#2e7d32;">₱' . number_format($total_amount, 2) . '</strong>
+                </div>
+            </div>
+
+            <p style="font-size:12px;color:#888;margin-top:24px;">
+                If you have any questions about this order, you can reply to this email or reach us via our Facebook page.
+            </p>
+        </div>
+    </body>
+    </html>
+    ';
+
+    $payload = [
+        'sender' => [
+            'email' => $SENDER_EMAIL,
+            'name'  => $SENDER_NAME
+        ],
+        'to' => [
+            ['email' => $email]
+        ],
+        'subject' => 'Your Shawarma Depot order ' . $orderCodeSafe,
+        'htmlContent' => $htmlContent
+    ];
+
+    $ch = curl_init('https://api.brevo.com/v3/smtp/email');
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'accept: application/json',
+        'content-type: application/json',
+        'api-key: ' . $BREVO_API_KEY
+    ]);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlErr  = curl_error($ch);
+    curl_close($ch);
+}
+
+
 // Helper: generate tracking code
 function generateOrderCode($length = 10) {
     $chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -65,7 +213,7 @@ if ($isPaymongoReturn) {
 
 
 // POST REQUEST: create order
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
+if ($_SERVER["REQUEST_METHOD"] === "POST" || $isPaymongoReturn) {
 
     $customer_name        = trim($data['customer_name']        ?? '');
     $customer_phone       = trim($data['customer_phone']       ?? '');
@@ -105,7 +253,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
             if (!$otpVerified) {
                 $error_msg = "OTP verification is required for cash orders. Please go back and enter the code.";
-            } elseif (!$otpEmail || strcasecmp($otpEmail, $customer_email) !== 0) {
+            } elseif ($customer_email && $otpEmail && strcasecmp($otpEmail, $customer_email) !== 0) {
+                // Only complain if both emails exist and don't match
                 $error_msg = "The OTP was not verified for this email address.";
             }
         }
@@ -213,6 +362,23 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                     $stmt->close();
 
+                // Build tracking URL for email
+                $emailTrackUrl = buildTrackUrl($order_code, $customer_phone);
+
+                // Send order confirmation email (if customer_email is present)
+                if (!empty($customer_email)) {
+                    sendOrderConfirmationEmail(
+                        $customer_email,
+                        $customer_name,
+                        $order_code,
+                        $cart_items,
+                        $subtotal,
+                        $delivery_fee,
+                        $total_amount,
+                        $emailTrackUrl
+                    );
+                }
+
                     // Clear OTP session after success
                     unset($_SESSION['otp_email'], $_SESSION['otp_code'], $_SESSION['otp_expires'], $_SESSION['otp_verified']);
 
@@ -297,21 +463,13 @@ $track_url = "";
 $qr_url    = "";
 
 if ($insert_ok && $order_code && $customer_phone) {
-    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-    $host   = $_SERVER['HTTP_HOST'] ?? 'localhost';
-
-    // Directory where order-confirmed.php lives (e.g. /shawarmadepot)
-    $dir = rtrim(dirname($_SERVER['REQUEST_URI'] ?? ''), '/\\');
-
-    // Full URL to track-order.php with the same params you already use
-    $track_url = $scheme . '://' . $host . $dir .
-        '/track-order.php?order_code=' . urlencode($order_code) .
-        '&order_phone=' . urlencode($customer_phone);
+    $track_url = buildTrackUrl($order_code, $customer_phone);
 
     // External QR microservice (goQR / qrserver)
     $qr_url = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' .
         urlencode($track_url);
 }
+
 ?>
 
 <!doctype html>

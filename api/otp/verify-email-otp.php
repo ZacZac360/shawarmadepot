@@ -62,8 +62,9 @@ if ($code !== (string)$sessionCode) {
 // Mark as verified
 $_SESSION['otp_verified'] = true;
 
-// clear the code now to prevent reuse
-unset($_SESSION['otp_email'], $_SESSION['otp_code'], $_SESSION['otp_expires']);
+// Clear only the code & expiry so it can't be reused
+// but KEEP otp_email so order-confirmed.php can match it
+unset($_SESSION['otp_code'], $_SESSION['otp_expires']);
 
 echo json_encode([
     'success' => true,

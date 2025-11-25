@@ -23,3 +23,18 @@ HTTP 201
 {"messageId":"<202511251552.18075484920@smtp-relay.mailin.fr>"}
 
 
+Key (first 12 chars): xkeysib-27b4...
+HTTP 401
+{"message":"API Key is not enabled","code":"unauthorized"}
+
+
+Key (first 12 chars): xkeysib-27b4...
+HTTP 401
+{"message":"API Key is not enabled","code":"unauthorized"}
+
+
+Key (first 12 chars): xkeysib-27b4...
+HTTP 401
+{"message":"API Key is not enabled","code":"unauthorized"}
+
+
