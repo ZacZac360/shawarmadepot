@@ -1,3 +1,4 @@
 /config
 api/otp/send-email-otp.php
 api/otp/send-email.otp.php
+api/otp/api-key.txt
